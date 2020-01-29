@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TRSSequence">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/white"
+        >
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Operating hours"
+            android:layout_marginLeft="@dimen/main_screen_sidemargin"
+            android:layout_marginRight="@dimen/main_screen_sidemargin"
+            android:layout_marginTop="2dp"
+            android:textSize="15sp"
+            android:visibility="invisible"
+            />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <LinearLayout
+                android:id="@+id/lLayout1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_marginTop="20dp"
+                android:baselineAligned="false"
+                >
+
+
+                <Button
+                    android:id="@+id/btnL1"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:gravity="center"
+                    android:text="D65"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:enabled="false"
+                    android:layout_weight="4"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:textSize="@dimen/button_text_size"
+                    android:tag=""
+
+                    />
+
+                <Button
+                    android:id="@+id/btnL2"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:gravity="center"
+                    android:text="D50"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="4"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:textSize="@dimen/button_text_size"
+                    android:tag=""
+                    android:enabled="false"
+                    />
+
+                <Button
+                    android:id="@+id/btnL3"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:gravity="center"
+                    android:text="A\n1540"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:onClick="btnClicked2"
+                    android:layout_weight="4"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:textSize="@dimen/button_text_size"
+                    android:tag="A"
+                    android:enabled="false"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_below="@+id/lLayout1"
+                android:layout_marginTop="15dp"
+                android:baselineAligned="false"
+                android:layout_marginEnd="@dimen/button_margin"
+                >
+
+                <Button
+                    android:id="@+id/btnL4"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:gravity="center"
+                    android:text="LED\n1540"
+                    android:onClick="btnClicked2"
+                    android:layout_weight="4"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:textSize="@dimen/button_text_size"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:tag="LED"
+                    android:enabled="false"
+                    />
+
+
+                <Button
+                    android:id="@+id/btnL5"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:gravity="center"
+                    android:text="TL84\n1540"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:onClick="btnClicked2"
+                    android:layout_weight="4"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:textSize="@dimen/button_text_size"
+                    android:tag="TL84"
+                    android:enabled="false"
+
+                    />
+
+                <Button
+                    android:id="@+id/btnL6"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:gravity="center"
+                    android:text="UVA\n1540"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:onClick="btnClicked2"
+                    android:layout_weight="4"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:textSize="@dimen/button_text_size"
+                    android:enabled="false"
+
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lLayout3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_below="@+id/lLayout2"
+                android:layout_marginTop="15dp"
+                android:baselineAligned="false"
+                android:orientation="vertical"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/lLayout4"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:text="System Time: "
+                        />
+
+                    <TextClock
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:format24Hour="H:mm:ss"
+                        android:textColor="@color/black"
+                        android:background="@color/white"
+                        />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/infobox"
+                    android:text="System Temperature: 21 deg C\nVersion: V0.91234\nwww.UnityColor.com"
+                />
+
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/lLayoutbottomspace"
+                android:layout_gravity="right|end"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_marginBottom="60dp"
+                android:baselineAligned="false"
+
+                >
+
+
+                <Button
+                    android:id="@+id/btnBack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:baselineAligned="false"
+                    android:gravity="center"
+                    android:onClick="onClickBack"
+                    android:text="BACK"
+                    android:textSize="@dimen/button_text_size" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/lLayoutbottomspace"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="5dp"
+                android:baselineAligned="true"
+                android:layout_alignParentBottom="true"
+                >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="10sp"
+                    android:text="Torso-Verlag e.K. Obere Grussen 8\nDE-97877 Wertheim Tel. +49(0)93242 933970"
+
+                    />
+
+
+            </RelativeLayout>
+
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

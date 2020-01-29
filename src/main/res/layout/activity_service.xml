@@ -1,0 +1,486 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/service_page_margin_width"
+    android:paddingRight="@dimen/service_page_margin_width"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="@android:color/white"
+    tools:context="com.kiand.LED2match.ServicePageActivity">
+
+    <TextView android:text="Service page"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:id="@+id/textView2" />
+
+    <TextView android:text="LED"
+        android:layout_width="@dimen/service_page_col2_width"
+        android:layout_height="@dimen/lamp_item_height"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:background="@android:color/black"
+        android:layout_below="@+id/textViewDate"
+        android:layout_toRightOf="@+id/textViewCOL1Header"
+        android:id="@+id/textViewCOL2Header"
+        android:gravity="center"
+        android:layout_marginLeft="12dp"
+        />
+
+    <TextView android:text="Lamp Timer"
+        android:layout_width="@dimen/service_page_col3_width"
+        android:layout_height="@dimen/lamp_item_height"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:background="@android:color/black"
+        android:id="@+id/textViewCOL3Header"
+        android:layout_alignTop="@+id/textViewCOL1Header"
+        android:layout_toRightOf="@+id/textViewCOL2Header"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="8dp"
+        android:gravity="center" />
+
+    <TextView
+        android:text="LED_65"
+        android:layout_width="@dimen/service_page_col2_width"
+        android:layout_height="@dimen/led_item_height"
+        android:textColor="@android:color/black"
+        android:background="#AAD7FF"
+        android:id="@+id/textViewRED"
+        android:textIsSelectable="false"
+        android:layout_below="@+id/textViewCOL2Header"
+        android:layout_alignLeft="@+id/textViewCOL2Header"
+        android:layout_alignRight="@+id/textViewCOL2Header"
+
+        android:gravity="center" />
+
+    <TextView
+        android:text="LED_UVA"
+        android:layout_width="@dimen/service_page_col2_width"
+        android:layout_height="@dimen/led_item_height"
+        android:textColor="@android:color/black"
+        android:background="#AAD7FF"
+        android:id="@+id/textViewGREEN"
+        android:layout_below="@+id/textViewRED"
+        android:layout_alignLeft="@+id/textViewCOL2Header"
+        android:layout_alignRight="@+id/textViewCOL2Header"
+        android:layout_marginTop="5dp"
+        android:gravity="center" />
+
+    <TextView
+        android:text="LED_50"
+        android:layout_width="@dimen/service_page_col2_width"
+        android:layout_height="@dimen/led_item_height"
+        android:background="#AAD7FF"
+        android:textColor="@android:color/black"
+        android:id="@+id/textViewBLUE"
+        android:layout_below="@+id/textViewGREEN"
+        android:layout_alignLeft="@+id/textViewCOL2Header"
+        android:layout_alignRight="@+id/textViewCOL2Header"
+        android:layout_marginTop="5dp"
+        android:gravity="center" />
+
+    <TextView
+        android:text="LED_27"
+        android:layout_width="@dimen/service_page_col2_width"
+        android:layout_height="@dimen/led_item_height"
+        android:textColor="@android:color/black"
+        android:background="#AAD7FF"
+        android:id="@+id/textViewWHITE"
+        android:layout_below="@+id/textViewBLUE"
+        android:layout_alignLeft="@+id/textViewCOL2Header"
+        android:layout_alignRight="@+id/textViewCOL2Header"
+        android:layout_marginTop="5dp"
+        android:gravity="center" />
+
+    <TextView
+        android:text="LED_W"
+        android:layout_width="@dimen/service_page_col2_width"
+        android:layout_height="@dimen/led_item_height"
+        android:textColor="@android:color/black"
+        android:background="#AAD7FF"
+        android:id="@+id/textViewLED5"
+        android:textIsSelectable="false"
+        android:layout_below="@+id/textViewWHITE"
+        android:layout_alignLeft="@+id/textViewCOL2Header"
+        android:layout_alignRight="@+id/textViewCOL2Header"
+        android:layout_marginTop="5dp"
+        android:gravity="center" />
+
+    <TextView
+        android:text="LED_R"
+        android:layout_width="@dimen/service_page_col2_width"
+        android:layout_height="@dimen/led_item_height"
+        android:textColor="@android:color/black"
+        android:background="#AAD7FF"
+        android:id="@+id/textViewLED6"
+        android:layout_below="@+id/textViewLED5"
+        android:layout_alignLeft="@+id/textViewCOL2Header"
+        android:layout_alignRight="@+id/textViewCOL2Header"
+        android:layout_marginTop="5dp"
+        android:gravity="center" />
+
+    <TextView
+        android:text="LED_G"
+        android:layout_width="@dimen/service_page_col2_width"
+        android:layout_height="@dimen/led_item_height"
+        android:background="#AAD7FF"
+        android:textColor="@android:color/black"
+        android:id="@+id/textViewLED7"
+        android:layout_below="@+id/textViewLED6"
+        android:layout_alignLeft="@+id/textViewCOL2Header"
+        android:layout_alignRight="@+id/textViewCOL2Header"
+        android:layout_marginTop="5dp"
+        android:gravity="center" />
+
+    <TextView
+        android:text="LED_B"
+        android:layout_width="@dimen/service_page_col2_width"
+        android:layout_height="@dimen/led_item_height"
+        android:textColor="@android:color/black"
+        android:background="#AAD7FF"
+        android:id="@+id/textViewLED8"
+        android:layout_below="@+id/textViewLED7"
+        android:layout_alignLeft="@+id/textViewCOL2Header"
+        android:layout_alignRight="@+id/textViewCOL2Header"
+        android:layout_marginTop="5dp"
+        android:gravity="center" />
+
+    <TextView
+        android:text="LED_395"
+        android:layout_width="@dimen/service_page_col2_width"
+        android:layout_height="@dimen/led_item_height"
+        android:background="#AAD7FF"
+        android:textColor="@android:color/black"
+        android:id="@+id/textViewLED9"
+        android:layout_below="@+id/textViewLED8"
+        android:layout_alignLeft="@+id/textViewCOL2Header"
+        android:layout_alignRight="@+id/textViewCOL2Header"
+        android:layout_marginTop="5dp"
+        android:gravity="center" />
+
+    <TextView
+        android:text="LED_660"
+        android:layout_width="@dimen/service_page_col2_width"
+        android:layout_height="@dimen/led_item_height"
+        android:textColor="@android:color/black"
+        android:background="#AAD7FF"
+        android:id="@+id/textViewLED10"
+        android:layout_below="@+id/textViewLED9"
+        android:layout_alignLeft="@+id/textViewCOL2Header"
+        android:layout_alignRight="@+id/textViewCOL2Header"
+        android:layout_marginTop="5dp"
+        android:gravity="center" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="150dp"
+        android:layout_height="30dp"
+        android:text="LAMP buttons: ON"
+        android:id="@+id/buttonLampLayoutOnOff"
+        android:onClick="switchLampLayoutOnOff"
+        android:background="@drawable/buttonselector_2nd"
+        android:textColor="@android:color/black"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/led_item_height"
+        android:layout_below="@+id/btnRenameLamp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/buttonselector_service"
+        android:onClick="resetChrono"
+        android:text="Replace Lamp"
+        android:layout_alignLeft="@+id/textViewCOL1Header"
+        android:layout_alignRight="@+id/textViewCOL1Header"
+        android:textColor="@android:color/black"
+        />
+
+    <TextView
+        android:text="Lamp installed: "
+        android:layout_width="fill_parent"
+        android:layout_height="25dp"
+        android:textColor="@android:color/black"
+        android:id="@+id/textViewDate"
+        android:layout_below="@+id/textView3"
+        android:layout_alignParentLeft="true" />
+
+    <TextView
+        android:text="Unit Name:"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/lamp_item_height"
+        android:textColor="@android:color/black"
+        android:id="@+id/textView3"
+        android:layout_below="@+id/textView2"
+        android:layout_alignParentLeft="true"
+        android:gravity="left|center_vertical" />
+
+    <EditText
+        android:layout_width="150dp"
+        android:layout_height="@dimen/lamp_item_height"
+        android:id="@+id/editTextUnitName"
+        android:layout_below="@+id/textView2"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/black"
+        android:maxLength="9" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="@dimen/lamp_item_width"
+        android:layout_height="@dimen/led_item_height"
+        android:text="SET"
+        android:layout_alignTop="@+id/editTextUnitName"
+        android:layout_alignParentRight="true"
+        android:onClick="setUnitName"
+        android:background="@drawable/buttonselector_service"
+        android:textColor="@android:color/black" />
+
+    <TextView
+        android:text="Lamp name"
+        android:layout_width="@dimen/service_page_col1_width"
+        android:layout_height="@dimen/lamp_item_height"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:background="@android:color/black"
+        android:id="@+id/textViewCOL1Header"
+        android:gravity="center"
+        android:layout_below="@+id/textViewDate"
+        android:layout_alignParentLeft="true"
+        />
+
+    <Spinner
+        android:id="@+id/spinnerLamps"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/led_item_height"
+        android:layout_below="@id/textViewCOL1Header"
+        android:layout_alignLeft="@+id/textViewCOL1Header"
+        android:layout_alignRight="@+id/textViewCOL1Header"
+        android:prompt="@string/lamp_select_prompt"
+        />
+
+    <Button
+        android:layout_width="@dimen/service_page_btn_width"
+        android:layout_height="@dimen/led_item_height"
+        android:id="@+id/btnRenameLamp"
+        android:layout_below="@id/spinnerLamps"
+        android:text="Rename Lamp"
+        android:layout_alignLeft="@+id/textViewCOL1Header"
+        android:layout_alignRight="@+id/textViewCOL1Header"
+        android:background="@drawable/buttonselector_service"
+        android:textColor="@android:color/black"
+        android:layout_marginTop="5dp"
+        android:onClick="renameLamp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/led_item_height"
+        android:text="00:00"
+        android:id="@+id/textCounterLED1"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/counter_text_size"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_below="@+id/textViewCOL3Header"
+        android:layout_alignLeft="@+id/textViewCOL3Header"
+        android:layout_alignRight="@+id/textViewCOL3Header"
+        android:layout_alignParentRight="true"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/led_item_height"
+        android:text="00:00"
+        android:id="@+id/textCounterLED2"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/counter_text_size"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_below="@+id/textCounterLED1"
+        android:layout_alignLeft="@+id/textViewCOL3Header"
+        android:layout_alignRight="@+id/textViewCOL3Header"
+        android:layout_marginTop="5dp"
+        android:layout_alignParentRight="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/led_item_height"
+        android:text="00:00"
+        android:id="@+id/textCounterLED3"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/counter_text_size"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_below="@+id/textCounterLED2"
+        android:layout_alignLeft="@+id/textViewCOL3Header"
+        android:layout_alignRight="@+id/textViewCOL3Header"
+        android:layout_marginTop="5dp"
+        android:layout_alignParentRight="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/led_item_height"
+        android:text="00:00"
+        android:id="@+id/textCounterLED4"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/counter_text_size"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_below="@+id/textCounterLED3"
+        android:layout_alignLeft="@+id/textViewCOL3Header"
+        android:layout_alignRight="@+id/textViewCOL3Header"
+        android:layout_marginTop="5dp"
+        android:layout_alignParentRight="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/led_item_height"
+        android:text="00:00"
+        android:id="@+id/textCounterLED5"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/counter_text_size"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_below="@+id/textCounterLED4"
+        android:layout_alignLeft="@+id/textViewCOL3Header"
+        android:layout_alignRight="@+id/textViewCOL3Header"
+        android:layout_marginTop="5dp"
+        android:layout_alignParentRight="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/led_item_height"
+        android:text="00:00"
+        android:id="@+id/textCounterLED6"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/counter_text_size"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_below="@+id/textCounterLED5"
+        android:layout_alignLeft="@+id/textViewCOL3Header"
+        android:layout_alignRight="@+id/textViewCOL3Header"
+        android:layout_marginTop="5dp"
+        android:layout_alignParentRight="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/led_item_height"
+        android:text="00:00"
+        android:id="@+id/textCounterLED7"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/counter_text_size"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_below="@+id/textCounterLED6"
+        android:layout_alignLeft="@+id/textViewCOL3Header"
+        android:layout_alignRight="@+id/textViewCOL3Header"
+        android:layout_marginTop="5dp"
+        android:layout_alignParentRight="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/led_item_height"
+        android:text="00:00"
+        android:id="@+id/textCounterLED8"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/counter_text_size"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_below="@+id/textCounterLED7"
+        android:layout_alignLeft="@+id/textViewCOL3Header"
+        android:layout_alignRight="@+id/textViewCOL3Header"
+        android:layout_marginTop="5dp"
+        android:layout_alignParentRight="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/led_item_height"
+        android:text="00:00"
+        android:id="@+id/textCounterLED9"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/counter_text_size"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_below="@+id/textCounterLED8"
+        android:layout_alignLeft="@+id/textViewCOL3Header"
+        android:layout_alignRight="@+id/textViewCOL3Header"
+        android:layout_marginTop="5dp"
+        android:layout_alignParentRight="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/led_item_height"
+        android:text="00:00"
+        android:id="@+id/textCounterLED10"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/counter_text_size"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_below="@+id/textCounterLED9"
+        android:layout_alignLeft="@+id/textViewCOL3Header"
+        android:layout_alignRight="@+id/textViewCOL3Header"
+        android:layout_marginTop="5dp"
+        android:layout_alignParentRight="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/led_item_height"
+        android:text="Read timers"
+        android:onClick="refreshCountersOverSerial"
+        android:background="@drawable/buttonselector_service"
+        android:layout_alignParentLeft="true"
+        android:layout_above="@+id/buttonResetCounter"
+        android:textColor="@android:color/black"
+        android:layout_alignLeft="@+id/textViewCOL1Header"
+        android:layout_alignRight="@+id/textViewCOL1Header"
+        android:layout_marginBottom="12dp"
+        />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/led_item_height"
+        android:text="Reset timers"
+        android:id="@+id/buttonResetCounter"
+        android:onClick="resetCountersOverSerial"
+        android:background="@drawable/buttonselector_service"
+        android:layout_above="@+id/btnFactoryReset"
+        android:textColor="@android:color/black"
+        android:layout_alignLeft="@+id/textViewCOL1Header"
+        android:layout_alignRight="@+id/textViewCOL1Header"
+        android:layout_marginBottom="12dp"
+        />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/led_item_height"
+        android:text="Factory reset"
+        android:id="@+id/btnFactoryReset"
+        android:onClick="factoryReset"
+        android:background="@drawable/buttonselector_service"
+        android:textColor="@android:color/black"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/textViewCOL1Header"
+        android:layout_alignRight="@+id/textViewCOL1Header"
+        android:layout_marginBottom="12dp"
+        />
+
+</RelativeLayout>

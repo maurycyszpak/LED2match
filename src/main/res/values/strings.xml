@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_header_title">Light2match</string>
+
+    <string name="white_br">White</string>
+    <string name="LED_9">LED 385</string>
+    <string name="readings_prompt">Select value</string>
+    <string name="system_footer">www.UnityColor.com</string>
+
+    <string name="pass_prompt">Enter password:</string>
+    <string name="action_settings">Settings</string>
+    <string name="lamp_select_prompt">Select Lamp</string>
+
+    //Sequence page
+    <string name="RED_value_hint">R</string>
+    <string name="GREEN_value_hint">G</string>
+    <string name="BLUE_value_hint">B</string>
+    <string name="WHITE_value_hint">W</string>
+    <string name="TIME_value_hint">Time(s)</string>
+    <string name="iv_remove_content_desc">remove row</string>
+    <string name="iv_add_content_desc">add row</string>
+    <string name="button_store_sequence">Store SEQ on controller</string>
+    <string name="button_execute_sequence">Execute stored sequence</string>
+    <string name="button_clear_page">Clear page</string>
+
+    //Popup Dialog
+
+
+    <string name="pre_msg">CheckedTextView is</string>
+    <string name="checked">checked</string>
+    <string name="unchecked">unchecked</string>
+
+    <string name="ledbar_manual">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sem massa, pellentesque ac sodales a, egestas ac nunc. Curabitur finibus scelerisque nisl, sed suscipit ipsum mattis et. Phasellus porttitor aliquam diam at porttitor. Duis auctor venenatis ex quis eleifend. Suspendisse potenti. Integer malesuada tincidunt nulla, nec volutpat risus rutrum eu. Aliquam efficitur convallis orci at rutrum. Aenean sed vestibulum ante. In consequat iaculis ante, sit amet tempor purus imperdiet a. In vel rutrum mi. Aliquam sollicitudin diam magna, quis pellentesque mi elementum condimentum. Quisque mi nisl, auctor sed ante et, sagittis feugiat velit. Nullam ligula erat, semper nec iaculis non, tincidunt ut tortor.
+\n\n
+Praesent congue nisl ornare, faucibus nisl ac, sodales odio. Nunc a sem ut lorem laoreet rutrum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam ornare sem sapien, non porttitor risus vestibulum eget. Nam pharetra massa erat, sit amet pharetra ex imperdiet id. Integer egestas lorem in suscipit euismod. Sed quis ullamcorper velit. Curabitur ut tortor nisl.
+\n\n
+Donec semper sagittis tellus, id molestie quam suscipit sit amet. Aenean posuere sed nisi ullamcorper aliquam. In id quam eu erat placerat convallis et quis erat. Maecenas eget augue ac erat tincidunt efficitur. Nam et quam vel elit vulputate ultricies sit amet nec turpis. Curabitur blandit pellentesque elementum. Duis lectus arcu, feugiat in finibus ut, aliquam nec metus. Phasellus dignissim arcu libero, sit amet ornare nulla gravida nec. Pellentesque in vestibulum eros, non consequat lorem. Fusce ut aliquam orci. Aliquam massa nunc, ornare ut purus sed, tincidunt egestas ante. Pellentesque rhoncus, orci sit amet aliquam varius, leo diam consequat tellus, at sagittis lacus risus a ligula. Integer et odio sem. Ut mattis consequat diam at finibus. Sed non urna in odio consequat congue sit amet in est. Maecenas condimentum iaculis metus nec eleifend.
+\n\n\n\n\n\n\n
+    </string>
+    <string name="unitycolor_led_light_label">UnityColor (R) LED Light Control System</string>
+
+
+</resources>

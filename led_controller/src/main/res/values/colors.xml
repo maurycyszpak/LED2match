@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="app_orange">#ffbb33</color>
+    <color name="light_gray">#cccccc</color>
+    <color name="dark_gray">#696969</color>
+    <color name="hts_blue">#195b98</color>
+    <color name="hts_green">#b0d180</color>
+    <color name="hts_gray">#e3e3e3</color>
+    <color name="green">#4FFF4C</color>
+    <color name="green_slider">#1e7822</color>
+    <color name="white_slider">#cecece</color>
+
+    <color name="red">#FF5444</color>
+    <color name="red_slider">#871b22</color>
+
+    <color name="bluee">#47c5ff</color>
+    <color name="blue_slider">#1111aa</color>
+</resources>

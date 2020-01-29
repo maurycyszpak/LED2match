@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp">
+
+    <TextView android:id="@+id/textViewRow1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="lamp1"
+        android:textSize= "16sp"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView android:id="@+id/textViewRow2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="lamp2"
+        android:textSize= "16sp"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView android:id="@+id/textViewRow3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="lamp3"
+        android:textSize= "16sp"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView android:id="@+id/textViewRow4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="lamp4"
+        android:textSize= "16sp"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView android:id="@+id/textViewRow5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="lamp5"
+        android:textSize= "16sp"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView android:id="@+id/textViewRow6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="lamp6"
+        android:textSize= "16sp"
+        android:layout_marginBottom="10dp"/>
+
+
+</LinearLayout>

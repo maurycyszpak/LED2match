@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TRSSequence">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="App manual"
+            android:layout_marginLeft="@dimen/main_screen_sidemargin"
+            android:layout_marginRight="@dimen/main_screen_sidemargin"
+            android:layout_marginTop="20dp"
+            android:textSize="22sp"
+            android:visibility="visible"
+            />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/lLayout1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_marginTop="5dp"
+                android:baselineAligned="false"
+                >
+
+                <TextView
+                    android:id="@+id/textview_manual"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:gravity="left"
+                    android:text="@string/ledbar_manual"
+                    android:textSize="@dimen/manual_text_size"
+                    android:scrollbars="vertical"
+                    />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/lLayoutbottomspace"
+                android:layout_gravity="right|end"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_marginBottom="5dp"
+                android:baselineAligned="false"
+
+                >
+
+
+                <Button
+                    android:id="@+id/btnSave"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:baselineAligned="false"
+                    android:gravity="center"
+                    android:onClick="goBack"
+                    android:text="BACK"
+                    android:textSize="@dimen/button_text_size" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/lLayoutbottomspace"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="5dp"
+                android:baselineAligned="true"
+                android:layout_alignParentBottom="true"
+                >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="10sp"
+                    android:text="Torso-Verlag e.K. Obere Grussen 8\nDE-97877 Wertheim Tel. +49(0)93242 933970"
+
+                    />
+
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

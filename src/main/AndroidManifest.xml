@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.kiand.LED2match"
+    android:versionCode="501"
+    android:versionName="3.1">
+
+    <uses-feature
+        android:name="android.hardware.usb.host"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+
+    <application
+        android:name=".MyApplication"
+        android:icon="@drawable/ic_launcher"
+        android:label="Light2match"
+        android:largeHeap="true"
+        tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".ReassignLamps"></activity>
+        <activity
+            android:name=".LightAdjustments"
+            android:label="Set Lights"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"></activity>
+        <activity
+            android:name=".BtScannerActivity"
+            android:label="RGB LED Bluetooth scanner"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ServicePageActivity"
+            android:label="LED2match"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SequenceProgramming"
+            android:label="Lights Sequence page"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".DigitalPanelActivity"
+            android:label="digital panel"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".TRSDigitalPanel"
+            android:label="Light2match"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/usb_device_filter" />
+        </activity>
+        <activity
+            android:name=".TRSLightOperatingHours"
+            android:label="Operating hours"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".TRSSequence"
+            android:label="Sequence Programming (PRG)"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".TRSBlowerPage"
+            android:label="Settings"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".TRSManualPage"
+            android:label="Manual"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".TRSRecertificationPage"
+            android:label="Recertification Page"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".TRSBluetoothDevicesScan"
+            android:label="Paired bluetooth devices"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".sequenceSummaryPage"
+            android:label="HTS-RGBW"
+            android:screenOrientation="portrait" />
+
+        <service
+            android:name=".UsbCOMMsService"
+            android:enabled="true"
+            android:stopWithTask="false" />
+        <service
+            android:name=".BtCOMMsService"
+            android:enabled="true"
+            android:stopWithTask="false" />
+    </application>
+
+</manifest>

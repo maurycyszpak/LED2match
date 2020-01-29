@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/bluetooth_connection_inactive_l_bg" android:maxLevel="0" />
+    <item android:drawable="@drawable/bluetooth_connection_active_l_bg" android:maxLevel="1" />
+</level-list>

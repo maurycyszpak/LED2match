@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TRSDigitalPanel">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/main_screen_sidemargin"
+            android:layout_marginRight="@dimen/main_screen_sidemargin"
+            android:layout_marginTop="2dp"
+            >
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="81dp"
+                android:layout_marginTop="5dp"
+                android:src="@mipmap/unity_torso_logo_fg"
+                android:layout_weight="4"
+                android:layout_gravity="start"
+                android:scaleType="fitStart"
+                android:layout_marginEnd="10dp"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="@string/unitycolor_led_light_label"
+                android:layout_marginEnd="10dp"
+                android:textSize="14sp"
+                android:gravity="start|center_vertical"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="4"
+                />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                >
+
+            <ImageView
+                android:id="@+id/usb_connection_image"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:layout_gravity="center"
+                android:foregroundGravity="center"
+                android:src="@drawable/usb_connection_levels"
+                />
+
+            <ImageView
+                android:id="@+id/bt_connection_image"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="4"
+                android:layout_gravity="center"
+                android:foregroundGravity="center"
+                android:src="@drawable/bluetooth_connection_levels"
+                />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/lLayout1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_marginTop="5dp"
+                android:baselineAligned="false"
+                >
+
+                <Button
+                    android:id="@+id/btnL1"
+                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:text="D65"
+                    android:tag="Button1"
+                    android:layout_marginEnd="10dp"
+                    android:onClick="btnClicked"
+                    android:layout_weight="4"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:textSize="@dimen/button_text_size"
+
+                    />
+
+
+                <Button
+                    android:id="@+id/btnL2"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:gravity="center"
+                    android:text="D50"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:onClick="btnClicked"
+                    android:layout_weight="4"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:textSize="@dimen/button_text_size"
+                    />
+
+                <Button
+                    android:id="@+id/btnL3"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:gravity="center"
+                    android:text="A"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:onClick="btnClicked"
+                    android:layout_weight="4"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:textSize="@dimen/button_text_size"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_below="@+id/lLayout1"
+                android:layout_marginTop="15dp"
+                android:baselineAligned="false"
+                >
+
+                <Button
+                    android:id="@+id/btnL4"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:gravity="center"
+                    android:text="LED"
+                    android:onClick="btnClicked"
+                    android:layout_weight="4"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:textSize="@dimen/button_text_size"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    />
+
+
+                <Button
+                    android:id="@+id/btnL5"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:gravity="center"
+                    android:text="TL84"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:onClick="btnClicked"
+                    android:layout_weight="4"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:textSize="@dimen/button_text_size"
+                    />
+
+                <Button
+                    android:id="@+id/btnL6"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:gravity="center"
+                    android:text="UVA"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:onClick="btnClicked"
+                    android:layout_weight="4"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:textSize="@dimen/button_text_size"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lLayout3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_below="@+id/lLayout2"
+                android:layout_marginTop="30dp"
+                android:baselineAligned="false"
+                >
+
+                <Button
+                    android:id="@+id/btnL7"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:gravity="center"
+                    android:text="PRG"
+                    android:onClick="executePRG"
+                    android:layout_weight="4"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:textSize="@dimen/button_text_size"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    />
+
+
+                <Button
+                    android:id="@+id/btnLOW"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:gravity="center"
+                    android:text="LOW"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:onClick="btnLOW"
+                    android:layout_weight="4"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:textSize="@dimen/button_text_size"
+
+                    />
+
+                <Button
+                    android:id="@+id/btnL9"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:gravity="center"
+                    android:text="OFF"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:onClick="allOFF"
+                    android:layout_weight="4"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:textSize="@dimen/button_text_size"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lLayout4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_below="@+id/lLayout3"
+                android:layout_marginTop="50dp"
+                android:baselineAligned="false"
+                >
+
+                <Button
+                    android:id="@+id/btnL10"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:gravity="center"
+                    android:text="reassign"
+                    android:onClick="reassign_lamps"
+                    android:layout_weight="6"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:textSize="@dimen/button_text_size"
+                    android:visibility="visible"
+                    />
+
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:gravity="center"
+                    android:text="TL84"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:onClick="btnClicked"
+                    android:layout_weight="4"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:textSize="@dimen/button_text_size"
+                    android:visibility="invisible"
+                    />
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:gravity="center"
+                    android:text="C40"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:onClick="btnClicked"
+                    android:layout_weight="4"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:textSize="@dimen/button_text_size"
+                    android:visibility="invisible"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_below="@+id/lLayout4"
+                android:layout_marginTop="15dp"
+                android:baselineAligned="false"
+                android:orientation="vertical">
+
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/lLayout4"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:text="System Time: "
+                        />
+
+                    <TextClock
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:format24Hour="H:mm:ss"
+                        android:textColor="@color/black"
+                        android:background="@color/white"
+                        />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/lLayout4"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="System Temperature: "
+                    android:textColor="@color/black"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/temperature_textview"
+                    android:text=""
+                    android:textColor="@color/black"
+                    />
+            </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/infobox"
+                    android:text="www.UnityColor.com"
+                    />
+
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="5dp"
+                android:baselineAligned="true"
+                android:layout_alignParentBottom="true"
+                >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="10sp"
+                    android:text="Torso-Verlag e.K. Obere Grussen 8\nDE-97877 Wertheim Tel. +49(0)93242 933970"
+
+                    />
+
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

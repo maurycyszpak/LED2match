@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ReassignLamps">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/lLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="20dp"
+            android:baselineAligned="false"
+            >
+
+            <TextView
+                android:layout_marginRight="@dimen/button_margin"
+                android:layout_height="@dimen/digital_panel_button_height"
+                android:layout_width="0dp"
+                android:gravity="center"
+                android:text="Button 1 lamp:"
+                android:tag="Button1"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="2"
+                android:scaleType="fitCenter"
+                android:textSize="@dimen/button_text_size"
+                />
+
+            <Spinner
+                android:id="@+id/spinner1"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/digital_panel_button_height"
+                android:layout_weight="3"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="@dimen/button_margin"
+                android:visibility="visible"
+
+            />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="20dp"
+            android:baselineAligned="false"
+            >
+
+            <TextView
+                android:id="@+id/text2"
+                android:layout_marginRight="@dimen/button_margin"
+                android:layout_height="@dimen/digital_panel_button_height"
+                android:layout_width="0dp"
+                android:gravity="center"
+                android:text="Button 2 lamp:"
+                android:tag="Button2"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="2"
+                android:scaleType="fitCenter"
+                android:textSize="@dimen/button_text_size"
+                />
+
+            <Spinner
+                android:id="@+id/spinner2"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/digital_panel_button_height"
+                android:layout_weight="3"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="@dimen/button_margin"
+                android:visibility="visible"
+
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lLayout3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="20dp"
+            android:baselineAligned="false"
+            >
+
+            <TextView
+                android:layout_marginRight="@dimen/button_margin"
+                android:layout_height="@dimen/digital_panel_button_height"
+                android:layout_width="0dp"
+                android:gravity="center"
+                android:text="Button 3 lamp:"
+                android:tag="Button3"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="2"
+                android:scaleType="fitCenter"
+                android:textSize="@dimen/button_text_size"
+                />
+
+            <Spinner
+                android:id="@+id/spinner3"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/digital_panel_button_height"
+                android:layout_weight="3"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="@dimen/button_margin"
+                android:visibility="visible"
+
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lLayout4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="20dp"
+            android:baselineAligned="false"
+            >
+
+            <TextView
+                android:layout_marginRight="@dimen/button_margin"
+                android:layout_height="@dimen/digital_panel_button_height"
+                android:layout_width="0dp"
+                android:gravity="center"
+                android:text="Button 4 lamp:"
+                android:tag="Button4"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="2"
+                android:scaleType="fitCenter"
+                android:textSize="@dimen/button_text_size"
+                />
+
+            <Spinner
+                android:id="@+id/spinner4"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/digital_panel_button_height"
+                android:layout_weight="3"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="@dimen/button_margin"
+                android:visibility="visible"
+
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="20dp"
+            android:baselineAligned="false"
+            >
+
+            <TextView
+                android:layout_marginRight="@dimen/button_margin"
+                android:layout_height="@dimen/digital_panel_button_height"
+                android:layout_width="0dp"
+                android:gravity="center"
+                android:text="Button 5 lamp:"
+                android:tag="Button5"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="2"
+                android:scaleType="fitCenter"
+                android:textSize="@dimen/button_text_size"
+                />
+
+            <Spinner
+                android:id="@+id/spinner5"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/digital_panel_button_height"
+                android:layout_weight="3"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="@dimen/button_margin"
+                android:visibility="visible"
+
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="20dp"
+            android:baselineAligned="false"
+            >
+
+            <TextView
+                android:layout_marginRight="@dimen/button_margin"
+                android:layout_height="@dimen/digital_panel_button_height"
+                android:layout_width="0dp"
+                android:gravity="center"
+                android:text="Button 6 lamp:"
+                android:tag="Button6"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="2"
+                android:scaleType="fitCenter"
+                android:textSize="@dimen/button_text_size"
+                />
+
+            <Spinner
+                android:id="@+id/spinner6"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/digital_panel_button_height"
+                android:layout_weight="3"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="@dimen/button_margin"
+                android:visibility="visible"
+
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="40dp"
+            android:baselineAligned="false"
+            android:gravity="center"
+            >
+
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="@dimen/digital_panel_button_height"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="@dimen/button_margin"
+                android:text="Cancel"
+                android:visibility="visible"
+                android:onClick="cancel_assignment"
+                android:layout_weight="1"
+                />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="@dimen/digital_panel_button_height"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="@dimen/button_margin"
+                android:text="Store"
+                android:visibility="visible"
+                android:onClick="store_assignment"
+                android:layout_weight="2"
+                />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

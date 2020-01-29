@@ -1,0 +1,2 @@
+# Referenced at C:\Users\ja\AndroidStudioProjects\LED2match\build\intermediates\merged_manifests\debug\AndroidManifest.xml:26
+-keep class com.kiand.LED2match.MyApplication { <init>(); }
