@@ -37,9 +37,11 @@ import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_CONTROLLER_FILEIM
 import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_LAMP_STATE;
 import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_LED_TIMERS;
 import static com.kiand.LED2match.TRSDigitalPanel.SHAREDPREFS_LAMP_ASSIGNMENTS;
+import static com.kiand.LED2match.TRSDigitalPanel.newLine;
 
 public class BtCOMMsService extends Service {
 
+    final boolean APP_DEBUG_MODE = false;
     final int handlerState = 0;                        //used to identify handler message
     Handler bluetoothIn = new Handler();
     private BluetoothAdapter btAdapter = null;
@@ -66,6 +68,7 @@ public class BtCOMMsService extends Service {
     public static String sBTResponse ="";
     public AsyncTask<?, ?, ?> running_task;
 
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -77,6 +80,21 @@ public class BtCOMMsService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "SERVICE STARTED");
         SharedPreferences prefs = getSharedPreferences(BT_PREFS, Context.MODE_PRIVATE);
+        //Log.d(TAG,intent.getStringExtra("shutdown"));
+        if (intent != null) {
+            try {
+                Log.d(TAG, "Received some intent");
+                Log.d(TAG, "Intent get string extra: " + intent.getStringExtra("shutdown"));
+                int flag = Integer.valueOf(intent.getStringExtra("shutdown"));
+                if (flag == 1) {
+                    Log.d(TAG, "Received signal - shutting down lamps");
+                    String sCommand = "S00000000000000000000";
+                    sCommand += "$" + newLine;
+                    sendData(sCommand);
+                }
+            } catch (NumberFormatException e) { e.printStackTrace(); }
+        }
+
         MAC_ADDRESS = prefs.getString("device_btaddress", "");
 
         if (MAC_ADDRESS.length() <= 1 || MAC_ADDRESS == null) {
@@ -160,8 +178,10 @@ public class BtCOMMsService extends Service {
 
         if (sPrefix.equals("RGBW")) {
             //makeToast("Decoding response, 'RGBW' found");
-            Log.d(TAG, "Decoding response, RGBW found");
-            Log.d(TAG, "PAYLOAD: " + sDataPart);
+            if (APP_DEBUG_MODE) {
+                Log.d(TAG, "Decoding response, RGBW found");
+                Log.d(TAG, "PAYLOAD: " + sDataPart);
+            }
 
             String[] sDataArray = sDataPart.split(",");
 
@@ -296,7 +316,7 @@ public class BtCOMMsService extends Service {
                 //this means we should check which button has a TAG equal to the returned value and illuminate it
                 //check in the file assignment order:
                 try {
-                    Log.d (TAG, "Locating preset '" + sDataArray[1] + "' in the lamp_button_assignments.xml");
+                    //Log.d (TAG, "Locating preset '" + sDataArray[1] + "' in the lamp_button_assignments.xml");
                     int iButtonIndex;
                     SharedPreferences myPrefs = this.getSharedPreferences(SHAREDPREFS_LAMP_ASSIGNMENTS, 0);
                     TreeMap<String, ?> keys = new TreeMap<String, Object>(myPrefs.getAll());
@@ -321,7 +341,7 @@ public class BtCOMMsService extends Service {
                     if (sDataArray[1].equalsIgnoreCase(entry)) {
                         Intent intent = new Intent("button_highlight_extra");
                         intent.putExtra("button_name", entry);
-                        Log.d (TAG, "Additional button to highlight: " + sDataArray[1]);
+                        //Log.d (TAG, "Additional button to highlight: " + sDataArray[1]);
                         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                     }
                 }

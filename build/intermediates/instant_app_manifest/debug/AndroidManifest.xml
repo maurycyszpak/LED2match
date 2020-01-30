@@ -29,7 +29,8 @@
         android:debuggable="true"
         android:icon="@drawable/ic_launcher"
         android:label="Light2match"
-        android:largeHeap="true" >
+        android:largeHeap="true"
+        android:testOnly="true" >
         <activity android:name="com.kiand.LED2match.ReassignLamps" />
         <activity
             android:name="com.kiand.LED2match.LightAdjustments"

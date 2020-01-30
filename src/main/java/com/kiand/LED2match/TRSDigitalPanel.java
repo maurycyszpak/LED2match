@@ -161,37 +161,37 @@ public class TRSDigitalPanel extends Activity {
 
             } else if (intent.getAction().equals("button_highlight_event")) {
                 String index = intent.getStringExtra("button_index");
-                Log.d(TAG, "Got index of button to highlight: " + index);
+                //Log.d(TAG, "Got index of button to highlight: " + index);
                 if (TextUtils.isEmpty(index)) {
                     return;
                 }
                 switchButtonON(Integer.valueOf(index));
-                Log.d(TAG, "Button: " + index + " highlighted");
+                //Log.d(TAG, "Button: " + index + " highlighted");
             } else if (intent.getAction().equals("button_highlight_extra")) {
                 String name = intent.getStringExtra("button_name");
-                Log.d(TAG, "Got additional button to highlight: " + name);
+                //Log.d(TAG, "Got additional button to highlight: " + name);
                 if (TextUtils.isEmpty(name)) {
                     return;
                 }
 
                 if (name.equalsIgnoreCase("PRG")){
                     switchButtonON(7);
-                    Log.d(TAG, "PRG Button highlighted");
+                   //Log.d(TAG, "PRG Button highlighted");
                 }
 
                 if (name.equalsIgnoreCase("LOW")){
                     if (!BL_LOW_MODE) {
                         switchButtonON(8);
-                        Log.d(TAG, "LOW Button highlighted");
+                        //Log.d(TAG, "LOW Button highlighted");
                     } else {
                         switchButtonOFF(8);
-                        Log.d(TAG, "LOW Button deactivated");
+                       // Log.d(TAG, "LOW Button deactivated");
                     }
                 }
 
                 if (name.equalsIgnoreCase("OFF")){
                     switchButtonON(9);
-                    Log.d(TAG, "OFF Button highlighted");
+                    //Log.d(TAG, "OFF Button highlighted");
                 }
             }
 

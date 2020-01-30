@@ -411,8 +411,7 @@ public class TRSBlowerPage extends Activity implements ServiceConnection {
     }
 
     public void allOFF() {
-        String sCommand = "";
-        sCommand = "S00000000000000000000";
+        String sCommand = "S00000000000000000000";
         sCommand += "$" + newLine;
         //if (btService.connected) {
         if (mBoundBT) {
@@ -421,6 +420,11 @@ public class TRSBlowerPage extends Activity implements ServiceConnection {
         } else {
             Log.d(TAG, "Service btService not connected!");
         }
+        Log.d(TAG, "*** ALLOFF *** Sending 'shutdown' intent to BtComms");
+        Intent serviceIntent= new Intent(TRSBlowerPage.this,BtCOMMsService.class);
+        serviceIntent.putExtra("shutdown", "1");
+        startService(serviceIntent);
+
         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
         SharedPreferences prefs = getSharedPreferences(TIME_OFF_STORAGE, 0);
         SharedPreferences.Editor editor = prefs.edit();
@@ -432,11 +436,11 @@ public class TRSBlowerPage extends Activity implements ServiceConnection {
 
             new CountDownTimer(hours*60*60*1000 + minutes*60*1000 + 30, 10000) { //30ms is for shits and giggles
                 public void onTick(long millisUntilFinished) {
-                    Log.d(TAG, "TICK: " + millisUntilFinished + " left until shutdown");
+                    Log.d(TAG, " *** TICK *** " + millisUntilFinished + " left until shutdown");
                 }
 
                 public void onFinish() {
-                    Log.d(TAG, "Time is up - switching all lamps off");
+                    Log.d(TAG, "*** TICKING OVER *** Time is up - switching all lamps off");
                     allOFF();
                     runOnUiThread(new Runnable() {
                         public void run() {
