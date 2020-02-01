@@ -75,7 +75,7 @@
             android:label="Sequence Programming (PRG)"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".TRSBlowerPage"
+            android:name=".TRSSettings"
             android:label="Settings"
             android:screenOrientation="portrait" />
         <activity

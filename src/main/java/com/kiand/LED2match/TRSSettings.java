@@ -25,12 +25,9 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import static com.kiand.LED2match.BtCOMMsService.BT_CONNECTED_PREFS;
 
-public class TRSBlowerPage extends Activity implements ServiceConnection {
+public class TRSSettings extends Activity implements ServiceConnection {
 
     public static final String SHAREDPREFS_ONE_OFF_SEEKBARS = "one-off-seekbar-values.txt"; //Mauricio
     public static final String TIME_OFF_STORAGE = "shutdown__timer"; //Mauricio
@@ -51,6 +48,7 @@ public class TRSBlowerPage extends Activity implements ServiceConnection {
     private LightAdjustments.MyHandler mHandler;
     public final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     private boolean bl_bluetooth_forced_on;
+    private CountDownTimer shutdownTimer;
 
     EditText editOff_h;
     EditText editOff_m;
@@ -260,7 +258,7 @@ public class TRSBlowerPage extends Activity implements ServiceConnection {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) {
                             if (btAdapter.isEnabled()) {
-                                Toast.makeText(TRSBlowerPage.this,
+                                Toast.makeText(TRSSettings.this,
                                         "Switching On...", Toast.LENGTH_SHORT).show();
 
 
@@ -273,7 +271,7 @@ public class TRSBlowerPage extends Activity implements ServiceConnection {
 
                                 //check if we're already connected
                                 if (!check_for_BT_connection()) {
-                                    Intent intent = new Intent(TRSBlowerPage.this, TRSBluetoothDevicesScan.class);
+                                    Intent intent = new Intent(TRSSettings.this, TRSBluetoothDevicesScan.class);
                                     startActivity(intent); //or start activity for result? this should be "modal"
                                 }
 
@@ -284,7 +282,7 @@ public class TRSBlowerPage extends Activity implements ServiceConnection {
                             }
 
                         } else {
-                            Toast.makeText(TRSBlowerPage.this,
+                            Toast.makeText(TRSSettings.this,
                                     "Switch Off", Toast.LENGTH_SHORT).show();
 
                             //Switching off
@@ -390,10 +388,25 @@ public class TRSBlowerPage extends Activity implements ServiceConnection {
         editor.putInt("minutes", iMinutes);
         editor.apply();
 
-        Long lTimeToOFF = Long.valueOf(iHours * 60 * 60 * 1000 + iMinutes * 60 * 1000);
+        Long lTimeToOFF = (long) (iHours * 60 * 60 + iMinutes * 60);
         if (lTimeToOFF > 0) {
-            Log.d(TAG, "Setting timer on - switching OFF all lamps in " + iHours + " hours and " + iMinutes + " minutes (=" + lTimeToOFF + " milliseconds).");
-            Toast.makeText(TRSBlowerPage.this, "Timer ON\nAll lamps off in " + iHours + " hours and " + iMinutes + " minutes.", Toast.LENGTH_LONG).show();
+            Log.d(TAG, "Setting timer on - switching OFF all lamps in " + iHours + " hours and " + iMinutes + " minutes (=" + lTimeToOFF + " seconds).");
+            Toast.makeText(TRSSettings.this, "Timer ON\nAll lamps off in " + iHours + " hours and " + iMinutes + " minutes.", Toast.LENGTH_LONG).show();
+
+            String sCommand = "I" + String.format("%04X", lTimeToOFF) + "$" + newLine;
+            Log.d(TAG, "*** strtol 4 HEX " + sCommand);
+            sCommand = "I" + String.format("%02X", lTimeToOFF) + "$" + newLine;
+            Log.d(TAG, "*** strtol 2 HEX " + sCommand);
+            if (mBoundBT) {
+                btService.sendData(sCommand);
+            } else {
+                Log.d(TAG, "Service btService not connected!");
+            }
+            Log.d(TAG, "*** ALLOFF *** Sending 'shutdown' intent to BtComms");
+
+            if (shutdownTimer != null) {
+                shutdownTimer.cancel();
+            }
             switchOFFAfterX(iHours, iMinutes);
             /*new Timer().schedule(new TimerTask() {
                 @Override
@@ -401,7 +414,7 @@ public class TRSBlowerPage extends Activity implements ServiceConnection {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             Log.d(TAG, "Time is up - switching all lamps off");
-                            Toast.makeText(TRSBlowerPage.this, "Time is up - switching all lamps off", Toast.LENGTH_LONG).show();
+                            Toast.makeText(TRSSettings.this, "Time is up - switching all lamps off", Toast.LENGTH_LONG).show();
                         }
                     });
                     allOFF();
@@ -421,7 +434,7 @@ public class TRSBlowerPage extends Activity implements ServiceConnection {
             Log.d(TAG, "Service btService not connected!");
         }
         Log.d(TAG, "*** ALLOFF *** Sending 'shutdown' intent to BtComms");
-        Intent serviceIntent= new Intent(TRSBlowerPage.this,BtCOMMsService.class);
+        Intent serviceIntent= new Intent(TRSSettings.this,BtCOMMsService.class);
         serviceIntent.putExtra("shutdown", "1");
         startService(serviceIntent);
 
@@ -434,9 +447,9 @@ public class TRSBlowerPage extends Activity implements ServiceConnection {
 
     public void switchOFFAfterX(int hours, int minutes) {
 
-            new CountDownTimer(hours*60*60*1000 + minutes*60*1000 + 30, 10000) { //30ms is for shits and giggles
+            shutdownTimer = new CountDownTimer(hours*60*60*1000 + minutes*60*1000 + 30, 10000) { //30ms is for shits and giggles
                 public void onTick(long millisUntilFinished) {
-                    Log.d(TAG, " *** TICK *** " + millisUntilFinished + " left until shutdown");
+                    Log.d(TAG, " *** TICK *** " + millisUntilFinished/1000 + " secs left until shutdown");
                 }
 
                 public void onFinish() {
@@ -444,7 +457,7 @@ public class TRSBlowerPage extends Activity implements ServiceConnection {
                     allOFF();
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            Toast.makeText(TRSBlowerPage.this, "Countdown timer is up - switching off all lamps.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(TRSSettings.this, "Countdown timer is up - switching off all lamps.", Toast.LENGTH_LONG).show();
                         }
                     });
 

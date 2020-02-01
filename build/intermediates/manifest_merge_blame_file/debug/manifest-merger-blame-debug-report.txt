@@ -51,159 +51,158 @@
 29-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:25:9-45
 30        android:label="Light2match"
 30-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:26:9-36
-31        android:largeHeap="true"
+31        android:largeHeap="true" >
 31-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:27:9-33
-32        android:testOnly="true" >
-33        <activity android:name="com.kiand.LED2match.ReassignLamps" />
-33-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:29:9-60
-33-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:29:19-48
-34        <activity
-34-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:30:9-34:64
-35            android:name="com.kiand.LED2match.LightAdjustments"
-35-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:31:13-45
-36            android:label="Set Lights"
-36-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:32:13-39
-37            android:screenOrientation="portrait"
-37-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:33:13-49
-38            android:windowSoftInputMode="adjustPan" />
-38-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:34:13-52
-39        <activity
-39-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:35:9-38:52
-40            android:name="com.kiand.LED2match.BtScannerActivity"
-40-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:36:13-46
-41            android:label="RGB LED Bluetooth scanner"
-41-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:37:13-54
-42            android:screenOrientation="portrait" />
-42-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:38:13-49
-43        <activity
-43-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:40:9-43:52
-44            android:name="com.kiand.LED2match.ServicePageActivity"
-44-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:41:13-48
-45            android:label="LED2match"
-45-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:42:13-38
-46            android:screenOrientation="portrait" />
-46-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:43:13-49
-47        <activity
-47-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:44:9-47:52
-48            android:name="com.kiand.LED2match.SequenceProgramming"
-48-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:45:13-48
-49            android:label="Lights Sequence page"
-49-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:46:13-49
-50            android:screenOrientation="portrait" />
-50-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:47:13-49
-51        <activity
-51-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:48:9-51:53
-52            android:name="com.kiand.LED2match.DigitalPanelActivity"
-52-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:49:13-49
-53            android:label="digital panel"
-53-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:50:13-42
-54            android:screenOrientation="landscape" />
-54-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:51:13-50
-55        <activity
-55-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:52:9-68:20
-56            android:name="com.kiand.LED2match.TRSDigitalPanel"
-56-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:53:13-44
-57            android:label="Light2match"
-57-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:54:13-40
-58            android:screenOrientation="portrait" >
-58-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:55:13-49
-59            <intent-filter>
-59-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:56:13-60:29
-60                <action android:name="android.intent.action.MAIN" />
-60-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:57:17-69
-60-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:57:25-66
-61
-62                <category android:name="android.intent.category.LAUNCHER" />
-62-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:59:17-77
-62-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:59:27-74
-63            </intent-filter>
-64            <intent-filter>
-64-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:61:13-63:29
-65                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
-65-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:62:17-90
-65-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:62:25-87
-66            </intent-filter>
-67
-68            <meta-data
-68-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:65:13-67:61
-69                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-69-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:66:17-79
-70                android:resource="@xml/usb_device_filter" />
-70-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:67:17-58
-71        </activity>
-72        <activity
-72-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:69:9-72:52
-73            android:name="com.kiand.LED2match.TRSLightOperatingHours"
-73-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:70:13-51
-74            android:label="Operating hours"
-74-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:71:13-44
-75            android:screenOrientation="portrait" />
-75-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:72:13-49
-76        <activity
-76-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:73:9-76:52
-77            android:name="com.kiand.LED2match.TRSSequence"
-77-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:74:13-40
-78            android:label="Sequence Programming (PRG)"
-78-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:75:13-55
-79            android:screenOrientation="portrait" />
-79-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:76:13-49
-80        <activity
-80-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:77:9-80:52
-81            android:name="com.kiand.LED2match.TRSBlowerPage"
-81-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:78:13-42
-82            android:label="Settings"
-82-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:79:13-37
-83            android:screenOrientation="portrait" />
-83-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:80:13-49
-84        <activity
-84-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:81:9-84:52
-85            android:name="com.kiand.LED2match.TRSManualPage"
-85-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:82:13-42
-86            android:label="Manual"
-86-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:83:13-35
-87            android:screenOrientation="portrait" />
-87-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:84:13-49
-88        <activity
-88-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:85:9-88:52
-89            android:name="com.kiand.LED2match.TRSRecertificationPage"
-89-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:86:13-51
-90            android:label="Recertification Page"
-90-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:87:13-49
-91            android:screenOrientation="portrait" />
-91-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:88:13-49
-92        <activity
-92-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:89:9-92:52
-93            android:name="com.kiand.LED2match.TRSBluetoothDevicesScan"
-93-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:90:13-52
-94            android:label="Paired bluetooth devices"
-94-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:91:13-53
-95            android:screenOrientation="portrait" />
-95-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:92:13-49
-96        <activity
-96-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:93:9-96:52
-97            android:name="com.kiand.LED2match.sequenceSummaryPage"
-97-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:94:13-48
-98            android:label="HTS-RGBW"
-98-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:95:13-37
-99            android:screenOrientation="portrait" />
-99-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:96:13-49
-100
-101        <service
-101-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:98:9-101:44
-102            android:name="com.kiand.LED2match.UsbCOMMsService"
-102-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:99:13-44
-103            android:enabled="true"
-103-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:100:13-35
-104            android:stopWithTask="false" />
-104-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:101:13-41
-105        <service
-105-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:102:9-105:44
-106            android:name="com.kiand.LED2match.BtCOMMsService"
-106-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:103:13-43
-107            android:enabled="true"
-107-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:104:13-35
-108            android:stopWithTask="false" />
-108-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:105:13-41
-109    </application>
-110
-111</manifest>
+32        <activity android:name="com.kiand.LED2match.ReassignLamps" />
+32-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:29:9-60
+32-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:29:19-48
+33        <activity
+33-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:30:9-34:64
+34            android:name="com.kiand.LED2match.LightAdjustments"
+34-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:31:13-45
+35            android:label="Set Lights"
+35-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:32:13-39
+36            android:screenOrientation="portrait"
+36-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:33:13-49
+37            android:windowSoftInputMode="adjustPan" />
+37-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:34:13-52
+38        <activity
+38-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:35:9-38:52
+39            android:name="com.kiand.LED2match.BtScannerActivity"
+39-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:36:13-46
+40            android:label="RGB LED Bluetooth scanner"
+40-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:37:13-54
+41            android:screenOrientation="portrait" />
+41-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:38:13-49
+42        <activity
+42-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:40:9-43:52
+43            android:name="com.kiand.LED2match.ServicePageActivity"
+43-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:41:13-48
+44            android:label="LED2match"
+44-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:42:13-38
+45            android:screenOrientation="portrait" />
+45-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:43:13-49
+46        <activity
+46-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:44:9-47:52
+47            android:name="com.kiand.LED2match.SequenceProgramming"
+47-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:45:13-48
+48            android:label="Lights Sequence page"
+48-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:46:13-49
+49            android:screenOrientation="portrait" />
+49-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:47:13-49
+50        <activity
+50-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:48:9-51:53
+51            android:name="com.kiand.LED2match.DigitalPanelActivity"
+51-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:49:13-49
+52            android:label="digital panel"
+52-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:50:13-42
+53            android:screenOrientation="landscape" />
+53-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:51:13-50
+54        <activity
+54-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:52:9-68:20
+55            android:name="com.kiand.LED2match.TRSDigitalPanel"
+55-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:53:13-44
+56            android:label="Light2match"
+56-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:54:13-40
+57            android:screenOrientation="portrait" >
+57-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:55:13-49
+58            <intent-filter>
+58-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:56:13-60:29
+59                <action android:name="android.intent.action.MAIN" />
+59-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:57:17-69
+59-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:57:25-66
+60
+61                <category android:name="android.intent.category.LAUNCHER" />
+61-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:59:17-77
+61-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:59:27-74
+62            </intent-filter>
+63            <intent-filter>
+63-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:61:13-63:29
+64                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+64-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:62:17-90
+64-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:62:25-87
+65            </intent-filter>
+66
+67            <meta-data
+67-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:65:13-67:61
+68                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+68-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:66:17-79
+69                android:resource="@xml/usb_device_filter" />
+69-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:67:17-58
+70        </activity>
+71        <activity
+71-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:69:9-72:52
+72            android:name="com.kiand.LED2match.TRSLightOperatingHours"
+72-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:70:13-51
+73            android:label="Operating hours"
+73-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:71:13-44
+74            android:screenOrientation="portrait" />
+74-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:72:13-49
+75        <activity
+75-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:73:9-76:52
+76            android:name="com.kiand.LED2match.TRSSequence"
+76-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:74:13-40
+77            android:label="Sequence Programming (PRG)"
+77-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:75:13-55
+78            android:screenOrientation="portrait" />
+78-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:76:13-49
+79        <activity
+79-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:77:9-80:52
+80            android:name="com.kiand.LED2match.TRSSettings"
+80-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:78:13-40
+81            android:label="Settings"
+81-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:79:13-37
+82            android:screenOrientation="portrait" />
+82-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:80:13-49
+83        <activity
+83-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:81:9-84:52
+84            android:name="com.kiand.LED2match.TRSManualPage"
+84-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:82:13-42
+85            android:label="Manual"
+85-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:83:13-35
+86            android:screenOrientation="portrait" />
+86-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:84:13-49
+87        <activity
+87-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:85:9-88:52
+88            android:name="com.kiand.LED2match.TRSRecertificationPage"
+88-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:86:13-51
+89            android:label="Recertification Page"
+89-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:87:13-49
+90            android:screenOrientation="portrait" />
+90-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:88:13-49
+91        <activity
+91-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:89:9-92:52
+92            android:name="com.kiand.LED2match.TRSBluetoothDevicesScan"
+92-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:90:13-52
+93            android:label="Paired bluetooth devices"
+93-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:91:13-53
+94            android:screenOrientation="portrait" />
+94-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:92:13-49
+95        <activity
+95-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:93:9-96:52
+96            android:name="com.kiand.LED2match.sequenceSummaryPage"
+96-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:94:13-48
+97            android:label="HTS-RGBW"
+97-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:95:13-37
+98            android:screenOrientation="portrait" />
+98-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:96:13-49
+99
+100        <service
+100-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:98:9-101:44
+101            android:name="com.kiand.LED2match.UsbCOMMsService"
+101-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:99:13-44
+102            android:enabled="true"
+102-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:100:13-35
+103            android:stopWithTask="false" />
+103-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:101:13-41
+104        <service
+104-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:102:9-105:44
+105            android:name="com.kiand.LED2match.BtCOMMsService"
+105-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:103:13-43
+106            android:enabled="true"
+106-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:104:13-35
+107            android:stopWithTask="false" />
+107-->C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:105:13-41
+108    </application>
+109
+110</manifest>

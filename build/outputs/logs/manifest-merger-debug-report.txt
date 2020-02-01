@@ -177,14 +177,14 @@ ADDED from C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.
 		ADDED from C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:75:13-55
 	android:name
 		ADDED from C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:74:13-40
-activity#com.kiand.LED2match.TRSBlowerPage
+activity#com.kiand.LED2match.TRSSettings
 ADDED from C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:77:9-80:52
 	android:screenOrientation
 		ADDED from C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:80:13-49
 	android:label
 		ADDED from C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:79:13-37
 	android:name
-		ADDED from C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:78:13-42
+		ADDED from C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:78:13-40
 activity#com.kiand.LED2match.TRSManualPage
 ADDED from C:\Users\ja\AndroidStudioProjects\LED2match\src\main\AndroidManifest.xml:81:9-84:52
 	android:screenOrientation
