@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_CONTROLLER_FILEIMAGE;
-import static com.kiand.LED2match.TRSDigitalPanel.NO_PRESET_TEXT;
 import static com.kiand.LED2match.TRSDigitalPanel.SHAREDPREFS_LAMP_ASSIGNMENTS;
 
 public class TRSRecertificationPage extends Activity {
@@ -510,7 +509,7 @@ public class TRSRecertificationPage extends Activity {
                 break;
 
             case 4:
-                Intent intent7 = new Intent(TRSRecertificationPage.this, TRSBlowerPage.class);
+                Intent intent7 = new Intent(TRSRecertificationPage.this, TRSSettings.class);
                 startActivity(intent7);
                 break;
 

@@ -199,6 +199,7 @@
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:layout_marginTop="15dp"
                 android:orientation="vertical"
+                android:id="@+id/lLayout5"
                 >
 
                 <CheckedTextView
@@ -227,9 +228,28 @@
                     />
 
                 <EditText
-                    android:layout_width="wrap_content"
+                    android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     android:text="Slave address" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/lLayout5"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical"
+                android:id="@+id/lLayout6"
+                >
+
+                <EditText
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:text="DACValue (600-800)" />
 
 
             </LinearLayout>

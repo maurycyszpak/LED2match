@@ -8,6 +8,6 @@ public final class BuildConfig {
   public static final String APPLICATION_ID = "com.kiand.LED2match";
   public static final String BUILD_TYPE = "debug";
   public static final String FLAVOR = "";
-  public static final int VERSION_CODE = 102;
-  public static final String VERSION_NAME = "1.01";
+  public static final int VERSION_CODE = 502;
+  public static final String VERSION_NAME = "3.2";
 }

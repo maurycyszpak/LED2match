@@ -11,7 +11,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -23,7 +22,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,15 +32,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -161,37 +155,37 @@ public class TRSDigitalPanel extends Activity {
 
             } else if (intent.getAction().equals("button_highlight_event")) {
                 String index = intent.getStringExtra("button_index");
-                Log.d(TAG, "Got index of button to highlight: " + index);
+                //Log.d(TAG, "Got index of button to highlight: " + index);
                 if (TextUtils.isEmpty(index)) {
                     return;
                 }
                 switchButtonON(Integer.valueOf(index));
-                Log.d(TAG, "Button: " + index + " highlighted");
+                //Log.d(TAG, "Button: " + index + " highlighted");
             } else if (intent.getAction().equals("button_highlight_extra")) {
                 String name = intent.getStringExtra("button_name");
-                Log.d(TAG, "Got additional button to highlight: " + name);
+                //Log.d(TAG, "Got additional button to highlight: " + name);
                 if (TextUtils.isEmpty(name)) {
                     return;
                 }
 
                 if (name.equalsIgnoreCase("PRG")){
                     switchButtonON(7);
-                    Log.d(TAG, "PRG Button highlighted");
+                   //Log.d(TAG, "PRG Button highlighted");
                 }
 
                 if (name.equalsIgnoreCase("LOW")){
                     if (!BL_LOW_MODE) {
                         switchButtonON(8);
-                        Log.d(TAG, "LOW Button highlighted");
+                        //Log.d(TAG, "LOW Button highlighted");
                     } else {
                         switchButtonOFF(8);
-                        Log.d(TAG, "LOW Button deactivated");
+                       // Log.d(TAG, "LOW Button deactivated");
                     }
                 }
 
                 if (name.equalsIgnoreCase("OFF")){
                     switchButtonON(9);
-                    Log.d(TAG, "OFF Button highlighted");
+                    //Log.d(TAG, "OFF Button highlighted");
                 }
             }
 
@@ -1427,7 +1421,7 @@ public class TRSDigitalPanel extends Activity {
                 break;
 
             case 4:
-                Intent intent7 = new Intent(TRSDigitalPanel.this, TRSBlowerPage.class);
+                Intent intent7 = new Intent(TRSDigitalPanel.this, TRSSettings.class);
                 startActivity(intent7);
                 break;
 

@@ -2303,7 +2303,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 			break;
 
 		case 6:
-			Intent intent6 = new Intent(LightAdjustments.this, TRSBlowerPage.class);
+			Intent intent6 = new Intent(LightAdjustments.this, TRSSettings.class);
 			startActivity(intent6);
 			break;
 
