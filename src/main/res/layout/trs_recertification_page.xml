@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TRSSequence">
+    tools:context=".TRSRecertificationPage">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -148,7 +148,7 @@
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:layout_below="@+id/lLayout2"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="5dp"
                 android:baselineAligned="false"
                 >
 
@@ -173,6 +173,7 @@
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:layout_marginTop="15dp"
                 android:orientation="vertical"
+                android:visibility="gone"
                 >
 
                 <CheckedTextView
@@ -197,7 +198,7 @@
                 android:layout_below="@+id/lLayout4"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="5dp"
                 android:orientation="vertical"
                 android:id="@+id/lLayout5"
                 >
@@ -226,11 +227,24 @@
                     android:gravity="center_vertical"
                     android:layout_marginBottom="0dp"
                     />
-
-                <EditText
-                    android:layout_width="200dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Slave address" />
+                    android:orientation="horizontal" >
+                    <TextView
+                        android:layout_width="@dimen/recertification_label_width"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/address_label"
+                        android:text="Slave address: "
+                        android:layout_marginEnd="10dp"
+                        />
+
+                    <EditText
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:hint="Slave address"
+                        android:textSize="13sp"/>
+                </LinearLayout>
 
 
             </LinearLayout>
@@ -241,15 +255,60 @@
                 android:layout_below="@+id/lLayout5"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_marginTop="15dp"
-                android:orientation="vertical"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal"
                 android:id="@+id/lLayout6"
                 >
 
-                <EditText
-                    android:layout_width="200dp"
+
+                <TextView
+                    android:layout_width="@dimen/recertification_label_width"
                     android:layout_height="wrap_content"
-                    android:text="DACValue (600-800)" />
+                    android:id="@+id/DAC_label"
+                    android:text="DAC value: "
+                    android:layout_marginEnd="10dp"
+                    />
+
+
+                <EditText
+                    android:id="@+id/edit_DACvalue"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:singleLine="true"
+                    android:hint="DAC value (600-800)"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/lLayout6"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal"
+                android:id="@+id/lLayout7"
+                >
+
+
+                <TextView
+                    android:layout_width="@dimen/recertification_label_width"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/DACmax_power_label"
+                    android:text="Max PSU current: "
+                    android:layout_marginEnd="10dp"
+                    />
+
+
+                <EditText
+                    android:id="@+id/edit_PSU_current"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:singleLine="true"
+                    android:hint="Amps"/>
 
 
             </LinearLayout>
@@ -289,7 +348,9 @@
                     android:baselineAligned="false"
                     android:gravity="center"
                     android:text="SAVE"
-                    android:textSize="@dimen/button_text_size" />
+                    android:textSize="@dimen/button_text_size"
+                    android:onClick="saveSettings"
+                    />
 
             </RelativeLayout>
 

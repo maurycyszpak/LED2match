@@ -13,12 +13,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.Map;
@@ -30,8 +32,11 @@ import static com.kiand.LED2match.TRSDigitalPanel.SHAREDPREFS_LAMP_ASSIGNMENTS;
 public class TRSRecertificationPage extends Activity {
 
     public static final String SHAREDPREFS_ONE_OFF_SEEKBARS = "one-off-seekbar-values.txt"; //Mauricio
+    public static final String PREFS_DAC_VALUE = "dac-value";
+    public static final String PREFS_PSU_CURRENT = "psu_max_power";
     public static final String newLine = System.getProperty("line.separator");
     public static final String NO_PRESET_TEXT = "#n/a";
+    public static final String TAG = "MORRIS-RECERT";
 
     boolean blLamp1_ON, blLamp2_ON, blLamp3_ON, blLamp4_ON, blLamp5_ON, blLamp6_ON;
     Button btnL1, btnL2, btnL3, btnL4, btnL5, btnL6;
@@ -77,6 +82,8 @@ public class TRSRecertificationPage extends Activity {
         }
 
         //populateLampsState();
+        readDACvalue();
+        readPSUpower();
     }
 
     @Override
@@ -348,6 +355,68 @@ public class TRSRecertificationPage extends Activity {
         setLampName(5, sLamp5Name);
         setLampName(6, sLamp6Name);
         //setLampName(4, sLamp4Name);
+    }
+
+    public void saveSettings(View v) {
+        //We need to store the DAC Value if present
+        EditText ed_DAC = findViewById(R.id.edit_DACvalue);
+        if (TextUtils.isEmpty(ed_DAC.getText().toString())) {
+            return;
+        }
+
+        Integer value = Integer.valueOf(ed_DAC.getText().toString());
+        if (value < 600 || value > 800) {
+            makeToast("DAC value should be between 600 and 800.");
+            return;
+        } else {
+            SharedPreferences spFile = getSharedPreferences(PREFS_DAC_VALUE, 0);
+            SharedPreferences.Editor editor = spFile.edit();
+            editor.clear();
+            editor.putInt("dac_value", value);
+            editor.apply();
+            Log.d(TAG, "DAC value of '" + value + "' stored in prefs file");
+            makeToast( "DAC value of '" + value + "' successfully stored.");
+        }
+
+        EditText ed_amps = findViewById(R.id.edit_PSU_current);
+        if (TextUtils.isEmpty(ed_amps.getText().toString())) {
+            return;
+        }
+
+        value = Integer.valueOf(ed_amps.getText().toString());
+        if (value < 1 || value > 5) {
+            makeToast("Power supply max current should be between 1 and 5 amps.");
+            return;
+        } else {
+            SharedPreferences spFile = getSharedPreferences(PREFS_PSU_CURRENT, 0);
+            SharedPreferences.Editor editor = spFile.edit();
+            editor.clear();
+            editor.putInt("psu_current", value);
+            editor.apply();
+            Log.d(TAG, "PSU current of '" + value + "' stored in prefs file");
+            makeToast( "PSU current value of '" + value + " amps' successfully stored.");
+            //int value = spFile.getInt("dac_value", 0);
+        }
+
+
+    }
+
+    private void readDACvalue() {
+        EditText edit_dac = findViewById(R.id.edit_DACvalue);
+        SharedPreferences spFile = getSharedPreferences(PREFS_DAC_VALUE, 0);
+        Integer value = spFile.getInt("dac_value", 0);
+        if (value > 0) {
+            edit_dac.setText(String.valueOf(value));
+        }
+    }
+
+    private void readPSUpower() {
+        EditText edit_dac = findViewById(R.id.edit_PSU_current);
+        SharedPreferences spFile = getSharedPreferences(PREFS_PSU_CURRENT, 0);
+        Integer value = spFile.getInt("psu_max_power", 0);
+        if (value > 0) {
+            edit_dac.setText(String.valueOf(value));
+        }
     }
 
     public void setLampName(int i, String sName) {

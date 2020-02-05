@@ -21,5 +21,6 @@
     <dimen name="button_margin">10dp</dimen>
 
     <dimen name="main_screen_sidemargin">20dp</dimen>
+    <dimen name="recertification_label_width">120dp</dimen>
 
 </resources>
