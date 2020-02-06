@@ -271,7 +271,7 @@ public class TRSLightOperatingHours extends Activity {
     private String convert_secs_to_hhmm (String sSeconds) {
         Long lSecs = Long.valueOf(sSeconds);
         Integer iHours = lSecs.intValue()/60/60;
-        Integer iMinutes = lSecs.intValue()/60;
+        Integer iMinutes = (lSecs.intValue() - iHours*60*60)/60;
 
         String sResult = String.format("%02d", iHours) + ":" + String.format("%02d", iMinutes);
         return sResult;
