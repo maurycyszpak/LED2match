@@ -276,6 +276,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="13sp"
                     android:singleLine="true"
+                    android:inputType="number"
                     android:hint="DAC value (600-800)"/>
 
 
@@ -321,6 +322,7 @@
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:layout_marginBottom="20dp"
+                android:inputType="number"
                 android:baselineAligned="false"
 
                 >

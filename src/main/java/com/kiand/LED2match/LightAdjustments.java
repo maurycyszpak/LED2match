@@ -73,6 +73,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import static com.kiand.LED2match.BtScannerActivity.BT_PREFS;
+import static com.kiand.LED2match.TRSRecertificationPage.PREFS_PSU_CURRENT;
 
 public class LightAdjustments extends Activity implements ServiceConnection {
 
@@ -1314,9 +1315,8 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 		// load savedPreference _KEY_MACADDRESS
 		SharedPreferences prefs = getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
 
-		btnSend.setOnClickListener(view -> {
-			onClickSend(view);
-			Toast.makeText(getBaseContext(), "Color applied!", Toast.LENGTH_SHORT).show();
+		/*btnSend.setOnClickListener(view -> {
+			//onClickSend(view);
 
 			File file = getApplicationContext().getFileStreamPath("hts-chrono1");
 			if (!file.exists()) {
@@ -1364,7 +1364,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 			} else {
 				writeData(findViewById(R.id.wrap_content), factorFileName, String.valueOf(SystemClock.elapsedRealtime()) + "-" + edWhite.getText().toString());
 			}
-		});
+		}); */
 	}
 
 	public void extractPresetsFromJson() {
@@ -1784,10 +1784,9 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 	}
 
 	public void onClickSend(View view) {
-
-		Log.d(TAG, "ENTERING ONCLICKSEND");
-
-		String sColour = "S" + String.format("%02X", Integer.valueOf(edLED65.getText().toString()));
+		Log.d (TAG, "CLICKSENDING");
+		String sCommand = "S";
+		String sColour = String.format("%02X", Integer.valueOf(edLED65.getText().toString()));
 		sColour += String.format("%02X", Integer.valueOf(edLEDUVA.getText().toString()));
         sColour += String.format("%02X", Integer.valueOf(edLED50.getText().toString()));
         sColour += String.format("%02X", Integer.valueOf(edLED27.getText().toString()));
@@ -1797,167 +1796,71 @@ public class LightAdjustments extends Activity implements ServiceConnection {
         sColour += String.format("%02X", Integer.valueOf(edBlue.getText().toString()));
         sColour += String.format("%02X", Integer.valueOf(edLED395.getText().toString()));
         sColour += String.format("%02X", Integer.valueOf(edLED420.getText().toString()));
-        sColour += "$" + sNewLine;
+        sCommand += sColour + "$" + sNewLine;
+
+		if (!power_drain_check(sColour)) {
+			return;
+		}
 
         if (lclBTServiceInstance.connected) {
             Log.d(TAG, "Sending RGBW combination: '" + sColour.replace("\n", "\\n").replace("\r", "\\r") + "'");
-            lclBTServiceInstance.sendData(sColour);
+            lclBTServiceInstance.sendData(sCommand);
         } else {
             Log.d(TAG, "Service btService not connected!");
         }
-        usbService.write(sColour.getBytes());
-
-		//String sColour = edRed.getText().toString();
-		/*if (sColour.length() == 1) {
-			sColour = "00" + sColour;
-		} else if (sColour.length() == 2) {
-			sColour = "0" + sColour;
-		}
-		String string = "S06" + sColour + "\n";
-		if (lclBTServiceInstance.connected) {
-			Log.d(TAG, "Service btService connected. Calling lclBTServiceInstance.sendData with message '" + string.replace("\n", "\\n").replace("\r", "\\r") + "'");
-			lclBTServiceInstance.sendData(string);
-		} else {
-			Log.d(TAG, "Service btService not connected!");
-		}
-		usbService.write(string.getBytes());
-		sendDataOverSerial(string);
-		
-		//tvAppend(textView, "\nData Sent: " + string);
-		//Toast.makeText(getBaseContext(), string, Toast.LENGTH_SHORT).show();
-
-		sColour = edGreen.getText().toString();
-		if (sColour.length() == 1) {
-			sColour = "00" + sColour;
-		} else if (sColour.length() == 2) {
-			sColour = "0" + sColour;
-		}
-		string = "S07" + sColour + "\n";
-		if (lclBTServiceInstance.connected) {
-			lclBTServiceInstance.sendData(string);
-		}
-		usbService.write(string.getBytes());
-		lclBTServiceInstance.sendData(string);
-		//sendDataOverSerial(string);
-		
-		//tvAppend(textView, "\nData Sent: " + string);
-
-		sColour = edBlue.getText().toString();
-		if (sColour.length() == 1) {
-			sColour = "00" + sColour;
-		} else if (sColour.length() == 2) {
-			sColour = "0" + sColour;
-		}
-		string = "S08" + sColour + "\n";
-		if (lclBTServiceInstance.connected) {
-			lclBTServiceInstance.sendData(string);
-		}
-		usbService.write(string.getBytes());
-		
-		//tvAppend(textView, "\nData Sent: " + string);
-
-		sColour = edWhite.getText().toString();
-		if (sColour.length() == 1) {
-			sColour = "00" + sColour;
-		} else if (sColour.length() == 2) {
-			sColour = "0" + sColour;
-		}
-		string = "S05" + sColour + "\n";
-		if (lclBTServiceInstance.connected) {
-			lclBTServiceInstance.sendData(string);
-		}
-		usbService.write(string.getBytes());
-		
-		//tvAppend(textView, "\nData Sent: " + string);
-
-		sColour = edLED65.getText().toString();
-		if (sColour.length() == 1) {
-			sColour = "00" + sColour;
-		} else if (sColour.length() == 2) {
-			sColour = "0" + sColour;
-		}
-		string = "S01" + sColour + "\n";
-		if (lclBTServiceInstance.connected) {
-			lclBTServiceInstance.sendData(string);
-		}
-		usbService.write(string.getBytes());
-		
-		//tvAppend(textView, "\nData Sent: " + string);
-
-		sColour = edLEDUVA.getText().toString();
-		if (sColour.length() == 1) {
-			sColour = "00" + sColour;
-		} else if (sColour.length() == 2) {
-			sColour = "0" + sColour;
-		}
-		string = "S02" + sColour + "\n";
-		if (lclBTServiceInstance.connected) {
-			lclBTServiceInstance.sendData(string);
-		}
-		usbService.write(string.getBytes());
-		
-		//tvAppend(textView, "\nData Sent: " + string);
-
-		sColour = edLED50.getText().toString();
-		if (sColour.length() == 1) {
-			sColour = "00" + sColour;
-		} else if (sColour.length() == 2) {
-			sColour = "0" + sColour;
-		}
-		string = "S03" + sColour + "\n";
-		if (lclBTServiceInstance.connected) {
-			lclBTServiceInstance.sendData(string);
-		}
-		usbService.write(string.getBytes());
-		//tvAppend(textView, "\nData Sent: " + string);
-
-		sColour = edLED27.getText().toString();
-		if (sColour.length() == 1) {
-			sColour = "00" + sColour;
-		} else if (sColour.length() == 2) {
-			sColour = "0" + sColour;
-		}
-		string = "S04" + sColour + "\n";
-		if (lclBTServiceInstance.connected) {
-			lclBTServiceInstance.sendData(string);
-		}
-		usbService.write(string.getBytes());
-		
-		//tvAppend(textView, "\nData Sent: " + string);
-
-		sColour = edLED395.getText().toString();
-		if (sColour.length() == 1) {
-			sColour = "00" + sColour;
-		} else if (sColour.length() == 2) {
-			sColour = "0" + sColour;
-		}
-		string = "S09" + sColour + "\n";
-		if (lclBTServiceInstance.connected) {
-			lclBTServiceInstance.sendData(string);
-		}
-		usbService.write(string.getBytes());
-		
-		//tvAppend(textView, "\nData Sent: " + string);
-
-		sColour = edLED420.getText().toString();
-		if (sColour.length() == 1) {
-			sColour = "00" + sColour;
-		} else if (sColour.length() == 2) {
-			sColour = "0" + sColour;
-		}
-		string = "S10" + sColour + "\n";
-		if (lclBTServiceInstance.connected) {
-			lclBTServiceInstance.sendData(string);
-		}
-		usbService.write(string.getBytes());*/
-		
-		//tvAppend(textView, "\nData Sent: " + string);
+        usbService.write(sCommand.getBytes());
+		Toast.makeText(getBaseContext(), "Color applied!", Toast.LENGTH_SHORT).show();
 	}
 
 
 	@Override
 	public void onStart() {
 		super.onStart();
+	}
+
+	private Boolean power_drain_check(String sHexRGBvalues) {
+		Integer light_power = check_light_power(sHexRGBvalues);
+		Integer max_power = get_max_power();
+
+		if (light_power/100 > max_power/100) {
+			String toast = getString(R.string.light_power_warning);
+			toast = toast.replace("%light_power%", String.format(Locale.US, "%.1f", light_power/1000.0));
+			toast = toast.replace("%psu_current%", String.format(Locale.US, "%.1f", max_power/1000.0));
+			//makeToast(toast);
+			display_popup_message("Power drain warning!", toast);
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	private Integer check_light_power(String sPresetRGBValues) {
+		Integer iPower = 0;
+		while (!TextUtils.isEmpty(sPresetRGBValues)) {
+			//Log.d (TAG, "checking light power of: " + sPresetRGBValues + ". Power so far: " + iPower);
+			int iDecimal = Integer.parseInt(sPresetRGBValues.substring(0, 2), 16);
+			//Log.d (TAG, iDecimal + " / 255 * 170 = " + 1500 * iDecimal / 255);
+			iPower += (int)Math.round(1500 * iDecimal / 255);
+			sPresetRGBValues = sPresetRGBValues.substring(2);
+		}
+		Log.d (TAG, "No more preset light to check. Overall light power is: " + iPower);
+		return iPower;
+	}
+
+	private Integer get_max_power() {
+		SharedPreferences spFile = getSharedPreferences(PREFS_PSU_CURRENT, 0);
+		Integer iPower = spFile.getInt("psu_current", 0) * 1000;
+		Log.d (TAG, "Max power for this PSU is " + iPower);
+		return iPower;
+	}
+
+	private void display_popup_message(String title, String message) {
+
+		AlertDialog dlg = new AlertDialog.Builder(this).create();
+		dlg.setTitle(title);
+		dlg.setMessage(message);
+		dlg.setIcon(R.drawable.icon_main);
+		dlg.show();
 	}
 
 	public void refreshItemsOnSpinner() {
@@ -2466,17 +2369,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 	}
 
 	private void openAboutDialog() {
-		//String sFWver = "N/A";
-		//getFWver();
 		String sFWverLcl = getFWver_JSON();
-		String sFreeRam = "N/A";
-
-		if (BtCore.Connected()) {
-			Log.d(TAG, "bluetoothAskReply(V09)");
-			sFWver = bluetoothAskReply("V09");
-			sFreeRam = bluetoothAskReply("I");
-		}
-
 		String sFormattedDate = "";
 		try {
 

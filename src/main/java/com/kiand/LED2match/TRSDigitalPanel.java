@@ -1240,7 +1240,7 @@ public class TRSDigitalPanel extends Activity {
         Integer light_power = check_light_power(convertRGBwithCommasToHexString(sPresetRGBValues));
         Integer max_power = get_max_power();
 
-        if (light_power > max_power) {
+        if (light_power/100 > max_power/100) {
             String toast = getString(R.string.light_power_warning);
             toast = toast.replace("%light_power%", String.format(Locale.US, "%.1f", light_power/1000.0));
             toast = toast.replace("%psu_current%", String.format(Locale.US, "%.1f", max_power/1000.0));
