@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -40,16 +41,12 @@ public class TRSRecertificationPage extends Activity {
 
     boolean blLamp1_ON, blLamp2_ON, blLamp3_ON, blLamp4_ON, blLamp5_ON, blLamp6_ON;
     Button btnL1, btnL2, btnL3, btnL4, btnL5, btnL6;
-    Integer btn1Timer = 0;
-    Integer btn2Timer = 0;
-    Integer btn3Timer = 0;
-    Integer btn4Timer = 0;
-    Integer btn5Timer = 0;
-    Integer btn6Timer = 0;
 
     private Handler lclHandler;
     private UsbCOMMsService lclUsbServiceInstance;
+    private BtCOMMsService lclBTServiceInstance;
     boolean mBound = false;
+    boolean mBoundBT = false;
     final Context context = this;
 
 
@@ -70,6 +67,22 @@ public class TRSRecertificationPage extends Activity {
         }
     };
 
+    private ServiceConnection btConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            BtCOMMsService.MyBinder binder = (BtCOMMsService.MyBinder) service;
+            lclBTServiceInstance = binder.getService();
+            mBoundBT = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBoundBT = false;
+        }
+    };
+
     protected void onResume()
     {
         super.onResume();
@@ -79,6 +92,15 @@ public class TRSRecertificationPage extends Activity {
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
             //Toast.makeText(this.getBaseContext(),"Service bound (onResume)", Toast.LENGTH_SHORT).show();
             mBound = true;
+        }
+
+        if (!mBoundBT) {
+            Intent intent = new Intent(this, BtCOMMsService.class);
+            bindService(intent, btConnection, Context.BIND_AUTO_CREATE);
+            //Toast.makeText(this.getBaseContext(),"Service bound (onResume)", Toast.LENGTH_SHORT).show();
+
+            SystemClock.sleep(50);
+            mBoundBT = true;
         }
 
         //populateLampsState();
@@ -376,6 +398,15 @@ public class TRSRecertificationPage extends Activity {
             editor.apply();
             Log.d(TAG, "DAC value of '" + value + "' stored in prefs file");
             makeToast( "DAC value of '" + value + "' successfully stored.");
+            String sCommand = "M" + value + "$" + newLine;
+            if (mBoundBT) {
+                Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
+                lclBTServiceInstance.sendData(sCommand);
+            } else {
+                Log.d(TAG, "Service btService not connected when sending message: '" + sCommand + "'");
+            }
+            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+
         }
 
         EditText ed_amps = findViewById(R.id.edit_PSU_current);
