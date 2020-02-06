@@ -32,6 +32,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -49,6 +51,7 @@ import static com.kiand.LED2match.BtCOMMsService.BT_CONNECTED_PREFS;
 import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 import static com.kiand.LED2match.LightAdjustments.TOAST_MESSAGE;
 import static com.kiand.LED2match.LightAdjustments.sNewLine;
+import static com.kiand.LED2match.TRSRecertificationPage.PREFS_PSU_CURRENT;
 import static com.kiand.LED2match.TRSSequence.SP_LAMP_TIMERS;
 
 public class TRSDigitalPanel extends Activity {
@@ -809,6 +812,11 @@ public class TRSDigitalPanel extends Activity {
             case R.id.btnL1:
                 if (spLampDefinitions.contains(btnL1.getText().toString())) {
                     sPresetRGBValues = spLampDefinitions.getString(btnL1.getText().toString(), null);
+
+                    if (!power_drain_check(sPresetRGBValues)) {
+                        return;
+                    }
+
                     Log.d(TAG, "sending " + sPresetRGBValues + " to controller");
                     if (sPresetRGBValues != null) {
 
@@ -900,6 +908,11 @@ public class TRSDigitalPanel extends Activity {
 
                 if (spLampDefinitions.contains(btnL2.getText().toString())) {
                     sPresetRGBValues = spLampDefinitions.getString(btnL2.getText().toString(), null);
+
+                    if (!power_drain_check(sPresetRGBValues)) {
+                        return;
+                    }
+
                     sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
                     sCommand += "$" + newLine;
                     //if (btService.connected) {
@@ -954,6 +967,11 @@ public class TRSDigitalPanel extends Activity {
 
                 if (spLampDefinitions.contains(btnL3.getText().toString())) {
                     sPresetRGBValues = spLampDefinitions.getString(btnL3.getText().toString(), null);
+
+                    if (!power_drain_check(sPresetRGBValues)) {
+                        return;
+                    }
+
                     sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
                     sCommand += "$" + newLine;
                     //if (btService.connected) {
@@ -1007,6 +1025,11 @@ public class TRSDigitalPanel extends Activity {
 
                 if (spLampDefinitions.contains(btnL4.getText().toString())) {
                     sPresetRGBValues = spLampDefinitions.getString(btnL4.getText().toString(), null);
+
+                    if (!power_drain_check(sPresetRGBValues)) {
+                        return;
+                    }
+
                     sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
                     sCommand += "$" + newLine;
                     //if (btService.connected) {
@@ -1060,6 +1083,11 @@ public class TRSDigitalPanel extends Activity {
 
                 if (spLampDefinitions.contains(btnL5.getText().toString())) {
                     sPresetRGBValues = spLampDefinitions.getString(btnL5.getText().toString(), null);
+
+                    if (!power_drain_check(sPresetRGBValues)) {
+                        return;
+                    }
+
                     sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
                     sCommand += "$" + newLine;
                     //if (btService.connected) {
@@ -1113,6 +1141,11 @@ public class TRSDigitalPanel extends Activity {
 
                 if (spLampDefinitions.contains(btnL6.getText().toString())) {
                     sPresetRGBValues = spLampDefinitions.getString(btnL6.getText().toString(), null);
+
+                    if (!power_drain_check(sPresetRGBValues)) {
+                        return;
+                    }
+
                     sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
                     sCommand += "$" + newLine;
                     //if (btService.connected) {
@@ -1201,6 +1234,51 @@ public class TRSDigitalPanel extends Activity {
         }
         sValue = sValue.toUpperCase();
         return sValue;
+    }
+
+    private Boolean power_drain_check(String sPresetRGBValues) {
+        Integer light_power = check_light_power(convertRGBwithCommasToHexString(sPresetRGBValues));
+        Integer max_power = get_max_power();
+
+        if (light_power > max_power) {
+            String toast = getString(R.string.light_power_warning);
+            toast = toast.replace("%light_power%", String.format(Locale.US, "%.1f", light_power/1000.0));
+            toast = toast.replace("%psu_current%", String.format(Locale.US, "%.1f", max_power/1000.0));
+            //makeToast(toast);
+            display_popup_message("Power drain warning!", toast);
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private Integer check_light_power(String sPresetRGBValues) {
+        Integer iPower = 0;
+        while (!TextUtils.isEmpty(sPresetRGBValues)) {
+            //Log.d (TAG, "checking light power of: " + sPresetRGBValues + ". Power so far: " + iPower);
+            int iDecimal = Integer.parseInt(sPresetRGBValues.substring(0, 2), 16);
+            //Log.d (TAG, iDecimal + " / 255 * 170 = " + 1500 * iDecimal / 255);
+            iPower += (int)Math.round(1500 * iDecimal / 255);
+            sPresetRGBValues = sPresetRGBValues.substring(2);
+        }
+        Log.d (TAG, "No more preset light to check. Overall light power is: " + iPower);
+        return iPower;
+    }
+
+    private Integer get_max_power() {
+        SharedPreferences spFile = getSharedPreferences(PREFS_PSU_CURRENT, 0);
+        Integer iPower = spFile.getInt("psu_current", 0) * 1000;
+        Log.d (TAG, "Max power for this PSU is " + iPower);
+        return iPower;
+    }
+
+    private void display_popup_message(String title, String message) {
+
+        AlertDialog dlg = new AlertDialog.Builder(this).create();
+        dlg.setTitle(title);
+        dlg.setMessage(message);
+        dlg.setIcon(R.drawable.icon_main);
+        dlg.show();
     }
 
     public void switch_all_off() {
@@ -1794,6 +1872,9 @@ public class TRSDigitalPanel extends Activity {
 
     public void makeToast (String message) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+    }
+    public void makeToast_short (String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
     /*static public class AsyncLampControl extends AsyncTask<Void, Void, String> {
