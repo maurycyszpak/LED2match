@@ -428,8 +428,6 @@ public class TRSRecertificationPage extends Activity {
             makeToast( "PSU current value of '" + value + " amps' successfully stored.");
             //int value = spFile.getInt("dac_value", 0);
         }
-
-
     }
 
     private void readDACvalue() {
@@ -444,7 +442,7 @@ public class TRSRecertificationPage extends Activity {
     private void readPSUpower() {
         EditText edit_dac = findViewById(R.id.edit_PSU_current);
         SharedPreferences spFile = getSharedPreferences(PREFS_PSU_CURRENT, 0);
-        Integer value = spFile.getInt("psu_max_power", 0);
+        Integer value = spFile.getInt("psu_current", 0);
         if (value > 0) {
             edit_dac.setText(String.valueOf(value));
         }

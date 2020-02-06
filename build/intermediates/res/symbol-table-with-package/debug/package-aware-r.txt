@@ -550,6 +550,7 @@ dimen notification_small_icon_size_as_large
 dimen notification_subtext_size
 dimen notification_top_pad
 dimen notification_top_pad_large_text
+dimen recertification_label_width
 dimen seq_lamps_spinner_width
 dimen seq_page_button_height
 dimen service_page_btn_width
@@ -706,6 +707,8 @@ drawable usb_connection_levels
 id ALT
 id ButtonLayout2
 id CTRL
+id DAC_label
+id DACmax_power_label
 id FUNCTION
 id META
 id RGBlayout
@@ -732,6 +735,7 @@ id action_text
 id actions
 id activity_chooser_view_content
 id add
+id address_label
 id alertTitle
 id all
 id always
@@ -844,6 +848,8 @@ id editTextWhite3
 id editTextWhite4
 id editTextWhite5
 id editTextWhite6
+id edit_DACvalue
+id edit_PSU_current
 id edit_query
 id edtpresetname
 id end
@@ -871,6 +877,9 @@ id lLayout1
 id lLayout2
 id lLayout3
 id lLayout4
+id lLayout5
+id lLayout6
+id lLayout7
 id lLayoutMID
 id lLayoutbottomspace
 id layoutSeqStep1
@@ -1139,6 +1148,7 @@ string iv_add_content_desc
 string iv_remove_content_desc
 string lamp_select_prompt
 string ledbar_manual
+string light_power_warning
 string pass_prompt
 string pre_msg
 string readings_prompt

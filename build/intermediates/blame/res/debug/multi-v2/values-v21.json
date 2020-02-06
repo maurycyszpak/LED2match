@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\ja\\AndroidStudioProjects\\LED2match\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v21\\values-v21.xml",
+            "outputFile": "C:\\Users\\Maurycy\\Downloads\\LED2match_git\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v21\\values-v21.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\ja\\.gradle\\caches\\transforms-2\\files-2.1\\2c68781b06d0ec96361a869352350b3a\\support-compat-27.1.1\\res\\values-v21\\values-v21.xml",
+                    "source": "C:\\Users\\Maurycy\\.gradle\\caches\\transforms-2\\files-2.1\\2c68781b06d0ec96361a869352350b3a\\support-compat-27.1.1\\res\\values-v21\\values-v21.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,13",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4",
@@ -23,7 +23,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\ja\\.gradle\\caches\\transforms-2\\files-2.1\\a3bbe6800f891ce2733a7993f194e276\\appcompat-v7-27.1.1\\res\\values-v21\\values-v21.xml",
+                    "source": "C:\\Users\\Maurycy\\.gradle\\caches\\transforms-2\\files-2.1\\a3bbe6800f891ce2733a7993f194e276\\appcompat-v7-27.1.1\\res\\values-v21\\values-v21.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,17,19,20,21,22,24,26,27,28,29,30,32,34,36,38,40,42,43,48,50,52,53,54,56,58,59,60,61,62,63,107,110,154,157,160,162,164,166,169,171,174,175,176,179,180,181,182,183,184,187,188,190,192,194,196,200,202,203,204,205,207,211,213,215,216,217,218,219,221,222,223,233,234,235,247",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
