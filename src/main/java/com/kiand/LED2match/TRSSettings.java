@@ -454,7 +454,7 @@ public class TRSSettings extends Activity implements ServiceConnection {
 
                 public void onFinish() {
                     Log.d(TAG, "*** TICKING OVER *** Time is up - switching all lamps off");
-                    allOFF();
+                    //allOFF();
                     runOnUiThread(new Runnable() {
                         public void run() {
                             Toast.makeText(TRSSettings.this, "Countdown timer is up - switching off all lamps.", Toast.LENGTH_LONG).show();

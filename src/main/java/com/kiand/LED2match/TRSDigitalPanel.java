@@ -238,6 +238,17 @@ public class TRSDigitalPanel extends Activity {
             mBoundBT = true;
 
             if (mBoundBT) {
+
+                if (bluetooth_connected()) {
+                    try {
+                        String sSequence = "G";
+                        sSequence = sSequence.concat(System.lineSeparator());
+                        lclBTServiceInstance.sendData(sSequence);
+                    } catch (NullPointerException e) {
+                        Log.e(TAG, "NullPointerException when sending command via Bluetooth");
+                    }
+                    SystemClock.sleep(50);
+                }
                 if (bluetooth_connected()) {
                     try {
                         String sSequence = "F";
@@ -249,16 +260,7 @@ public class TRSDigitalPanel extends Activity {
                     }
                     SystemClock.sleep(1500);
                 }
-                if (bluetooth_connected()) {
-                    try {
-                        String sSequence = "G";
-                        sSequence = sSequence.concat(System.lineSeparator());
-                        lclBTServiceInstance.sendData(sSequence);
-                    } catch (NullPointerException e) {
-                        Log.e(TAG, "NullPointerException when sending command via Bluetooth");
-                    }
-                    SystemClock.sleep(50);
-                }
+
                 if (bluetooth_connected()) {
                     try {
                         String sSequence = "J";
