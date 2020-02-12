@@ -183,7 +183,7 @@
                     android:gravity="center"
                     android:text="UVA"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:onClick="btnClicked"
+                    android:onClick="btnClicked2"
                     android:layout_weight="4"
                     android:background="@android:color/transparent"
                     android:scaleType="fitCenter"

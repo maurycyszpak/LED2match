@@ -1168,13 +1168,19 @@ public class TRSDigitalPanel extends Activity {
         }
     }
 
-    public void btnClicked2(View v) {
+    private void send_via_bt(String command) {
+        if (mBoundBT) {
+            Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + command.replace("\n", "\\n").replace("\r", "\\r") + "'");
+            lclBTServiceInstance.sendData(command);
+        } else {
+            Log.d(TAG, "Service btService not connected!");
+        }
+    }
 
-        SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+    public void btnClicked2(View v) {
         SharedPreferences spLampDefinitions = getSharedPreferences(SHAREDPREFS_LAMP_DEFINITIONS, 0);
-        String sPresetRGBValues = "000,000,000,000,000,000,000,000,000,000";
-        String sCommand = "";
-        JSON_analyst json_analyst = new JSON_analyst(spFile);
+        String sPresetRGBValues;
+        String sCommand;
 
         String buttonCaption = v.getTag().toString();
         if (!TextUtils.isEmpty(buttonCaption)) {
@@ -1183,101 +1189,83 @@ public class TRSDigitalPanel extends Activity {
             }
         }
 
+        int buttonID = v.getId();
+        Button button = findViewById(buttonID);
         BL_LOW_MODE = false;
 
-        switch (v.getId()) {
-            case R.id.btnL1:
-                if (spLampDefinitions.contains(btnL1.getText().toString())) {
-                    sPresetRGBValues = spLampDefinitions.getString(btnL1.getText().toString(), null);
-                    Log.d(TAG, "sending " + sPresetRGBValues + " to controller");
-                    if (sPresetRGBValues != null) {
+        if (spLampDefinitions.contains(button.getText().toString())) {
+            sPresetRGBValues = spLampDefinitions.getString(button.getText().toString(), null);
+            Log.d(TAG, "sending " + sPresetRGBValues + " to controller");
+            if (sPresetRGBValues != null) {
 
-                        if (btnL1.getText().toString().equalsIgnoreCase("UV")) {
-                            //complementary light - keep current on and add UV definition for non-zeros - when switching ON UV mode. Otherwise switch off additional lamps
-                            sCommand = "P" + convertRGB2complementaryLight(sPresetRGBValues, (!BL_UV_MODE));
-                            sCommand += "$" + newLine;
-                            if (mBoundBT) {
-                                Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                                lclBTServiceInstance.sendData(sCommand);
-                            } else {
-                                Log.d(TAG, "Service btService not connected!");
-                            }
-                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                if (button.getText().toString().equalsIgnoreCase("UV")) {
+                    //complementary light - keep current on and add UV definition for non-zeros - when switching ON UV mode. Otherwise switch off additional lamps
+                    sCommand = "P" + convertRGB2complementaryLight(sPresetRGBValues, (!BL_UV_MODE));
+                    sCommand += "$" + newLine;
+                    send_via_bt(sCommand);
+                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
 
-                            sCommand = "B," + btnL1.getTag().toString() + (BL_UV_MODE ? 0 : 1) + "$" + newLine;
-                            if (mBoundBT) {
-                                Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                                lclBTServiceInstance.sendData(sCommand);
-                            } else {
-                                Log.d(TAG, "Service btService not connected!");
-                            }
-                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                    sCommand = "B," + btnL1.getTag().toString() + (BL_UV_MODE ? 0 : 1) + "$" + newLine;
+                    send_via_bt(sCommand);
+                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
 
-                            BL_UV_MODE = !BL_UV_MODE;
-                            String s = (BL_UV_MODE ? "active" : "inactive");
-                            Log.d(TAG, "UV mode - " + s);
-                            if (BL_UV_MODE) {
-                                btnL1.setBackgroundResource(R.drawable.buttonselector_active);
-                                btnL1.setTextColor(Color.BLACK);
-                            } else {
-                                btnL1.setBackgroundResource(R.drawable.buttonselector_main);
-                                btnL1.setTextColor(Color.WHITE);
-                            }
-                        } else {
-
-                            sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
-                            sCommand += "$" + newLine;
-                            //if (btService.connected) {
-                            if (mBoundBT) {
-                                Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                                lclBTServiceInstance.sendData(sCommand);
-                            } else {
-                                Log.d(TAG, "Service btService not connected!");
-                            }
-                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                            sCommand = "B," + btnL1.getTag().toString() + "1$" + newLine;
-                            if (mBoundBT) {
-                                Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                                lclBTServiceInstance.sendData(sCommand);
-                            } else {
-                                Log.d(TAG, "Service btService not connected!");
-                            }
-                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-
-                            if (btnL1.getText().toString().equalsIgnoreCase(TL84_TAG)) {
-                                if (BL_LOW_MODE) {
-                                    sCommand = "S11050" + newLine;
-                                } else {
-                                    sCommand = "S11100" + newLine;
-                                }
-                                if (mBoundBT) {
-                                    //Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                                    lclBTServiceInstance.sendData(sCommand);
-                                } else {
-                                    Log.d(TAG, "Service btService not connected!");
-                                }
-                                lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                                blTL84_ON = true;
-                            } else {
-                                sCommand = "S11000" + newLine;
-                                blTL84_ON = false;
-                                if (mBoundBT) {
-                                    lclBTServiceInstance.sendData(sCommand);
-                                }
-                            }
-                            btnL1.setBackgroundResource(R.drawable.buttonselector_active);
-                            btnL1.setTextColor(Color.BLACK);
-                        }
-                        blLamp1_ON = true;
-                        updateLampValue(sPresetRGBValues);
+                    BL_UV_MODE = !BL_UV_MODE;
+                    String s = (BL_UV_MODE ? "active" : "inactive");
+                    Log.d(TAG, "UV mode - " + s);
+                    if (BL_UV_MODE) {
+                        button.setBackgroundResource(R.drawable.buttonselector_active);
+                        button.setTextColor(Color.BLACK);
+                    } else {
+                        button.setBackgroundResource(R.drawable.buttonselector_main);
+                        button.setTextColor(Color.WHITE);
                     }
                 } else {
-                    makeToast("No lamp preset assigned to this button!");
+                    sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
+                    sCommand += "$" + newLine;
+                    send_via_bt(sCommand);
+                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+
+                    sCommand = "B," + btnL1.getTag().toString() + "1$" + newLine;
+                    send_via_bt(sCommand);
+                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+
+                    if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
+                        if (BL_LOW_MODE) {
+                            sCommand = "S11050" + newLine;
+                        } else {
+                            sCommand = "S11100" + newLine;
+                        }
+                        send_via_bt(sCommand);
+                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                        blTL84_ON = true;
+                    } else {
+                        sCommand = "S11000" + newLine;
+                        blTL84_ON = false;
+                        send_via_bt(sCommand);
+                    }
+                    button.setBackgroundResource(R.drawable.buttonselector_active);
+                    button.setTextColor(Color.BLACK);
                 }
-                break;
+                if (buttonID == R.id.btnL1) {
+                    blLamp1_ON = true;
+                } else if (buttonID == R.id.btnL2) {
+                    blLamp2_ON = true;
+                } else if (buttonID == R.id.btnL3) {
+                    blLamp3_ON = true;
+                } else if (buttonID == R.id.btnL4) {
+                    blLamp4_ON = true;
+                } else if (buttonID == R.id.btnL5) {
+                    blLamp5_ON = true;
+                } else if (buttonID == R.id.btnL6) {
+                    blLamp6_ON = true;
+                }
+                updateLampValue(sPresetRGBValues);
+            }
+        } else {
+            makeToast("No lamp preset assigned to this button!");
         }
     }
-    
+
     public String convertRGB2complementaryLight(String sRGB, boolean ON) {
         String sValue = "";
 
