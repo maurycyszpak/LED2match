@@ -1193,6 +1193,17 @@ public class TRSDigitalPanel extends Activity {
         Button button = findViewById(buttonID);
         BL_LOW_MODE = false;
 
+        /* scenarios:
+        1. "clean" execution - switch on lamp
+        2. "clean" execution - special lamp - UV
+        3. "clean" execution - special lamp - TL84
+        4. "clean" execution - special lamp - LOW
+        5. a lamp is already on - special lamp - UV
+        5. a lamp is already on - special lamp - TL84
+        5. a lamp is already on - special lamp - LOW on
+        5. a lamp is already on - special lamp - LOW off
+         */
+
         if (spLampDefinitions.contains(button.getText().toString())) {
             sPresetRGBValues = spLampDefinitions.getString(button.getText().toString(), null);
             Log.d(TAG, "sending " + sPresetRGBValues + " to controller");
