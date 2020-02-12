@@ -473,11 +473,7 @@ public class TRSDigitalPanel extends Activity {
 
     public boolean shared_prefs_exists(String sFileName, String sKey) {
         SharedPreferences spFile = getSharedPreferences(sFileName, 0);
-        if (spFile.contains(sKey)) {
-            return true;
-        } else {
-            return false;
-        }
+        return spFile.contains(sKey);
     }
 
     public void repopulate_button_assignments() {
@@ -814,7 +810,7 @@ public class TRSDigitalPanel extends Activity {
 
                         if (btnL1.getText().toString().equalsIgnoreCase("UV")) {
                             //complementary light - keep current on and add UV definition for non-zeros - when switching ON UV mode. Otherwise switch off additional lamps
-                            sCommand = "P" + convertRGB2complementaryLight(sPresetRGBValues, (BL_UV_MODE ? false : true));
+                            sCommand = "P" + convertRGB2complementaryLight(sPresetRGBValues, (!BL_UV_MODE));
                             sCommand += "$" + newLine;
                             if (mBoundBT) {
                                 Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
@@ -1171,6 +1167,117 @@ public class TRSDigitalPanel extends Activity {
                 break;
         }
     }
+
+    public void btnClicked2(View v) {
+
+        SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        SharedPreferences spLampDefinitions = getSharedPreferences(SHAREDPREFS_LAMP_DEFINITIONS, 0);
+        String sPresetRGBValues = "000,000,000,000,000,000,000,000,000,000";
+        String sCommand = "";
+        JSON_analyst json_analyst = new JSON_analyst(spFile);
+
+        String buttonCaption = v.getTag().toString();
+        if (!TextUtils.isEmpty(buttonCaption)) {
+            if (!buttonCaption.equalsIgnoreCase("LOW") && !buttonCaption.equalsIgnoreCase("UV")) {
+                switch_all_off();
+            }
+        }
+
+        BL_LOW_MODE = false;
+
+        switch (v.getId()) {
+            case R.id.btnL1:
+                if (spLampDefinitions.contains(btnL1.getText().toString())) {
+                    sPresetRGBValues = spLampDefinitions.getString(btnL1.getText().toString(), null);
+                    Log.d(TAG, "sending " + sPresetRGBValues + " to controller");
+                    if (sPresetRGBValues != null) {
+
+                        if (btnL1.getText().toString().equalsIgnoreCase("UV")) {
+                            //complementary light - keep current on and add UV definition for non-zeros - when switching ON UV mode. Otherwise switch off additional lamps
+                            sCommand = "P" + convertRGB2complementaryLight(sPresetRGBValues, (!BL_UV_MODE));
+                            sCommand += "$" + newLine;
+                            if (mBoundBT) {
+                                Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
+                                lclBTServiceInstance.sendData(sCommand);
+                            } else {
+                                Log.d(TAG, "Service btService not connected!");
+                            }
+                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+
+                            sCommand = "B," + btnL1.getTag().toString() + (BL_UV_MODE ? 0 : 1) + "$" + newLine;
+                            if (mBoundBT) {
+                                Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
+                                lclBTServiceInstance.sendData(sCommand);
+                            } else {
+                                Log.d(TAG, "Service btService not connected!");
+                            }
+                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+
+                            BL_UV_MODE = !BL_UV_MODE;
+                            String s = (BL_UV_MODE ? "active" : "inactive");
+                            Log.d(TAG, "UV mode - " + s);
+                            if (BL_UV_MODE) {
+                                btnL1.setBackgroundResource(R.drawable.buttonselector_active);
+                                btnL1.setTextColor(Color.BLACK);
+                            } else {
+                                btnL1.setBackgroundResource(R.drawable.buttonselector_main);
+                                btnL1.setTextColor(Color.WHITE);
+                            }
+                        } else {
+
+                            sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
+                            sCommand += "$" + newLine;
+                            //if (btService.connected) {
+                            if (mBoundBT) {
+                                Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
+                                lclBTServiceInstance.sendData(sCommand);
+                            } else {
+                                Log.d(TAG, "Service btService not connected!");
+                            }
+                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                            sCommand = "B," + btnL1.getTag().toString() + "1$" + newLine;
+                            if (mBoundBT) {
+                                Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
+                                lclBTServiceInstance.sendData(sCommand);
+                            } else {
+                                Log.d(TAG, "Service btService not connected!");
+                            }
+                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+
+                            if (btnL1.getText().toString().equalsIgnoreCase(TL84_TAG)) {
+                                if (BL_LOW_MODE) {
+                                    sCommand = "S11050" + newLine;
+                                } else {
+                                    sCommand = "S11100" + newLine;
+                                }
+                                if (mBoundBT) {
+                                    //Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
+                                    lclBTServiceInstance.sendData(sCommand);
+                                } else {
+                                    Log.d(TAG, "Service btService not connected!");
+                                }
+                                lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                                blTL84_ON = true;
+                            } else {
+                                sCommand = "S11000" + newLine;
+                                blTL84_ON = false;
+                                if (mBoundBT) {
+                                    lclBTServiceInstance.sendData(sCommand);
+                                }
+                            }
+                            btnL1.setBackgroundResource(R.drawable.buttonselector_active);
+                            btnL1.setTextColor(Color.BLACK);
+                        }
+                        blLamp1_ON = true;
+                        updateLampValue(sPresetRGBValues);
+                    }
+                } else {
+                    makeToast("No lamp preset assigned to this button!");
+                }
+                break;
+        }
+    }
+    
     public String convertRGB2complementaryLight(String sRGB, boolean ON) {
         String sValue = "";
 
@@ -1708,7 +1815,7 @@ public class TRSDigitalPanel extends Activity {
     public void updateLampValue (String sCommand) {
         SharedPreferences prefsCurrentState = getSharedPreferences(SHAREDPREFS_CURRENT_LAMPS, 0);
         SharedPreferences.Editor editor = prefsCurrentState.edit();
-        List<String> RGBValues = Arrays.asList(sCommand.split(","));
+        String[] RGBValues = sCommand.split(",");
         Map<String, String> map = new HashMap<>();
         int i = 1;
         for (String RGB : RGBValues) {
