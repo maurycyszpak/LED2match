@@ -800,6 +800,7 @@ public class TRSDigitalPanel extends Activity {
         }
 
         BL_LOW_MODE = false;
+        Log.d(TAG, "switching off LOW mode - shouldn't happen, this function is redundant");
 
         switch (v.getId()) {
             case R.id.btnL1:
@@ -1185,13 +1186,13 @@ public class TRSDigitalPanel extends Activity {
         String buttonCaption = v.getTag().toString();
         if (!TextUtils.isEmpty(buttonCaption)) {
             if (!buttonCaption.equalsIgnoreCase("LOW") && !buttonCaption.equalsIgnoreCase("UV")) {
+                Log.d(TAG, "switching off all lamps");
                 switch_all_off();
             }
         }
 
         int buttonID = v.getId();
         Button button = findViewById(buttonID);
-        BL_LOW_MODE = false;
 
         /* scenarios:
         1. "clean" execution - switch on lamp
@@ -1199,10 +1200,11 @@ public class TRSDigitalPanel extends Activity {
         3. "clean" execution - special lamp - TL84
         4. "clean" execution - special lamp - LOW
         5. a lamp is already on - special lamp - UV
-        5. a lamp is already on - special lamp - TL84
-        5. a lamp is already on - special lamp - LOW on
-        5. a lamp is already on - special lamp - LOW off
+        6. a lamp is already on - special lamp - TL84
+        7. a lamp is already on - special lamp - LOW on
+        8. a lamp is already on - special lamp - LOW off
          */
+
 
         if (spLampDefinitions.contains(button.getText().toString())) {
             sPresetRGBValues = spLampDefinitions.getString(button.getText().toString(), null);
@@ -1230,30 +1232,63 @@ public class TRSDigitalPanel extends Activity {
                         button.setBackgroundResource(R.drawable.buttonselector_main);
                         button.setTextColor(Color.WHITE);
                     }
+
+
                 } else {
-                    sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
-                    sCommand += "$" + newLine;
-                    send_via_bt(sCommand);
-                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                    if (!BL_LOW_MODE) {
+                        Log.d(TAG, "I'm not in LOW mode");
 
-                    sCommand = "B," + btnL1.getTag().toString() + "1$" + newLine;
-                    send_via_bt(sCommand);
-                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-
-                    if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
-                        if (BL_LOW_MODE) {
-                            sCommand = "S11050" + newLine;
-                        } else {
+                        if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
                             sCommand = "S11100" + newLine;
+                            send_via_bt(sCommand);
+                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                            blTL84_ON = true;
+                        } else {
+                            sCommand = "S11000" + newLine;
+                            blTL84_ON = false;
+                            send_via_bt(sCommand);
                         }
+
+                        sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
+                        sCommand += "$" + newLine;
                         send_via_bt(sCommand);
                         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                        blTL84_ON = true;
-                    } else {
-                        sCommand = "S11000" + newLine;
-                        blTL84_ON = false;
+
+                        sCommand = "B," + btnL1.getTag().toString() + "1$" + newLine;
                         send_via_bt(sCommand);
+                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                    } else {
+                        //LOW MODE!
+                        /*SharedPreferences prefsLamps = getSharedPreferences(SHAREDPREFS_CURRENT_LAMPS, 0);
+                        Map<String, ?> keys = prefsLamps.getAll(); */
+                        Log.d (TAG, "LOW mode! Changing " + sPresetRGBValues + " to LOW values.");
+                        String[] sRGB_in = sPresetRGBValues.split(",");
+                        String[] sRGB_out = sRGB_in;
+                        for (int i = 0; i < sRGB_in.length; i++) {
+                            int iRGB = Integer.valueOf(sRGB_in[i]);
+                            iRGB /= (BL_LOW_MODE ? 2 : 1);
+                            sRGB_out[i] = String.valueOf(iRGB);
+                        }
+                        String concatValues = TextUtils.join(",", sRGB_out);
+                        String sHex = convertRGBwithCommasToHexString(concatValues);
+                        sCommand = "S" + sHex + "$" + newLine;
+                        send_via_bt(sCommand);
+                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                        Log.d(TAG, "I'm in LOW mode");
+                        Log.d(TAG, "Illuminating lamps with: " + sCommand);
+
+                        if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
+                            sCommand = "S11050" + newLine;
+                            send_via_bt(sCommand);
+                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                            blTL84_ON = true;
+                        } else {
+                            sCommand = "S11000" + newLine;
+                            blTL84_ON = false;
+                            send_via_bt(sCommand);
+                        }
                     }
+
                     button.setBackgroundResource(R.drawable.buttonselector_active);
                     button.setTextColor(Color.BLACK);
                 }
@@ -1332,11 +1367,16 @@ public class TRSDigitalPanel extends Activity {
         btnL7.setBackgroundResource(R.drawable.buttonselector_main);
         btnL7.setTextColor(Color.WHITE);
 
-        btnLOW.setBackgroundResource(R.drawable.buttonselector_low);
-        btnLOW.setTextColor(Color.WHITE);
+        /*btnLOW.setBackgroundResource(R.drawable.buttonselector_low);
+        btnLOW.setTextColor(Color.WHITE);*/
 
         btnL9.setBackgroundResource(R.drawable.buttonselector_main);
         btnL9.setTextColor(Color.WHITE);
+    }
+
+    public void buttonOFF(View v) {
+        BL_LOW_MODE = false;
+        allOFF(v);
     }
 
     public void allOFF(View v) {
@@ -1361,8 +1401,13 @@ public class TRSDigitalPanel extends Activity {
         btnL6.setTextColor(Color.WHITE);
 
         //blLamp9_ON = true;
-        btnL9.setBackgroundResource(R.drawable.buttonselector_active);
-        btnL9.setTextColor(Color.BLACK);
+        if (!BL_LOW_MODE) {
+            btnL9.setBackgroundResource(R.drawable.buttonselector_active);
+            btnL9.setTextColor(Color.BLACK);
+
+            btnLOW.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_low));
+            btnLOW.setTextColor(Color.WHITE);
+        }
 
         blTL84_ON = false;
         String sCommand = "";
@@ -1376,10 +1421,6 @@ public class TRSDigitalPanel extends Activity {
             Log.d(TAG, "Service btService not connected!");
         }
         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-
-        btnLOW.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_low));
-        btnLOW.setTextColor(Color.WHITE);
-        BL_LOW_MODE = false;
         BL_UV_MODE = false;
         sCommand= "B,OFF1$" + newLine;
         lclBTServiceInstance.sendData(sCommand);
@@ -1839,7 +1880,7 @@ public class TRSDigitalPanel extends Activity {
             if (!BL_LOW_MODE) {
                 String sCommand = "S11050" + newLine;
                 if (mBoundBT) {
-                    Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
+                    Log.d(TAG, "LOW function - Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
                     lclBTServiceInstance.sendData(sCommand);
                 } else {
                     Log.d(TAG, "Service btService not connected!");
@@ -1886,11 +1927,9 @@ public class TRSDigitalPanel extends Activity {
         ArrayList<String> concatValues = new ArrayList<>();
         for (Map.Entry<String, String> entry : sorted.entrySet()) {
             concatValues.add(entry.getValue());
-            //rduiLog.d (TAG, "sortedLOW: " + entry.getKey() + ", " + entry.getValue());
         }
 
         String sHex = convertRGBwithCommasToHexString(TextUtils.join(",", concatValues));
-        //String sCommand = "S" + entry.getKey() + String.format("%03d", iRGB) + newLine;
         sCommand = "S" + sHex + "$" + newLine;
         Log.d("MORRIS-TRSDIGITAL", "btnLOW: sending command:" + sCommand);
         lclBTServiceInstance.sendData(sCommand);
