@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
@@ -35,6 +36,7 @@ public class TRSRecertificationPage extends Activity {
     public static final String SHAREDPREFS_ONE_OFF_SEEKBARS = "one-off-seekbar-values.txt"; //Mauricio
     public static final String PREFS_DAC_VALUE = "dac-value";
     public static final String PREFS_PSU_CURRENT = "psu_max_power";
+    public static final String prefs_psu_value_tag = "psu_current";
     public static final String newLine = System.getProperty("line.separator");
     public static final String NO_PRESET_TEXT = "#n/a";
     public static final String TAG = "MORRIS-RECERT";
@@ -227,6 +229,50 @@ public class TRSRecertificationPage extends Activity {
         });
     }
 
+    public void factoryReset(View v) {
+        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        View promptView = layoutInflater.inflate(R.layout.factory_reset_confirmation_view, null);
+
+        // set prompts.xml to be the layout file of the alertdialog builder
+        alertDialogBuilder.setView(promptView);
+
+
+        // setup a dialog window
+        alertDialogBuilder
+                .setCancelable(true)
+                .setPositiveButton("OK", (dialog, id) -> {
+                    //brace for reset!
+                    String sCommand = "T" + newLine;
+                    send_via_bt(sCommand);
+                })
+                .setNegativeButton("Cancel",
+                        (dialog, id) -> dialog.cancel());
+
+        // create an alert dialog
+        AlertDialog alertD = alertDialogBuilder.create();
+        alertD.setOnShowListener( new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                alertD.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.dark_gray));
+                //alertD.getButton(AlertDialog.BUTTON_NEGATIVE).setBackgroundColor(getResources().getColor(R.color.hts_gray));
+
+                alertD.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.red_slider));
+                //alertD.getButton(AlertDialog.BUTTON_POSITIVE).setBackgroundColor(getResources().getColor(R.color.hts_gray));
+            }
+        });
+        alertD.show();
+
+    }
+    private void send_via_bt(String command) {
+        if (mBoundBT) {
+            Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + command.replace("\n", "\\n").replace("\r", "\\r") + "'");
+            lclBTServiceInstance.sendData(command);
+        } else {
+            Log.d(TAG, "Service btService not connected!");
+        }
+    }
+
     public void repopulate_button_assignments() {
         SharedPreferences myPrefs = this.getSharedPreferences(SHAREDPREFS_LAMP_ASSIGNMENTS, 0);
         TreeMap<String, ?> keys = new TreeMap<String, Object>(myPrefs.getAll());
@@ -329,32 +375,6 @@ public class TRSRecertificationPage extends Activity {
         finish();
     }
 
-    public void updateUIView() {
-        Log.d("morris-sender", "Broadcasting message");
-        Intent mIntent = new Intent("custom-event-name");
-        mIntent.putExtra("iMessage", 0);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(mIntent);
-
-
-
-        SharedPreferences spsFile = getSharedPreferences(SHAREDPREFS_ONE_OFF_SEEKBARS, 0);
-        SharedPreferences.Editor spsEditor = spsFile.edit();
-        spsEditor.clear();
-        spsEditor.commit();
-
-        spsEditor.putInt ("seekBar1", 0);
-        spsEditor.putInt ("seekBar2", 0);
-        spsEditor.putInt ("seekBar3", 0);
-        spsEditor.putInt ("seekBar4", 0);
-        spsEditor.putInt ("seekBar5", 0);
-        spsEditor.putInt ("seekBar6", 0);
-        spsEditor.putInt ("seekBar7", 0);
-        spsEditor.putInt ("seekBar8", 0);
-        spsEditor.putInt ("seekBar9", 0);
-        spsEditor.putInt ("seekBar10", 0);
-
-        spsEditor.commit();
-    }
 
     public void openLightPage(View v) {
         Intent intent = new Intent(TRSRecertificationPage.this, LightAdjustments.class);
@@ -427,7 +447,7 @@ public class TRSRecertificationPage extends Activity {
             SharedPreferences spFile = getSharedPreferences(PREFS_PSU_CURRENT, 0);
             SharedPreferences.Editor editor = spFile.edit();
             editor.clear();
-            editor.putInt("psu_current", value);
+            editor.putInt(prefs_psu_value_tag, value);
             editor.apply();
             Log.d(TAG, "PSU current of '" + value + "' stored in prefs file");
             makeToast( "PSU current value of '" + value + " amps' successfully stored.");
@@ -449,7 +469,7 @@ public class TRSRecertificationPage extends Activity {
     private void readPSUpower() {
         EditText edit_psu = findViewById(R.id.edit_PSU_current);
         SharedPreferences spFile = getSharedPreferences(PREFS_PSU_CURRENT, 0);
-        Integer value = spFile.getInt("psu_max_power", 0);
+        Integer value = spFile.getInt(prefs_psu_value_tag, 0);
         if (value > 0) {
             edit_psu.setText(String.valueOf(value));
         }

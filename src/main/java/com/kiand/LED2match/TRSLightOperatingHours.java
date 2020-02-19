@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.util.Log;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -29,7 +30,6 @@ import java.util.TreeMap;
 
 import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 import static com.kiand.LED2match.LightAdjustments.sNewLine;
-import static com.kiand.LED2match.TRSDigitalPanel.NO_PRESET_TEXT;
 import static com.kiand.LED2match.TRSDigitalPanel.SHAREDPREFS_LAMP_ASSIGNMENTS;
 
 public class TRSLightOperatingHours extends Activity {
@@ -38,21 +38,17 @@ public class TRSLightOperatingHours extends Activity {
     public static final String SHAREDPREFS_LED_TIMERS = "led_timers"; //Mauricio
     public static final String newLine = System.getProperty("line.separator");
     public static final String NO_PRESET_TEXT = "#n/a";
-    private BtCOMMsService lclBTServiceInstance;
 
-    boolean blLamp1_ON, blLamp2_ON, blLamp3_ON, blLamp4_ON, blLamp5_ON, blLamp6_ON;
+
+    boolean blLamp1_ON, blLamp2_ON, blLamp3_ON, blLamp4_ON;
     Button btnL1, btnL2, btnL3, btnL4, btnL5, btnL6;
-    Integer btn1Timer = 0;
-    Integer btn2Timer = 0;
-    Integer btn3Timer = 0;
-    Integer btn4Timer = 0;
-    Integer btn5Timer = 0;
-    Integer btn6Timer = 0;
     String sEmptyTimerValue = "00:00";
     public final String TAG = "MORRIS-LED-HOURS";
 
     private Handler lclHandler;
     private UsbCOMMsService lclUsbServiceInstance;
+    public BtCOMMsService lclBTServiceInstance;
+
     boolean mBound = false;
     boolean mBoundBT = false;
     final Context context = this;
@@ -99,6 +95,13 @@ public class TRSLightOperatingHours extends Activity {
     protected void onResume()
     {
         super.onResume();
+
+        if (shared_prefs_exists(SHAREDPREFS_LAMP_ASSIGNMENTS, "666")) {
+            repopulate_button_assignments();
+            Log.d(TAG, "Repopulating button captions");
+        } else {
+            populateButtonNames();
+        }
         //Toast.makeText(this.getBaseContext(),"mBound = " + mBound, Toast.LENGTH_SHORT).show();
         if (!mBound) {
             Intent intent = new Intent(this, UsbCOMMsService.class);
@@ -107,9 +110,9 @@ public class TRSLightOperatingHours extends Activity {
             mBound = true;
         }
         if (!mBoundBT) {
-            Intent intent = new Intent(this, BtCOMMsService.class);
-            bindService(intent, btConnection, Context.BIND_AUTO_CREATE);
-            //Toast.makeText(this.getBaseContext(),"Service bound (onResume)", Toast.LENGTH_SHORT).show();
+            Intent intentBT = new Intent(this, BtCOMMsService.class);
+            bindService(intentBT, btConnection, Context.BIND_AUTO_CREATE);
+            Toast.makeText(this.getBaseContext(),"Service bound (onResume)", Toast.LENGTH_SHORT).show();
             mBoundBT = true;
             Log.d(TAG, "BT service bound");
         }
@@ -122,6 +125,7 @@ public class TRSLightOperatingHours extends Activity {
                 Log.d(TAG, "Requesting timers via commmand J");
             } catch (NullPointerException e) {
                 Log.e(TAG, "NullPointerException when sending command via Bluetooth");
+                //Log.e(TAG, Log.getStackTraceString(e));
             }
         }
         SystemClock.sleep(1500);
@@ -164,7 +168,7 @@ public class TRSLightOperatingHours extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.trs_operatingtime_page);
+        setContentView(R.layout.trs_light_operating_hours);
 
         lclHandler = new Handler();
 
@@ -199,7 +203,10 @@ public class TRSLightOperatingHours extends Activity {
         populate_button_timers_empty();
     }
 
+
+
     public void populate_button_timers_empty() {
+        Log.d(TAG, "Populating EMPTY button timers");
         if (!btnL1.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
             btnL1.setText(btnL1.getTag().toString() + System.lineSeparator() + sEmptyTimerValue);
         }
@@ -227,6 +234,7 @@ public class TRSLightOperatingHours extends Activity {
 
     public void populate_button_timers() {
 
+        Log.d(TAG, "Populating button timers");
         SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_LED_TIMERS, 0);
         String sCounters = spFile.getString("currTimers", "");
         if (sCounters.length() > 0) {
@@ -236,6 +244,9 @@ public class TRSLightOperatingHours extends Activity {
                     String sTimers[] = sPiece.split(",");
 
                     try {
+                        Log.d(TAG, "Button1 tag: " + btnL1.getTag().toString());
+                        Log.d(TAG, "Button1 timer: " + convert_secs_to_hhmm(sTimers[0]));
+
 
                         if (!btnL1.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
                             btnL1.setText(btnL1.getTag().toString() + System.lineSeparator() + convert_secs_to_hhmm(sTimers[0]));
@@ -266,6 +277,8 @@ public class TRSLightOperatingHours extends Activity {
                     }
                 }
             }
+        } else {
+            Log.d(TAG, "No timers found in the shared prefs file");
         }
     }
     private String convert_secs_to_hhmm (String sSeconds) {
@@ -273,8 +286,7 @@ public class TRSLightOperatingHours extends Activity {
         Integer iHours = lSecs.intValue()/60/60;
         Integer iMinutes = (lSecs.intValue() - iHours*60*60)/60;
 
-        String sResult = String.format("%02d", iHours) + ":" + String.format("%02d", iMinutes);
-        return sResult;
+        return String.format("%02d", iHours) + ":" + String.format("%02d", iMinutes);
     }
 
     public void repopulate_button_assignments() {
@@ -338,31 +350,10 @@ public class TRSLightOperatingHours extends Activity {
         finish();
     }
 
-    public void updateUIView() {
-        Log.d("morris-sender", "Broadcasting message");
-        Intent mIntent = new Intent("custom-event-name");
-        mIntent.putExtra("iMessage", 0);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(mIntent);
 
-
-
-        SharedPreferences spsFile = getSharedPreferences(SHAREDPREFS_ONE_OFF_SEEKBARS, 0);
-        SharedPreferences.Editor spsEditor = spsFile.edit();
-        spsEditor.clear();
-        spsEditor.commit();
-
-        spsEditor.putInt ("seekBar1", 0);
-        spsEditor.putInt ("seekBar2", 0);
-        spsEditor.putInt ("seekBar3", 0);
-        spsEditor.putInt ("seekBar4", 0);
-        spsEditor.putInt ("seekBar5", 0);
-        spsEditor.putInt ("seekBar6", 0);
-        spsEditor.putInt ("seekBar7", 0);
-        spsEditor.putInt ("seekBar8", 0);
-        spsEditor.putInt ("seekBar9", 0);
-        spsEditor.putInt ("seekBar10", 0);
-
-        spsEditor.commit();
+    public boolean shared_prefs_exists(String sFileName, String sKey) {
+        SharedPreferences spFile = getSharedPreferences(sFileName, 0);
+        return spFile.contains(sKey);
     }
 
     public void populateButtonNames() {
@@ -371,61 +362,78 @@ public class TRSLightOperatingHours extends Activity {
         JSON_analyst json_analyst = new JSON_analyst(spFile);
 
         //Log.d(TAG, "bluetoothAskReply(V1)");
+        final String sLamp1Counter = json_analyst.getJSONValue("counter1");
+        final String sLamp2Counter = json_analyst.getJSONValue("counter2");
+        final String sLamp3Counter = json_analyst.getJSONValue("counter3");
+        final String sLamp4Counter = json_analyst.getJSONValue("counter4");
+        final String sLamp5Counter = json_analyst.getJSONValue("counter5");
+        final String sLamp6Counter = json_analyst.getJSONValue("counter6");
 
-        final String sLamp1Name = json_analyst.getJSONValue("preset1_name") + sNewLine + json_analyst.getJSONValue("counter1");
-        final String sLamp2Name = json_analyst.getJSONValue("preset2_name") + sNewLine + json_analyst.getJSONValue("counter2");
-        final String sLamp3Name = json_analyst.getJSONValue("preset3_name") + sNewLine + json_analyst.getJSONValue("counter3");
-        final String sLamp4Name = json_analyst.getJSONValue("preset4_name") + sNewLine + json_analyst.getJSONValue("counter4");
-        final String sLamp5Name = json_analyst.getJSONValue("preset5_name") + sNewLine + json_analyst.getJSONValue("counter5");
-        final String sLamp6Name = json_analyst.getJSONValue("preset6_name") + sNewLine + json_analyst.getJSONValue("counter6");
+        final String sLamp1Name = json_analyst.getJSONValue("preset1_name");
+        final String sLamp2Name = json_analyst.getJSONValue("preset2_name");
+        final String sLamp3Name = json_analyst.getJSONValue("preset3_name");
+        final String sLamp4Name = json_analyst.getJSONValue("preset4_name");
+        final String sLamp5Name = json_analyst.getJSONValue("preset5_name");
+        final String sLamp6Name = json_analyst.getJSONValue("preset6_name");
 
         //final String sLamp4Name = extractJSONvalue("", "lamp4_name");
 
-        setLampName(1, sLamp1Name);
-        setLampName(2, sLamp2Name);
-        setLampName(3, sLamp3Name);
-        setLampName(4, sLamp4Name);
-        setLampName(5, sLamp5Name);
-        setLampName(6, sLamp6Name);
-        //setLampName(4, sLamp4Name);
+        setLampName(1, sLamp1Name, sLamp1Counter);
+        setLampName(2, sLamp2Name, sLamp2Counter);
+        setLampName(3, sLamp3Name, sLamp3Counter);
+        setLampName(4, sLamp4Name, sLamp4Counter);
+        setLampName(5, sLamp5Name, sLamp5Counter);
+        setLampName(6, sLamp6Name, sLamp6Counter);
     }
 
-    public void setLampName(int i, String sName) {
+    public void setLampName(int i, String sLampName, String sCounter) {
         if (i == 1) {
-            if (sName.length() > 0) {
-                btnL1.setText(sName);
+            if (sLampName.length() > 0) {
+                btnL1.setText(sLampName + sNewLine + sCounter);
+                btnL1.setTag(sLampName);
             } else {
                 btnL1.setText(NO_PRESET_TEXT);
+                btnL1.setTag(NO_PRESET_TEXT);
             }
         } else if (i == 2) {
-            if (sName.length() > 0) {
-                btnL2.setText(sName);
+            if (sLampName.length() > 0) {
+                btnL2.setText(sLampName + sNewLine + sCounter);
+                btnL2.setTag(sLampName);
             } else {
                 btnL2.setText(NO_PRESET_TEXT);
+                btnL2.setTag(NO_PRESET_TEXT);
             }
         } else if (i == 3) {
-            if (sName.length() > 0) {
-                btnL3.setText(sName);
+            if (sLampName.length() > 0) {
+                btnL3.setText(sLampName + sNewLine + sCounter);
+                btnL3.setTag(sLampName);
             } else {
                 btnL3.setText(NO_PRESET_TEXT);
+                btnL3.setTag(NO_PRESET_TEXT);
             }
         } else if (i == 4) {
-            if (sName.length() > 0) {
-                btnL4.setText(sName);
+            if (sLampName.length() > 0) {
+                btnL4.setText(sLampName + sNewLine + sCounter);
+                btnL4.setTag(sLampName);
             } else {
                 btnL4.setText(NO_PRESET_TEXT);
+                btnL4.setTag(NO_PRESET_TEXT);
             }
         } else if (i == 5) {
-            if (sName.length() > 0) {
-                btnL5.setText(sName);
+            if (sLampName.length() > 0) {
+                btnL5.setText(sLampName + sNewLine + sCounter);
+                btnL5.setTag(sLampName);
             } else {
                 btnL5.setText(NO_PRESET_TEXT);
+                btnL5.setTag(NO_PRESET_TEXT);
             }
         } else if (i == 6) {
-            if (sName.length() > 0) {
-                btnL6.setText(sName);
+            if (sLampName.length() > 0) {
+                btnL6.setText(sLampName + sNewLine + sCounter);
+                btnL6.setTag(sLampName);
             } else {
                 btnL6.setText(NO_PRESET_TEXT);
+                btnL6.setTag(NO_PRESET_TEXT);
             }
         }
 
