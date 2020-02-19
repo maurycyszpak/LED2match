@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -49,7 +50,9 @@ public class TRSRecertificationPage extends Activity {
 
     private Handler lclHandler;
     private UsbCOMMsService lclUsbServiceInstance;
+    private BtCOMMsService lclBTServiceInstance;
     boolean mBound = false;
+    boolean mBoundBT = false;
     final Context context = this;
 
 
@@ -70,6 +73,22 @@ public class TRSRecertificationPage extends Activity {
         }
     };
 
+    private ServiceConnection btConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            BtCOMMsService.MyBinder binder = (BtCOMMsService.MyBinder) service;
+            lclBTServiceInstance = binder.getService();
+            mBoundBT = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBoundBT = false;
+        }
+    };
+
     protected void onResume()
     {
         super.onResume();
@@ -79,6 +98,15 @@ public class TRSRecertificationPage extends Activity {
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
             //Toast.makeText(this.getBaseContext(),"Service bound (onResume)", Toast.LENGTH_SHORT).show();
             mBound = true;
+        }
+
+        if (!mBoundBT) {
+            Intent intent = new Intent(this, BtCOMMsService.class);
+            bindService(intent, btConnection, Context.BIND_AUTO_CREATE);
+            //Toast.makeText(this.getBaseContext(),"Service bound (onResume)", Toast.LENGTH_SHORT).show();
+
+            SystemClock.sleep(50);
+            mBoundBT = true;
         }
 
         //populateLampsState();
@@ -376,6 +404,14 @@ public class TRSRecertificationPage extends Activity {
             editor.apply();
             Log.d(TAG, "DAC value of '" + value + "' stored in prefs file");
             makeToast( "DAC value of '" + value + "' successfully stored.");
+            String sCommand = "M" + value + "$" + newLine;
+            if (mBoundBT) {
+                Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
+                lclBTServiceInstance.sendData(sCommand);
+            } else {
+                Log.d(TAG, "Service btService not connected when sending message: '" + sCommand + "'");
+            }
+            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
         }
 
         EditText ed_amps = findViewById(R.id.edit_PSU_current);
@@ -411,11 +447,11 @@ public class TRSRecertificationPage extends Activity {
     }
 
     private void readPSUpower() {
-        EditText edit_dac = findViewById(R.id.edit_PSU_current);
+        EditText edit_psu = findViewById(R.id.edit_PSU_current);
         SharedPreferences spFile = getSharedPreferences(PREFS_PSU_CURRENT, 0);
         Integer value = spFile.getInt("psu_max_power", 0);
         if (value > 0) {
-            edit_dac.setText(String.valueOf(value));
+            edit_psu.setText(String.valueOf(value));
         }
     }
 
