@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 buildscript {
-    ext.kotlin_version = '1.3.10'
+    ext.kotlin_version = '1.3.50'
     repositories {
         google()
         jcenter()
@@ -21,8 +21,8 @@ android {
         applicationId "com.kiand.LED2match"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 102
-        versionName "1.01"
+        //versionCode 102
+        //versionName "1.01"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }

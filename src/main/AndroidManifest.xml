@@ -5,6 +5,7 @@
     android:versionCode="502"
     android:versionName="5.0">
 
+
     <uses-feature
         android:name="android.hardware.usb.host"
         android:required="true" />
