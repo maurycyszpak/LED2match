@@ -39,6 +39,9 @@ Donec semper sagittis tellus, id molestie quam suscipit sit amet. Aenean posuere
 \n\n\n\n\n\n\n
     </string>
     <string name="unitycolor_led_light_label">UnityColor (R) LED Light Control System</string>
+    <string name="light_power_warning">Selected light drains circa %light_power% A\nSelected power supply handles: %psu_current% A\n\nDecrease the light intensity or set the power of PSU to higher on the Recertification Page.</string>
+
+
 
 
 </resources>

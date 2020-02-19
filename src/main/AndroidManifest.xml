@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.kiand.LED2match"
     android:versionCode="502"
-    android:versionName="3.2">
+    android:versionName="5.0">
+
 
     <uses-feature
         android:name="android.hardware.usb.host"

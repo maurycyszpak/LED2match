@@ -49,6 +49,7 @@ import static com.kiand.LED2match.BtCOMMsService.BT_CONNECTED_PREFS;
 import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 import static com.kiand.LED2match.LightAdjustments.TOAST_MESSAGE;
 import static com.kiand.LED2match.LightAdjustments.sNewLine;
+import static com.kiand.LED2match.TRSRecertificationPage.PREFS_PSU_CURRENT;
 import static com.kiand.LED2match.TRSSequence.SP_LAMP_TIMERS;
 
 public class TRSDigitalPanel extends Activity {
@@ -473,11 +474,7 @@ public class TRSDigitalPanel extends Activity {
 
     public boolean shared_prefs_exists(String sFileName, String sKey) {
         SharedPreferences spFile = getSharedPreferences(sFileName, 0);
-        if (spFile.contains(sKey)) {
-            return true;
-        } else {
-            return false;
-        }
+        return spFile.contains(sKey);
     }
 
     public void repopulate_button_assignments() {
@@ -804,6 +801,7 @@ public class TRSDigitalPanel extends Activity {
         }
 
         BL_LOW_MODE = false;
+        Log.d(TAG, "switching off LOW mode - shouldn't happen, this function is redundant");
 
         switch (v.getId()) {
             case R.id.btnL1:
@@ -814,7 +812,7 @@ public class TRSDigitalPanel extends Activity {
 
                         if (btnL1.getText().toString().equalsIgnoreCase("UV")) {
                             //complementary light - keep current on and add UV definition for non-zeros - when switching ON UV mode. Otherwise switch off additional lamps
-                            sCommand = "P" + convertRGB2complementaryLight(sPresetRGBValues, (BL_UV_MODE ? false : true));
+                            sCommand = "P" + convertRGB2complementaryLight(sPresetRGBValues, (!BL_UV_MODE));
                             sCommand += "$" + newLine;
                             if (mBoundBT) {
                                 Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
@@ -1171,6 +1169,154 @@ public class TRSDigitalPanel extends Activity {
                 break;
         }
     }
+
+    private void send_via_bt(String command) {
+        if (mBoundBT) {
+            Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + command.replace("\n", "\\n").replace("\r", "\\r") + "'");
+            lclBTServiceInstance.sendData(command);
+        } else {
+            Log.d(TAG, "Service btService not connected!");
+        }
+    }
+
+    public void btnClicked2(View v) {
+        SharedPreferences spLampDefinitions = getSharedPreferences(SHAREDPREFS_LAMP_DEFINITIONS, 0);
+        String sPresetRGBValues;
+        String sCommand;
+
+        String buttonCaption = v.getTag().toString();
+        if (!TextUtils.isEmpty(buttonCaption)) {
+            if (!buttonCaption.equalsIgnoreCase("LOW") && !buttonCaption.equalsIgnoreCase("UV")) {
+                Log.d(TAG, "switching off all lamps");
+                switch_all_off();
+            }
+        }
+
+        int buttonID = v.getId();
+        Button button = findViewById(buttonID);
+
+        /* scenarios:
+        1. "clean" execution - switch on lamp
+        2. "clean" execution - special lamp - UV
+        3. "clean" execution - special lamp - TL84
+        4. "clean" execution - special lamp - LOW
+        5. a lamp is already on - special lamp - UV
+        6. a lamp is already on - special lamp - TL84
+        7. a lamp is already on - special lamp - LOW on
+        8. a lamp is already on - special lamp - LOW off
+         */
+
+
+        if (spLampDefinitions.contains(button.getText().toString())) {
+            sPresetRGBValues = spLampDefinitions.getString(button.getText().toString(), null);
+
+            if (!power_drain_check(sPresetRGBValues)) {
+                return;
+            }
+            Log.d(TAG, "sending " + sPresetRGBValues + " to controller");
+            if (sPresetRGBValues != null) {
+
+                if (button.getText().toString().equalsIgnoreCase("UV")) {
+                    //complementary light - keep current on and add UV definition for non-zeros - when switching ON UV mode. Otherwise switch off additional lamps
+                    sCommand = "P" + convertRGB2complementaryLight(sPresetRGBValues, (!BL_UV_MODE));
+                    sCommand += "$" + newLine;
+                    send_via_bt(sCommand);
+                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+
+                    sCommand = "B," + btnL1.getTag().toString() + (BL_UV_MODE ? 0 : 1) + "$" + newLine;
+                    send_via_bt(sCommand);
+                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+
+                    BL_UV_MODE = !BL_UV_MODE;
+                    String s = (BL_UV_MODE ? "active" : "inactive");
+                    Log.d(TAG, "UV mode - " + s);
+                    if (BL_UV_MODE) {
+                        button.setBackgroundResource(R.drawable.buttonselector_active);
+                        button.setTextColor(Color.BLACK);
+                    } else {
+                        button.setBackgroundResource(R.drawable.buttonselector_main);
+                        button.setTextColor(Color.WHITE);
+                    }
+
+
+                } else {
+                    if (!BL_LOW_MODE) {
+                        Log.d(TAG, "I'm not in LOW mode");
+
+                        if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
+                            sCommand = "S11100" + newLine;
+                            send_via_bt(sCommand);
+                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                            blTL84_ON = true;
+                        } else {
+                            sCommand = "S11000" + newLine;
+                            blTL84_ON = false;
+                            send_via_bt(sCommand);
+                        }
+
+                        sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
+                        sCommand += "$" + newLine;
+                        send_via_bt(sCommand);
+                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+
+                        sCommand = "B," + btnL1.getTag().toString() + "1$" + newLine;
+                        send_via_bt(sCommand);
+                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                    } else {
+                        //LOW MODE!
+                        /*SharedPreferences prefsLamps = getSharedPreferences(SHAREDPREFS_CURRENT_LAMPS, 0);
+                        Map<String, ?> keys = prefsLamps.getAll(); */
+                        Log.d (TAG, "LOW mode! Changing " + sPresetRGBValues + " to LOW values.");
+                        String[] sRGB_in = sPresetRGBValues.split(",");
+                        String[] sRGB_out = sRGB_in;
+                        for (int i = 0; i < sRGB_in.length; i++) {
+                            int iRGB = Integer.valueOf(sRGB_in[i]);
+                            iRGB /= (BL_LOW_MODE ? 2 : 1);
+                            sRGB_out[i] = String.valueOf(iRGB);
+                        }
+                        String concatValues = TextUtils.join(",", sRGB_out);
+                        String sHex = convertRGBwithCommasToHexString(concatValues);
+                        sCommand = "S" + sHex + "$" + newLine;
+                        send_via_bt(sCommand);
+                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                        Log.d(TAG, "I'm in LOW mode");
+                        Log.d(TAG, "Illuminating lamps with: " + sCommand);
+
+                        if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
+                            sCommand = "S11050" + newLine;
+                            send_via_bt(sCommand);
+                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                            blTL84_ON = true;
+                        } else {
+                            sCommand = "S11000" + newLine;
+                            blTL84_ON = false;
+                            send_via_bt(sCommand);
+                        }
+                    }
+
+                    button.setBackgroundResource(R.drawable.buttonselector_active);
+                    button.setTextColor(Color.BLACK);
+                }
+                if (buttonID == R.id.btnL1) {
+                    blLamp1_ON = true;
+                } else if (buttonID == R.id.btnL2) {
+                    blLamp2_ON = true;
+                } else if (buttonID == R.id.btnL3) {
+                    blLamp3_ON = true;
+                } else if (buttonID == R.id.btnL4) {
+                    blLamp4_ON = true;
+                } else if (buttonID == R.id.btnL5) {
+                    blLamp5_ON = true;
+                } else if (buttonID == R.id.btnL6) {
+                    blLamp6_ON = true;
+                }
+                updateLampValue(sPresetRGBValues);
+            }
+        } else {
+            makeToast("No lamp preset assigned to this button!");
+        }
+    }
+
     public String convertRGB2complementaryLight(String sRGB, boolean ON) {
         String sValue = "";
 
@@ -1203,6 +1349,51 @@ public class TRSDigitalPanel extends Activity {
         return sValue;
     }
 
+    private Boolean power_drain_check(String sPresetRGBValues) {
+        Integer light_power = check_light_power(convertRGBwithCommasToHexString(sPresetRGBValues));
+        Integer max_power = get_max_power();
+
+        if (light_power/100 > max_power/100) {
+            String toast = getString(R.string.light_power_warning);
+            toast = toast.replace("%light_power%", String.format(Locale.US, "%.1f", light_power/1000.0));
+            toast = toast.replace("%psu_current%", String.format(Locale.US, "%.1f", max_power/1000.0));
+            //makeToast(toast);
+            display_popup_message("Power drain warning!", toast);
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private Integer check_light_power(String sPresetRGBValues) {
+        Integer iPower = 0;
+        while (!TextUtils.isEmpty(sPresetRGBValues)) {
+            //Log.d (TAG, "checking light power of: " + sPresetRGBValues + ". Power so far: " + iPower);
+            int iDecimal = Integer.parseInt(sPresetRGBValues.substring(0, 2), 16);
+            //Log.d (TAG, iDecimal + " / 255 * 170 = " + 1500 * iDecimal / 255);
+            iPower += (int)Math.round(1500 * iDecimal / 255);
+            sPresetRGBValues = sPresetRGBValues.substring(2);
+        }
+        Log.d (TAG, "No more preset light to check. Overall light power is: " + iPower);
+        return iPower;
+    }
+
+    private Integer get_max_power() {
+        SharedPreferences spFile = getSharedPreferences(PREFS_PSU_CURRENT, 0);
+        Integer iPower = spFile.getInt("psu_current", 0) * 1000;
+        Log.d (TAG, "Max power for this PSU is " + iPower);
+        return iPower;
+    }
+
+    private void display_popup_message(String title, String message) {
+
+        AlertDialog dlg = new AlertDialog.Builder(this).create();
+        dlg.setTitle(title);
+        dlg.setMessage(message);
+        dlg.setIcon(R.drawable.icon_main);
+        dlg.show();
+    }
+
     public void switch_all_off() {
         blLamp1_ON = false;
         btnL1.setBackgroundResource(R.drawable.buttonselector_main);
@@ -1226,11 +1417,16 @@ public class TRSDigitalPanel extends Activity {
         btnL7.setBackgroundResource(R.drawable.buttonselector_main);
         btnL7.setTextColor(Color.WHITE);
 
-        btnLOW.setBackgroundResource(R.drawable.buttonselector_low);
-        btnLOW.setTextColor(Color.WHITE);
+        /*btnLOW.setBackgroundResource(R.drawable.buttonselector_low);
+        btnLOW.setTextColor(Color.WHITE);*/
 
         btnL9.setBackgroundResource(R.drawable.buttonselector_main);
         btnL9.setTextColor(Color.WHITE);
+    }
+
+    public void buttonOFF(View v) {
+        BL_LOW_MODE = false;
+        allOFF(v);
     }
 
     public void allOFF(View v) {
@@ -1255,8 +1451,13 @@ public class TRSDigitalPanel extends Activity {
         btnL6.setTextColor(Color.WHITE);
 
         //blLamp9_ON = true;
-        btnL9.setBackgroundResource(R.drawable.buttonselector_active);
-        btnL9.setTextColor(Color.BLACK);
+        if (!BL_LOW_MODE) {
+            btnL9.setBackgroundResource(R.drawable.buttonselector_active);
+            btnL9.setTextColor(Color.BLACK);
+
+            btnLOW.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_low));
+            btnLOW.setTextColor(Color.WHITE);
+        }
 
         blTL84_ON = false;
         String sCommand = "";
@@ -1270,10 +1471,6 @@ public class TRSDigitalPanel extends Activity {
             Log.d(TAG, "Service btService not connected!");
         }
         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-
-        btnLOW.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_low));
-        btnLOW.setTextColor(Color.WHITE);
-        BL_LOW_MODE = false;
         BL_UV_MODE = false;
         sCommand= "B,OFF1$" + newLine;
         lclBTServiceInstance.sendData(sCommand);
@@ -1708,7 +1905,7 @@ public class TRSDigitalPanel extends Activity {
     public void updateLampValue (String sCommand) {
         SharedPreferences prefsCurrentState = getSharedPreferences(SHAREDPREFS_CURRENT_LAMPS, 0);
         SharedPreferences.Editor editor = prefsCurrentState.edit();
-        List<String> RGBValues = Arrays.asList(sCommand.split(","));
+        String[] RGBValues = sCommand.split(",");
         Map<String, String> map = new HashMap<>();
         int i = 1;
         for (String RGB : RGBValues) {
@@ -1733,7 +1930,7 @@ public class TRSDigitalPanel extends Activity {
             if (!BL_LOW_MODE) {
                 String sCommand = "S11050" + newLine;
                 if (mBoundBT) {
-                    Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
+                    Log.d(TAG, "LOW function - Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
                     lclBTServiceInstance.sendData(sCommand);
                 } else {
                     Log.d(TAG, "Service btService not connected!");
@@ -1780,11 +1977,9 @@ public class TRSDigitalPanel extends Activity {
         ArrayList<String> concatValues = new ArrayList<>();
         for (Map.Entry<String, String> entry : sorted.entrySet()) {
             concatValues.add(entry.getValue());
-            //rduiLog.d (TAG, "sortedLOW: " + entry.getKey() + ", " + entry.getValue());
         }
 
         String sHex = convertRGBwithCommasToHexString(TextUtils.join(",", concatValues));
-        //String sCommand = "S" + entry.getKey() + String.format("%03d", iRGB) + newLine;
         sCommand = "S" + sHex + "$" + newLine;
         Log.d("MORRIS-TRSDIGITAL", "btnLOW: sending command:" + sCommand);
         lclBTServiceInstance.sendData(sCommand);
