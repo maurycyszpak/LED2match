@@ -1702,7 +1702,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 	}
 
 	public void sendDataOverSerial(String data) {
-		Log.d (TAG, "sendDataOverSerial: '" + data + "'");
+		Log.d (TAG, "sendDataOverSerial: '" + data.replaceAll("\r", "").replaceAll("\n", "") + "'");
 		if (usbService != null) {
 			//display.append(" >> " + data);
 			usbService.write(data.getBytes());
@@ -2173,7 +2173,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 			AlertDialog alertD = alertDialogBuilder.create();
 			alertD.show();
 		} else {
-			Toast.makeText(this, "openDialog: Please connect to the RGB LED first.", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "goto_recertification: Please connect to the RGB LED first.", Toast.LENGTH_SHORT).show();
 		}
 	}
 	@Override

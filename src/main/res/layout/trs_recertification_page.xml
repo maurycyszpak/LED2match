@@ -18,7 +18,7 @@
             android:text="Reset operating hours:"
             android:layout_marginLeft="@dimen/main_screen_sidemargin"
             android:layout_marginRight="@dimen/main_screen_sidemargin"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:textSize="15sp"
 
             />
@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:baselineAligned="false"
                 >
 
@@ -320,12 +320,11 @@
                 android:layout_gravity="right|end"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_marginBottom="20dp"
-                android:baselineAligned="false"
-
+                android:layout_marginBottom="10dp"
                 >
 
                 <Button
+                    android:id="@+id/lightsettings"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
@@ -350,6 +349,21 @@
                     android:text="SAVE"
                     android:textSize="@dimen/button_text_size"
                     android:onClick="saveSettings"
+                    />
+
+                <Button
+                    android:id="@+id/btnFactoryReset"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/lightsettings"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignEnd="@+id/lightsettings"
+                    android:layout_marginTop="2dp"
+                    android:text="Factory reset"
+                    android:textSize="@dimen/button_text_size"
+                    android:onClick="factoryReset"
+                    android:backgroundTint="@color/red_slider"
+                    android:textColor="@color/white"
                     />
 
             </RelativeLayout>

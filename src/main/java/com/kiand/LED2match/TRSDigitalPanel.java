@@ -26,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -282,6 +283,7 @@ public class TRSDigitalPanel extends Activity {
             repopulate_button_assignments();
             Log.d(TAG, "Repopulating button captions");
         } else {
+            Log.d(TAG, "Key 666 not found. Populating button names from JSON");
             populateButtonNames();
         }
 
@@ -331,6 +333,8 @@ public class TRSDigitalPanel extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         //Toast.makeText(this.getBaseContext(),"Main activity destroyed", Toast.LENGTH_SHORT).show();
+        mark_BT_disconnected();
+
 
     }
 
@@ -453,6 +457,25 @@ public class TRSDigitalPanel extends Activity {
 
     }
 
+    public void mark_BT_connnected() {
+        SharedPreferences prefs = getSharedPreferences(BT_CONNECTED_PREFS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor spEditor = prefs.edit();
+
+        spEditor.clear();
+        spEditor.putBoolean("CONNECTED", true);
+        spEditor.apply();
+        Log.d(TAG, "BT connection marked as true in the sp file");
+    }
+
+    public void mark_BT_disconnected() {
+        SharedPreferences prefs = getSharedPreferences(BT_CONNECTED_PREFS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor spEditor = prefs.edit();
+        spEditor.clear();
+        spEditor.putBoolean("CONNECTED", false);
+        spEditor.apply();
+        Log.d(TAG, "BT connection marked as false in the sp file");
+    }
+
     public void toggle_usb_icon(View view) {
         usb_conn_indicator.getLayoutParams().height= ICON_HEIGHT;
         usb_conn_indicator.requestLayout();
@@ -474,6 +497,7 @@ public class TRSDigitalPanel extends Activity {
 
     public boolean shared_prefs_exists(String sFileName, String sKey) {
         SharedPreferences spFile = getSharedPreferences(sFileName, 0);
+        Log.d(TAG, "Shared_prefs_exists (" + sFileName+ "): " + spFile.contains(sKey));
         return spFile.contains(sKey);
     }
 
@@ -1317,6 +1341,12 @@ public class TRSDigitalPanel extends Activity {
         }
     }
 
+    private void TL84_OFF() {
+        String sCommand = "S11000" + newLine;
+        blTL84_ON = false;
+        send_via_bt(sCommand);
+    }
+
     public String convertRGB2complementaryLight(String sRGB, boolean ON) {
         String sValue = "";
 
@@ -1460,22 +1490,15 @@ public class TRSDigitalPanel extends Activity {
         }
 
         blTL84_ON = false;
-        String sCommand = "";
-        sCommand = "S00000000000000000000";
-        sCommand += "$" + newLine;
-        //if (btService.connected) {
-        if (mBoundBT) {
-            Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-            lclBTServiceInstance.sendData(sCommand);
-        } else {
-            Log.d(TAG, "Service btService not connected!");
-        }
+        String sCommand = "S00000000000000000000$" + newLine;
+        send_via_bt(sCommand);
+
         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
         BL_UV_MODE = false;
         sCommand= "B,OFF1$" + newLine;
-        lclBTServiceInstance.sendData(sCommand);
+        send_via_bt(sCommand);
         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-
+        TL84_OFF();
         updateLampValue("000,000,000,000,000,000,000,000,000,000");
     }
 
@@ -1629,7 +1652,7 @@ public class TRSDigitalPanel extends Activity {
 
             case 6:
                 //Recertification page
-                openDialog(null);
+                goto_recertification(null);
                 //startActivity(intent9);
                 break;
 
@@ -1637,7 +1660,7 @@ public class TRSDigitalPanel extends Activity {
         return true;
     }
 
-    public void openDialog(final View view) {
+    public void goto_recertification(final View view) {
 
         if (BtCore.Connected() || true) {
             LayoutInflater layoutInflater = LayoutInflater.from(context);
@@ -1647,6 +1670,7 @@ public class TRSDigitalPanel extends Activity {
             // set prompts.xml to be the layout file of the alertdialog builder
             alertDialogBuilder.setView(promptView);
             final EditText edtInput = promptView.findViewById(R.id.passInput);
+
 
             // setup a dialog window
             alertDialogBuilder
@@ -1688,8 +1712,10 @@ public class TRSDigitalPanel extends Activity {
             // create an alert dialog
             AlertDialog alertD = alertDialogBuilder.create();
             alertD.show();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(edtInput, InputMethodManager.SHOW_IMPLICIT);
         } else {
-            Toast.makeText(this, "openDialog: Please connect to the RGB LED first.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "goto_recertification: Please connect to the RGB LED first.", Toast.LENGTH_SHORT).show();
         }
     }
 
