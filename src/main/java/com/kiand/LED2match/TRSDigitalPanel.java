@@ -1247,7 +1247,8 @@ public class TRSDigitalPanel extends Activity {
                     send_via_bt(sCommand);
                     lclUsbServiceInstance.sendBytes(sCommand.getBytes());
 
-                    sCommand = "B," + btnL1.getTag().toString() + (BL_UV_MODE ? 0 : 1) + "$" + newLine;
+                    sCommand = "B," + button.getTag().toString() + (BL_UV_MODE ? 0 : 1) + "$" + newLine;
+                    Log.d(TAG, "sendviabt ** B command with tag: "+ button.getTag().toString() + " text: " + button.getText());
                     send_via_bt(sCommand);
                     lclUsbServiceInstance.sendBytes(sCommand.getBytes());
 
@@ -1283,7 +1284,7 @@ public class TRSDigitalPanel extends Activity {
                         send_via_bt(sCommand);
                         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
 
-                        sCommand = "B," + btnL1.getTag().toString() + "1$" + newLine;
+                        sCommand = "B," + button.getTag().toString() + "1$" + newLine;
                         send_via_bt(sCommand);
                         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                     } else {
@@ -1400,8 +1401,10 @@ public class TRSDigitalPanel extends Activity {
         while (!TextUtils.isEmpty(sPresetRGBValues)) {
             //Log.d (TAG, "checking light power of: " + sPresetRGBValues + ". Power so far: " + iPower);
             int iDecimal = Integer.parseInt(sPresetRGBValues.substring(0, 2), 16);
-            //Log.d (TAG, iDecimal + " / 255 * 170 = " + 1500 * iDecimal / 255);
-            iPower += (int)Math.round(1500 * iDecimal / 255);
+
+            //iPower += (int)Math.round(1500 * iDecimal / 255);
+            iPower += (int)Math.round(1000 * iDecimal / 210);
+            Log.d (TAG, iDecimal + " / 210 = " + (int)Math.round(1000 * iDecimal / 210) + " mA");
             sPresetRGBValues = sPresetRGBValues.substring(2);
         }
         Log.d (TAG, "No more preset light to check. Overall light power is: " + iPower);
