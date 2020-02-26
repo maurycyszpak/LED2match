@@ -17,6 +17,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -31,9 +32,12 @@ public class TRSSettings extends Activity implements ServiceConnection {
 
     public static final String SHAREDPREFS_ONE_OFF_SEEKBARS = "one-off-seekbar-values.txt"; //Mauricio
     public static final String TIME_OFF_STORAGE = "shutdown__timer"; //Mauricio
+    public static final String CONFIG_SETTINGS = "config_settings";
     public static final String newLine = System.getProperty("line.separator");
 
-    boolean blLamp1_ON, blLamp2_ON, blLamp3_ON, blLamp4_ON, blLamp5_ON, blLamp6_ON;
+    public static final String TL84_DELAY_KEY = "TL884_delay";
+    public static final int TL84_DELAY_DEFAULT = 600;
+
     Button btnSave;
     Switch aSwitch;
 
@@ -52,6 +56,7 @@ public class TRSSettings extends Activity implements ServiceConnection {
 
     EditText editOff_h;
     EditText editOff_m;
+    EditText edit_TL84_delay;
 
 
 
@@ -147,6 +152,7 @@ public class TRSSettings extends Activity implements ServiceConnection {
 
         editOff_h = findViewById(R.id.editAutoShutOFF_h);
         editOff_m = findViewById(R.id.editAutoShutOFF_m);
+        edit_TL84_delay = findViewById(R.id.edit_TL84_delay);
 
         if (!mBound) {
             Intent intent = new Intent(this, UsbCOMMsService.class);
@@ -173,20 +179,30 @@ public class TRSSettings extends Activity implements ServiceConnection {
             editOff_m.setText(String.valueOf(check_for_shutdown_timer_m()));
         }
 
-
+        int delay = check_for_TL84_delay();
+        if (delay > 0) {
+            edit_TL84_delay.setText(String.valueOf(check_for_TL84_delay()));
+        } else {
+            edit_TL84_delay.setText(String.valueOf(TL84_DELAY_DEFAULT));
+        }
     }
+
 
     int check_for_shutdown_timer_h() {
         SharedPreferences prefs = getSharedPreferences(TIME_OFF_STORAGE, 0);
         return prefs.getInt("hours", 0);
-
-
     }
 
     int check_for_shutdown_timer_m() {
         SharedPreferences prefs = getSharedPreferences(TIME_OFF_STORAGE, 0);
         return prefs.getInt("minutes", 0);
     }
+
+    int check_for_TL84_delay() {
+        SharedPreferences prefs = getSharedPreferences(CONFIG_SETTINGS, 0);
+        return prefs.getInt(TL84_DELAY_KEY, 0);
+    }
+
 
     @Override
     protected void onStart() {
@@ -241,7 +257,7 @@ public class TRSSettings extends Activity implements ServiceConnection {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.trs_blower_page);
+        setContentView(R.layout.trs_settings);
 
         //editOff_h = findViewById(R.id.editAutoShutOFF_h);
         //editOff_m = findViewById(R.id.editAutoShutOFF_m);
@@ -300,8 +316,6 @@ public class TRSSettings extends Activity implements ServiceConnection {
                         }
                     }
                 });
-
-        //populateButtonNames();
 
         setFiltersBT();
         setFiltersBTdevice();
@@ -374,19 +388,48 @@ public class TRSSettings extends Activity implements ServiceConnection {
         return false;
     }
 
-    public void saveSettings(View v) {
+    boolean validate_tl84_delay(Integer value) {
+        if (value > 0 && value < 4000) {
+            return true;
+        }
+        return false;
+    }
 
+    public void saveSettings(View v) {
+        EditText edit_bltl84delay = findViewById(R.id.edit_TL84_delay);
+        boolean bl_edit_tl84delay = false;
         Log.d(TAG, "Entering function saveSettings.");
         int iHours = 0, iMinutes = 0;
         if (editOff_h.getText().toString().isEmpty()) { iHours = 0; } else { iHours = Integer.valueOf(editOff_h.getText().toString()); }
         if (editOff_m.getText().toString().isEmpty()) { iMinutes = 0; } else { iMinutes = Integer.valueOf(editOff_m.getText().toString()); }
 
+        SharedPreferences prefs_config = getSharedPreferences(CONFIG_SETTINGS, 0);
         SharedPreferences prefs = getSharedPreferences(TIME_OFF_STORAGE, 0);
         SharedPreferences.Editor editor = prefs.edit();
         editor.clear();
         editor.putInt("hours", iHours);
         editor.putInt("minutes", iMinutes);
         editor.apply();
+
+        if (!TextUtils.isEmpty(edit_bltl84delay.getText().toString())) {
+            if (!validate_tl84_delay(Integer.valueOf(edit_TL84_delay.getText().toString()))) {
+                makeToast("NO BUENO");
+                bl_edit_tl84delay = false;
+            } else {
+                bl_edit_tl84delay = true;
+            }
+        }
+
+
+
+
+        if (bl_edit_tl84delay) {
+            SharedPreferences.Editor edit_config = prefs_config.edit();
+            edit_config.remove(TL84_DELAY_KEY);
+            edit_config.putInt(TL84_DELAY_KEY, Integer.valueOf(edit_bltl84delay.getText().toString()));
+            edit_config.apply();
+            makeToast("TL84 delay of " + edit_bltl84delay.getText().toString() + "ms stored in the config file.");
+        }
 
         Long lTimeToOFF = (long) (iHours * 60 * 60 + iMinutes * 60);
         if (lTimeToOFF > 0) {

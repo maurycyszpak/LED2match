@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TRSSequence">
+    tools:context=".TRSSettings">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -42,7 +42,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:layout_weight="3"
+                    android:layout_weight="@dimen/settings_pg_label_width"
                     android:gravity="right|center_vertical"
                     android:text="Blower on"
                     android:textSize="@dimen/button_text_size" />
@@ -54,7 +54,7 @@
                     android:layout_marginEnd="@dimen/button_margin"
                     android:textSize="@dimen/button_text_size"
                     android:gravity="center"
-                    android:layout_weight="1"
+                    android:layout_weight="@dimen/settings_pg_value_width"
                     android:maxLines="1"
                     android:singleLine="true"
                     />
@@ -63,7 +63,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:layout_weight="1"
+                    android:layout_weight="0.16"
                     android:gravity="center"
                     android:text="° C"
                     android:textSize="@dimen/button_text_size" />
@@ -85,8 +85,8 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:layout_weight="3"
-                    android:gravity="right|center_vertical"
+                    android:layout_weight="@dimen/settings_pg_label_width"
+                    android:gravity="end|center_vertical"
                     android:text="Blower off"
                     android:textSize="@dimen/button_text_size" />
 
@@ -97,7 +97,7 @@
                     android:layout_marginEnd="@dimen/button_margin"
                     android:textSize="@dimen/button_text_size"
                     android:gravity="center"
-                    android:layout_weight="1"
+                    android:layout_weight="@dimen/settings_pg_value_width"
                     android:maxLines="1"
                     android:singleLine="true"
                     />
@@ -106,7 +106,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:layout_weight="1"
+                    android:layout_weight="0.16"
                     android:gravity="center"
                     android:text="° C"
                     android:textSize="@dimen/button_text_size" />
@@ -128,8 +128,8 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:layout_weight="3"
-                    android:gravity="right|center_vertical"
+                    android:layout_weight="@dimen/settings_pg_label_width"
+                    android:gravity="end|center_vertical"
                     android:text="Blower installed"
                     android:textSize="@dimen/button_text_size" />
 
@@ -137,7 +137,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:layout_weight="1"
+                    android:layout_weight="@dimen/settings_pg_value_width"
                     android:gravity="center"
                     android:text="NO"
                     android:textSize="@dimen/button_text_size" />
@@ -147,7 +147,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:layout_weight="1"
+                    android:layout_weight="0.16"
                     android:gravity="center"
                     android:textSize="@dimen/button_text_size" />
 
@@ -169,28 +169,32 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:layout_weight="3"
-                    android:gravity="center"
+                    android:layout_weight="@dimen/settings_pg_label_width"
+                    android:gravity="end|center_vertical"
                     android:text="TL84 delay"
                     android:textSize="@dimen/button_text_size" />
 
                 <EditText
+                    android:id="@+id/edit_TL84_delay"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="600"
+                    android:text=""
+                    android:hint="100 - 1200"
                     android:layout_marginEnd="@dimen/button_margin"
                     android:textSize="@dimen/button_text_size"
                     android:gravity="center"
-                    android:layout_weight="2"
+                    android:layout_weight="@dimen/settings_pg_value_width"
                     android:maxLines="1"
                     android:singleLine="true"
+                    android:digits="0123456789"
+                    android:inputType="numberDecimal"
                     />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:layout_weight="1"
+                    android:layout_weight="0.14"
                     android:gravity="center"
                     android:text="ms"
                     android:textSize="@dimen/button_text_size" />
@@ -212,8 +216,8 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:layout_weight="13"
-                    android:gravity="center"
+                    android:layout_weight="@dimen/settings_pg_label_width"
+                    android:gravity="end|center_vertical"
                     android:text="Auto shut off"
                     android:textSize="@dimen/button_text_size" />
 
@@ -222,7 +226,7 @@
                     android:layout_width="0dp"
                     android:layout_height="fill_parent"
                     android:layout_marginEnd="0dp"
-                    android:layout_weight="4"
+                    android:layout_weight="0.16"
                     android:gravity="center"
                     android:maxLines="1"
                     android:singleLine="true"
@@ -235,7 +239,7 @@
                     android:layout_height="fill_parent"
                     android:layout_marginEnd="1dp"
                     android:layout_marginStart="1dp"
-                    android:layout_weight="1"
+                    android:layout_weight="0.06"
                     android:gravity="center"
                     android:maxLines="1"
                     android:singleLine="true"
@@ -247,7 +251,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:layout_weight="4"
+                    android:layout_weight="0.16"
                     android:gravity="center"
                     android:maxLines="1"
                     android:singleLine="true"
@@ -259,7 +263,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:layout_weight="4"
+                    android:layout_weight="0.14"
                     android:gravity="center"
                     android:text="h"
                     android:textSize="@dimen/button_text_size" />
@@ -280,9 +284,9 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:layout_weight="3"
-                    android:gravity="center"
-                    android:text="Bluetooth connected"
+                    android:layout_weight="@dimen/settings_pg_label_width"
+                    android:gravity="end|center_vertical"
+                    android:text="Connect BT"
                     android:textSize="@dimen/button_text_size" />
 
                 <Switch
@@ -294,7 +298,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     android:text=""
                     android:textSize="@dimen/button_text_size"
-                    android:layout_weight="1"
+                    android:layout_weight="@dimen/settings_pg_value_width"
                     android:layout_gravity="left|center_vertical"
                     android:theme="@style/MySwitch"
                     />
@@ -302,7 +306,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:layout_weight="1"
+                    android:layout_weight="0.16"
                     android:gravity="center"
                     android:text=""
                     android:visibility="invisible"
