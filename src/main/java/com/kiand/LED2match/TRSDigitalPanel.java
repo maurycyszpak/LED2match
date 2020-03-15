@@ -52,12 +52,14 @@ import static com.kiand.LED2match.LightAdjustments.TOAST_MESSAGE;
 import static com.kiand.LED2match.LightAdjustments.sNewLine;
 import static com.kiand.LED2match.TRSRecertificationPage.PREFS_PSU_CURRENT;
 import static com.kiand.LED2match.TRSSequence.SP_LAMP_TIMERS;
+import static com.kiand.LED2match.TRSSettings.TL84_DELAY_KEY;
 
 public class TRSDigitalPanel extends Activity {
 
     public static final String TAG = "morris-TRSDigitalPanel";
     public static final String SHAREDPREFS_CURRENT_LAMPS= "lamps_current_values"; //Mauricio
     public static final String SHAREDPREFS_LAMP_DEFINITIONS = "presets_definition"; //Mauricio
+    public static final String CONFIG_SETTINGS = "config_settings";
     public String S_CURRENT_SEQ_ITEM = "";
     public boolean BL_LOW_MODE = false;
     public boolean BL_UV_MODE = false;
@@ -808,6 +810,12 @@ public class TRSDigitalPanel extends Activity {
         }
 
     }
+    public String get_tl84_delay() {
+        SharedPreferences config_prefs = getSharedPreferences(CONFIG_SETTINGS, 0);
+        Log.d(TAG, " ** TL84_delay from file: " + String.format(Locale.US, "%04d", config_prefs.getInt(TL84_DELAY_KEY, 0)));
+        return String.format(Locale.US, "%04d", config_prefs.getInt(TL84_DELAY_KEY, 0));
+
+    }
 
     public void btnClicked(View v) {
 
@@ -1269,7 +1277,8 @@ public class TRSDigitalPanel extends Activity {
                         Log.d(TAG, "I'm not in LOW mode");
 
                         if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
-                            sCommand = "S11100" + newLine;
+                            get_tl84_delay();
+                            sCommand = "S11100" + get_tl84_delay() + "$" + newLine;
                             send_via_bt(sCommand);
                             lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                             blTL84_ON = true;
@@ -1308,7 +1317,7 @@ public class TRSDigitalPanel extends Activity {
                         Log.d(TAG, "Illuminating lamps with: " + sCommand);
 
                         if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
-                            sCommand = "S11050" + newLine;
+                            sCommand = "S11050" + get_tl84_delay() + "$" + newLine;
                             send_via_bt(sCommand);
                             lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                             blTL84_ON = true;
@@ -1404,7 +1413,7 @@ public class TRSDigitalPanel extends Activity {
 
             //iPower += (int)Math.round(1500 * iDecimal / 255);
             iPower += (int)Math.round(1000 * iDecimal / 210);
-            Log.d (TAG, iDecimal + " / 210 = " + (int)Math.round(1000 * iDecimal / 210) + " mA");
+            //Log.d (TAG, iDecimal + " / 210 = " + (int)Math.round(1000 * iDecimal / 210) + " mA");
             sPresetRGBValues = sPresetRGBValues.substring(2);
         }
         Log.d (TAG, "No more preset light to check. Overall light power is: " + iPower);

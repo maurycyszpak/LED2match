@@ -275,9 +275,20 @@ public class TRSSequence extends Activity {
             return true;
         });
 
-        //populateButtonNames();
-        repopulate_button_assignments();
+        if (shared_prefs_exists(SHAREDPREFS_LAMP_ASSIGNMENTS, "666")) {
+            repopulate_button_assignments();
+            Log.d(TAG, "Repopulating button captions");
+        } else {
+            Log.d(TAG, "Key 666 not found. Populating button names from JSON");
+            populateButtonNames();
+        }
         invokeLampSequence();
+    }
+
+    public boolean shared_prefs_exists(String sFileName, String sKey) {
+        SharedPreferences spFile = getSharedPreferences(sFileName, 0);
+        Log.d(TAG, "Shared_prefs_exists (" + sFileName+ "): " + spFile.contains(sKey));
+        return spFile.contains(sKey);
     }
 
     public void writeSequenceToFile(String sLampName, Integer iTimeToDisplay, String seq_id) {
@@ -380,7 +391,7 @@ public class TRSSequence extends Activity {
         Toast.makeText(this, "Sequence data stored on mobile device.\nPress PRG on main panel to run", Toast.LENGTH_SHORT).show();
     }
 
-    /*public void populateButtonNames() {
+    public void populateButtonNames() {
         //String sUnitName = "";
         SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
         JSON_analyst json_analyst = new JSON_analyst(spFile);
@@ -398,7 +409,7 @@ public class TRSSequence extends Activity {
         setLampName(4, sLamp4Name);
         setLampName(5, sLamp5Name);
         setLampName(6, sLamp6Name);
-    }*/
+    }
 
     public void repopulate_button_assignments() {
         SharedPreferences myPrefs = this.getSharedPreferences(SHAREDPREFS_LAMP_ASSIGNMENTS, 0);
