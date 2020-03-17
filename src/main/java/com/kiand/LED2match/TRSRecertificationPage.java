@@ -440,8 +440,8 @@ public class TRSRecertificationPage extends Activity {
         }
 
         value = Integer.valueOf(ed_amps.getText().toString());
-        if (value < 1 || value > 5) {
-            makeToast("Power supply max current should be between 1 and 5 amps.");
+        if (value < 1 || value > 120) {
+            makeToast("Power supply max current should be between 1 and 120 amps.");
             return;
         } else {
             SharedPreferences spFile = getSharedPreferences(PREFS_PSU_CURRENT, 0);

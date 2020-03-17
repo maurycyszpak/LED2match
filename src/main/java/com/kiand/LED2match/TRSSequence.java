@@ -29,6 +29,7 @@ import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_CONTROLLER_FILEIM
 import static com.kiand.LED2match.LightAdjustments.sNewLine;
 import static com.kiand.LED2match.TRSDigitalPanel.NO_PRESET_TEXT;
 import static com.kiand.LED2match.TRSDigitalPanel.SHAREDPREFS_LAMP_ASSIGNMENTS;
+import static com.kiand.LED2match.TRSDigitalPanel.TL84_TAG;
 
 
 public class TRSSequence extends Activity {
@@ -317,6 +318,38 @@ public class TRSSequence extends Activity {
         }
     }*/
 
+    public void resetSequenceCommand(View v) {
+        SharedPreferences spLampTimers = getSharedPreferences(SP_LAMP_TIMERS, 0);
+        SharedPreferences.Editor editor = spLampTimers.edit();
+        editor.clear();
+        editor.apply();
+
+        btnL1.setBackgroundResource(R.drawable.buttonselector_main);
+        btnL1.setTextColor(Color.WHITE);
+        btnL1.setText(btnL1.getTag().toString());
+
+        btnL2.setBackgroundResource(R.drawable.buttonselector_main);
+        btnL2.setTextColor(Color.WHITE);
+        btnL2.setText(btnL2.getTag().toString());
+
+        btnL3.setBackgroundResource(R.drawable.buttonselector_main);
+        btnL3.setTextColor(Color.WHITE);
+        btnL3.setText(btnL3.getTag().toString());
+
+        btnL4.setBackgroundResource(R.drawable.buttonselector_main);
+        btnL4.setTextColor(Color.WHITE);
+        btnL4.setText(btnL4.getTag().toString());
+
+        btnL5.setBackgroundResource(R.drawable.buttonselector_main);
+        btnL5.setTextColor(Color.WHITE);
+        btnL5.setText(btnL5.getTag().toString());
+
+        btnL6.setBackgroundResource(R.drawable.buttonselector_main);
+        btnL6.setTextColor(Color.WHITE);
+        btnL6.setText(btnL6.getTag().toString());
+
+        btn1Timer = btn2Timer = btn3Timer = btn4Timer = btn5Timer = btn6Timer = 0;
+    }
     public void generateSequenceCommand(View v) {
 
         Date dteNow = new Date();
@@ -367,26 +400,6 @@ public class TRSSequence extends Activity {
             sPresetName = json_analyst.getJSONValue("preset6_name");
             writeSequenceToFile(sPresetName, Integer.valueOf(sLamp6Timers), "6");
         }
-        //Toast.makeText(this, "SEQ data sent to controller.\nPress Execute to run", Toast.LENGTH_SHORT).show();
-        //iterate over the file and remove presets that don't exist in the presets definition any more
-        /*SharedPreferences prefsPresets = getSharedPreferences(PRESETS_DEFINITION, 0);
-        ArrayList<String> listPresets = new ArrayList<>();
-        Map<String, ?> allEntries = prefsPresets.getAll();
-        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-            listPresets.add(entry.getKey());
-        }
-
-        SharedPreferences prefsSequenceFile = getSharedPreferences(SP_SEQUENCE_COMMAND_GENERATE, 0);
-        SharedPreferences.Editor editor = prefsSequenceFile.edit();
-        //ArrayList<String> listSequenceFile = new ArrayList<>();
-        Map<String, ?> sequenceFileAll = prefsSequenceFile.getAll();
-        for (Map.Entry<String, ?> entry : sequenceFileAll.entrySet()) {
-            if (!listPresets.contains(entry.getKey().toUpperCase())) {
-                Log.d(TAG, "'" + entry.getKey().toUpperCase() + "' not found in the presets definition file. Taking out from the sequence_command_generate.");
-                editor.remove(entry.getKey());
-            }
-        }
-        editor.apply();*/
 
         Toast.makeText(this, "Sequence data stored on mobile device.\nPress PRG on main panel to run", Toast.LENGTH_SHORT).show();
     }
@@ -652,8 +665,14 @@ public class TRSSequence extends Activity {
                     sButtonCaption = sButtonCaption + sNewLine + btn1Timer*5 + " sec";
                     sHEX = getRGBValues(btnL1.getTag().toString());
                     sHEX = sHEX.concat(String.format("%04d", (btn1Timer*5)));
+                    int i_flag_TL84 = 0;
+                    if (btnL1.getTag().toString().equalsIgnoreCase(TL84_TAG)) {
+                        i_flag_TL84 = 1;
+                    }
+
                     //makeToast(sHEX);
-                    updateLampHEXsequence(btnL1.getTag().toString(), System.currentTimeMillis() + "," + sHEX);
+                    updateLampHEXsequence(btnL1.getTag().toString(), System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
+                    //updateLampHEXsequence("lamp1_timer", System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
 
                     btnL1.setText(sButtonCaption);
                 }
@@ -672,7 +691,12 @@ public class TRSSequence extends Activity {
 
                     sHEX = getRGBValues(btnL2.getTag().toString());
                     sHEX = sHEX.concat(String.format("%04d", (btn2Timer * 5)));
-                    updateLampHEXsequence(btnL2.getTag().toString(), System.currentTimeMillis() + "," + sHEX);
+                    int i_flag_TL84 = 0;
+                    if (btnL2.getTag().toString().equalsIgnoreCase(TL84_TAG)) {
+                        i_flag_TL84 = 1;
+                    }
+                    updateLampHEXsequence(btnL2.getTag().toString(), System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
+                    //updateLampHEXsequence("lamp2_timer", System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
 
                     btnL2.setText(sButtonCaption);
                 }
@@ -688,7 +712,12 @@ public class TRSSequence extends Activity {
 
                     sHEX = getRGBValues(btnL3.getTag().toString());
                     sHEX = sHEX.concat(String.format("%04d", (btn3Timer * 5)));
-                    updateLampHEXsequence(btnL3.getTag().toString(), System.currentTimeMillis() + "," + sHEX);
+                    int i_flag_TL84 = 0;
+                    if (btnL3.getTag().toString().equalsIgnoreCase(TL84_TAG)) {
+                        i_flag_TL84 = 1;
+                    }
+                    updateLampHEXsequence(btnL3.getTag().toString(), System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
+                    //updateLampHEXsequence("lamp3_timer", System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
 
                     sButtonCaption = btnL3.getTag().toString();
                     sButtonCaption = sButtonCaption + sNewLine + btn3Timer * 5 + " sec";
@@ -707,7 +736,12 @@ public class TRSSequence extends Activity {
 
                     sHEX = getRGBValues(btnL4.getTag().toString());
                     sHEX = sHEX.concat(String.format("%04d", (btn4Timer * 5)));
-                    updateLampHEXsequence(btnL4.getTag().toString(), System.currentTimeMillis() + "," + sHEX);
+                    int i_flag_TL84 = 0;
+                    if (btnL4.getTag().toString().equalsIgnoreCase(TL84_TAG)) {
+                        i_flag_TL84 = 1;
+                    }
+                    updateLampHEXsequence(btnL4.getTag().toString(), System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
+                    //updateLampHEXsequence("lamp4_timer", System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
 
                     sButtonCaption = btnL4.getTag().toString();
                     sButtonCaption = sButtonCaption + sNewLine + btn4Timer * 5 + " sec";
@@ -726,7 +760,12 @@ public class TRSSequence extends Activity {
 
                     sHEX = getRGBValues(btnL5.getTag().toString());
                     sHEX = sHEX.concat(String.format("%04d", (btn5Timer * 5)));
-                    updateLampHEXsequence(btnL5.getTag().toString(), System.currentTimeMillis() + "," + sHEX);
+                    int i_flag_TL84 = 0;
+                    if (btnL5.getTag().toString().equalsIgnoreCase(TL84_TAG)) {
+                        i_flag_TL84 = 1;
+                    }
+                    updateLampHEXsequence(btnL5.getTag().toString(), System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
+                    //updateLampHEXsequence("lamp5_timer", System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
 
                     sButtonCaption = btnL5.getTag().toString();
                     sButtonCaption = sButtonCaption + sNewLine + btn5Timer * 5 + " sec";
@@ -746,7 +785,12 @@ public class TRSSequence extends Activity {
 
                     sHEX = getRGBValues(btnL6.getTag().toString());
                     sHEX = sHEX.concat(String.format("%04d", (btn6Timer * 5)));
-                    updateLampHEXsequence(btnL6.getTag().toString(), System.currentTimeMillis() + "," + sHEX);
+                    int i_flag_TL84 = 0;
+                    if (btnL6.getTag().toString().equalsIgnoreCase(TL84_TAG)) {
+                        i_flag_TL84 = 1;
+                    }
+                    updateLampHEXsequence(btnL6.getTag().toString(), System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
+                    //updateLampHEXsequence("lamp6_timer", System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
 
                     sButtonCaption = btnL6.getTag().toString();
                     sButtonCaption = sButtonCaption + sNewLine + btn6Timer * 5 + " sec";

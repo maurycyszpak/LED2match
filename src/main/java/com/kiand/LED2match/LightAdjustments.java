@@ -1341,29 +1341,29 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 				currentFileContent += "|" + SystemClock.elapsedRealtime() + "-" + edGreen.getText().toString();
 				writeData(findViewById(R.id.wrap_content), factorFileName, currentFileContent);
 			} else {
-				writeData(findViewById(R.id.wrap_content), factorFileName, String.valueOf(SystemClock.elapsedRealtime()) + "-" + edGreen.getText().toString());
+				writeData(findViewById(R.id.wrap_content), factorFileName, SystemClock.elapsedRealtime() + "-" + edGreen.getText().toString());
 			}
 
 			factorFileName = "hts-chrono1.BLUEfactor";
 			file = getApplicationContext().getFileStreamPath(factorFileName);
 			if (file.exists()) {
 				String currentFileContent = readData(findViewById(R.id.wrap_content), factorFileName);
-				currentFileContent += "|" + String.valueOf(SystemClock.elapsedRealtime()) + "-" + edBlue.getText().toString();
+				currentFileContent += "|" + SystemClock.elapsedRealtime() + "-" + edBlue.getText().toString();
 				writeData(findViewById(R.id.wrap_content), factorFileName, currentFileContent);
 				currentFileContent = readData(findViewById(R.id.wrap_content), factorFileName);
 			} else {
-				writeData(findViewById(R.id.wrap_content), factorFileName, String.valueOf(SystemClock.elapsedRealtime()) + "-" + edBlue.getText().toString());
+				writeData(findViewById(R.id.wrap_content), factorFileName, SystemClock.elapsedRealtime() + "-" + edBlue.getText().toString());
 			}
 
 			factorFileName = "hts-chrono1.WHITEfactor";
 			file = getApplicationContext().getFileStreamPath(factorFileName);
 			if (file.exists()) {
 				String currentFileContent = readData(findViewById(R.id.wrap_content), factorFileName);
-				currentFileContent += "|" + String.valueOf(SystemClock.elapsedRealtime()) + "-" + edWhite.getText().toString();
+				currentFileContent += "|" + SystemClock.elapsedRealtime() + "-" + edWhite.getText().toString();
 				writeData(findViewById(R.id.wrap_content), factorFileName, currentFileContent);
 				currentFileContent = readData(findViewById(R.id.wrap_content), factorFileName);
 			} else {
-				writeData(findViewById(R.id.wrap_content), factorFileName, String.valueOf(SystemClock.elapsedRealtime()) + "-" + edWhite.getText().toString());
+				writeData(findViewById(R.id.wrap_content), factorFileName, SystemClock.elapsedRealtime() + "-" + edWhite.getText().toString());
 			}
 		});
 	}
@@ -1474,7 +1474,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 				spsEditor.putLong("timestamp", lMillisEpoch);
 				spsEditor.apply();
 
-				makeToast("Current lamp state read.\nTimestamp: " + String.valueOf(timestamp));
+				makeToast("Current lamp state read.\nTimestamp: " + timestamp);
 
 			} else if ((sDataArray[0]).equals("FILE")) {
 				//process the reply for 'FILE'
@@ -1511,7 +1511,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 				spsEditor.putString("JSON", sTemp);
 				spsEditor.putLong("timestamp", lMillisEpoch);
 				spsEditor.apply();
-				makeToast("Data from controller refreshed.\nTimestamp: " + String.valueOf(timestamp));
+				makeToast("Data from controller refreshed.\nTimestamp: " + timestamp);
 
 			} else if ((sDataArray[0]).equals("J")) {
 
@@ -1838,11 +1838,55 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 
 	private Integer check_light_power(String sPresetRGBValues) {
 		Integer iPower = 0;
+		Integer i = 0;
+        /*"Assign specific power drain to indidual LEDs:
+        Each Count 255:
+
+        1.LED65 1.44A
+        2.LED50 1.44A
+        3.LED27 1.48A
+        4.Red 1.0A
+        5.Green 0.88A
+        6.Blue  0.86A
+        7.White 1.04A
+        8.UVA 0.98A
+        9.385 0.83A
+        10.420 0.78A"*/
+
 		while (!TextUtils.isEmpty(sPresetRGBValues)) {
 			//Log.d (TAG, "checking light power of: " + sPresetRGBValues + ". Power so far: " + iPower);
 			int iDecimal = Integer.parseInt(sPresetRGBValues.substring(0, 2), 16);
-			//Log.d (TAG, iDecimal + " / 255 * 170 = " + 1500 * iDecimal / 255);
-			iPower += (int)Math.round(1500 * iDecimal / 255);
+			i++;
+
+			if (i==1 || i ==2) {
+				int iFullPower = 1440;
+				iPower += (int)Math.round((1.0 * iDecimal / 255)*iFullPower);
+			} else if (i==3) {
+				int iFullPower = 1480;
+				iPower += (int)Math.round((1.0 * iDecimal / 255)*iFullPower);
+			} else if (i==4) {
+				int iFullPower = 1000;
+				iPower += (int)Math.round((1.0 * iDecimal / 255)*iFullPower);
+			} else if (i==5) {
+				int iFullPower = 880;
+				iPower += (int)Math.round((1.0 * iDecimal / 255)*iFullPower);
+			} else if (i==6) {
+				int iFullPower = 860;
+				iPower += (int)Math.round((1.0 * iDecimal / 255)*iFullPower);
+			} else if (i==7) {
+				int iFullPower = 1040;
+				iPower += (int)Math.round((1.0 * iDecimal / 255)*iFullPower);
+			} else if (i==8) {
+				int iFullPower = 980;
+				iPower += (int)Math.round((1.0 * iDecimal / 255)*iFullPower);
+			} else if (i==9) {
+				int iFullPower = 830;
+				iPower += (int)Math.round((1.0 * iDecimal / 255)*iFullPower);
+			} else if (i==10) {
+				int iFullPower = 780;
+				iPower += (int)Math.round((1.0 * iDecimal / 255)*iFullPower);
+			}
+			//Log.d (TAG, iDecimal + " / 210 = " + (int)Math.round(1000 * iDecimal / 210) + " mA");
 			sPresetRGBValues = sPresetRGBValues.substring(2);
 		}
 		Log.d (TAG, "No more preset light to check. Overall light power is: " + iPower);
@@ -2135,7 +2179,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 
 			// set prompts.xml to be the layout file of the alertdialog builder
 			alertDialogBuilder.setView(promptView);
-			final EditText edtInput = (EditText) promptView.findViewById(R.id.passInput);
+			final EditText edtInput = promptView.findViewById(R.id.passInput);
 
 			// setup a dialog window
 			alertDialogBuilder
@@ -2738,9 +2782,9 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 				int seconds = (int) (millis/1000);
 			});
 		}
-	};
+	}
 
-	public class MyRunnable implements Runnable {
+    public class MyRunnable implements Runnable {
 		public MyRunnable(String parameter) {
 		}
 

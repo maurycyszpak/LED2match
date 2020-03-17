@@ -1407,12 +1407,54 @@ public class TRSDigitalPanel extends Activity {
 
     private Integer check_light_power(String sPresetRGBValues) {
         Integer iPower = 0;
+        Integer i = 0;
+        /*"Assign specific power drain to indidual LEDs:
+        Each Count 255:
+
+        1.LED65 1.44A
+        2.LED50 1.44A
+        3.LED27 1.48A
+        4.Red 1.0A
+        5.Green 0.88A
+        6.Blue  0.86A
+        7.White 1.04A
+        8.UVA 0.98A
+        9.385 0.83A
+        10.420 0.78A"*/
+
         while (!TextUtils.isEmpty(sPresetRGBValues)) {
             //Log.d (TAG, "checking light power of: " + sPresetRGBValues + ". Power so far: " + iPower);
             int iDecimal = Integer.parseInt(sPresetRGBValues.substring(0, 2), 16);
+            i++;
 
-            //iPower += (int)Math.round(1500 * iDecimal / 255);
-            iPower += (int)Math.round(1000 * iDecimal / 210);
+            if (i==1 || i ==2) {
+                int iFullPower = 1440;
+                iPower += (int)Math.round((1.0 * iDecimal / 255)*iFullPower);
+            } else if (i==3) {
+                int iFullPower = 1480;
+                iPower += (int)Math.round((1.0 * iDecimal / 255)*iFullPower);
+            } else if (i==4) {
+                int iFullPower = 1000;
+                iPower += (int)Math.round((1.0 * iDecimal / 255)*iFullPower);
+            } else if (i==5) {
+                int iFullPower = 880;
+                iPower += (int)Math.round((1.0 * iDecimal / 255)*iFullPower);
+            } else if (i==6) {
+                int iFullPower = 860;
+                iPower += (int)Math.round((1.0 * iDecimal / 255)*iFullPower);
+            } else if (i==7) {
+                int iFullPower = 1040;
+                iPower += (int)Math.round((1.0 * iDecimal / 255)*iFullPower);
+            } else if (i==8) {
+                int iFullPower = 980;
+                iPower += (int)Math.round((1.0 * iDecimal / 255)*iFullPower);
+            } else if (i==9) {
+                int iFullPower = 830;
+                iPower += (int)Math.round((1.0 * iDecimal / 255)*iFullPower);
+            } else if (i==10) {
+                int iFullPower = 780;
+                iPower += (int)Math.round((1.0 * iDecimal / 255)*iFullPower);
+            }
             //Log.d (TAG, iDecimal + " / 210 = " + (int)Math.round(1000 * iDecimal / 210) + " mA");
             sPresetRGBValues = sPresetRGBValues.substring(2);
         }
