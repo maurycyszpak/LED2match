@@ -57,9 +57,7 @@ import static com.kiand.LED2match.TRSSettings.TL84_DELAY_KEY;
 public class TRSDigitalPanel extends Activity {
 
     public static final String TAG = "morris-TRSDigitalPanel";
-    public static final String SHAREDPREFS_CURRENT_LAMPS= "lamps_current_values"; //Mauricio
-    public static final String SHAREDPREFS_LAMP_DEFINITIONS = "presets_definition"; //Mauricio
-    public static final String CONFIG_SETTINGS = "config_settings";
+
     public String S_CURRENT_SEQ_ITEM = "";
     public boolean BL_LOW_MODE = false;
     public boolean BL_UV_MODE = false;
@@ -637,7 +635,7 @@ public class TRSDigitalPanel extends Activity {
         switch(index) {
             case 1:
                 if (!blLamp1_ON) {
-                    switch_all_off();
+                    mark_all_buttons_off_on_mobile();
                     blLamp1_ON = true;
                     btnL1.setBackgroundResource(R.drawable.buttonselector_active);
                     btnL1.setTextColor(Color.BLACK);
@@ -647,7 +645,7 @@ public class TRSDigitalPanel extends Activity {
 
             case 2:
                 if (!blLamp2_ON) {
-                    switch_all_off();
+                    mark_all_buttons_off_on_mobile();
                     blLamp2_ON = true;
                     btnL2.setBackgroundResource(R.drawable.buttonselector_active);
                     btnL2.setTextColor(Color.BLACK);
@@ -657,7 +655,7 @@ public class TRSDigitalPanel extends Activity {
 
             case 3:
                 if (!blLamp3_ON) {
-                    switch_all_off();
+                    mark_all_buttons_off_on_mobile();
                     blLamp3_ON = true;
                     btnL3.setBackgroundResource(R.drawable.buttonselector_active);
                     btnL3.setTextColor(Color.BLACK);
@@ -667,7 +665,7 @@ public class TRSDigitalPanel extends Activity {
 
             case 4:
                 if (!blLamp4_ON) {
-                    switch_all_off();
+                    mark_all_buttons_off_on_mobile();
                     blLamp4_ON = true;
                     btnL4.setBackgroundResource(R.drawable.buttonselector_active);
                     btnL4.setTextColor(Color.BLACK);
@@ -677,7 +675,7 @@ public class TRSDigitalPanel extends Activity {
 
             case 5:
                 if (!blLamp5_ON) {
-                    switch_all_off();
+                    mark_all_buttons_off_on_mobile();
                     blLamp5_ON = true;
                     btnL5.setBackgroundResource(R.drawable.buttonselector_active);
                     btnL5.setTextColor(Color.BLACK);
@@ -687,7 +685,7 @@ public class TRSDigitalPanel extends Activity {
 
             case 6:
                 if (!blLamp6_ON) {
-                    switch_all_off();
+                    mark_all_buttons_off_on_mobile();
                     blLamp6_ON = true;
                     btnL6.setBackgroundResource(R.drawable.buttonselector_active);
                     btnL6.setTextColor(Color.BLACK);
@@ -696,7 +694,7 @@ public class TRSDigitalPanel extends Activity {
                 break;
 
             case 7: //PRG
-                switch_all_off();
+                mark_all_buttons_off_on_mobile();
                 btnL7.setBackgroundResource(R.drawable.buttonselector_active);
                 btnL7.setTextColor(Color.BLACK);
                 makeToast("SEQUENCE switched on");
@@ -709,7 +707,7 @@ public class TRSDigitalPanel extends Activity {
                 break;
 
             case 9: //OFF
-                switch_all_off();
+                mark_all_buttons_off_on_mobile();
                 btnL9.setBackgroundResource(R.drawable.buttonselector_active);
                 btnL9.setTextColor(Color.BLACK);
                 makeToast("All lights switched off");
@@ -717,7 +715,7 @@ public class TRSDigitalPanel extends Activity {
 
             case 11:
                 if (!blTL84_ON) {
-                    switch_all_off();
+                    mark_all_buttons_off_on_mobile();
                     blTL84_ON = true;
                 }
 
@@ -811,7 +809,7 @@ public class TRSDigitalPanel extends Activity {
 
     }
     public String get_tl84_delay() {
-        SharedPreferences config_prefs = getSharedPreferences(CONFIG_SETTINGS, 0);
+        SharedPreferences config_prefs = getSharedPreferences(Constants.CONFIG_SETTINGS, 0);
         Log.d(TAG, " ** TL84_delay from file: " + String.format(Locale.US, "%04d", config_prefs.getInt(TL84_DELAY_KEY, 0)));
         return String.format(Locale.US, "%04d", config_prefs.getInt(TL84_DELAY_KEY, 0));
 
@@ -820,7 +818,7 @@ public class TRSDigitalPanel extends Activity {
     public void btnClicked(View v) {
 
         SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
-        SharedPreferences spLampDefinitions = getSharedPreferences(SHAREDPREFS_LAMP_DEFINITIONS, 0);
+        SharedPreferences spLampDefinitions = getSharedPreferences(Constants.SHAREDPREFS_LAMP_DEFINITIONS, 0);
         String sPresetRGBValues = "000,000,000,000,000,000,000,000,000,000";
         String sCommand = "";
         JSON_analyst json_analyst = new JSON_analyst(spFile);
@@ -828,7 +826,7 @@ public class TRSDigitalPanel extends Activity {
         String buttonCaption = v.getTag().toString();
         if (!TextUtils.isEmpty(buttonCaption)) {
             if (!buttonCaption.equalsIgnoreCase("LOW") && !buttonCaption.equalsIgnoreCase("UV")) {
-                switch_all_off();
+                mark_all_buttons_off_on_mobile();
             }
         }
 
@@ -1212,7 +1210,7 @@ public class TRSDigitalPanel extends Activity {
     }
 
     public void btnClicked2(View v) {
-        SharedPreferences spLampDefinitions = getSharedPreferences(SHAREDPREFS_LAMP_DEFINITIONS, 0);
+        SharedPreferences spLampDefinitions = getSharedPreferences(Constants.SHAREDPREFS_LAMP_DEFINITIONS, 0);
         String sPresetRGBValues;
         String sCommand;
 
@@ -1220,7 +1218,7 @@ public class TRSDigitalPanel extends Activity {
         if (!TextUtils.isEmpty(buttonCaption)) {
             if (!buttonCaption.equalsIgnoreCase("LOW") && !buttonCaption.equalsIgnoreCase("UV")) {
                 Log.d(TAG, "switching off all lamps");
-                switch_all_off();
+                mark_all_buttons_off_on_mobile();
             }
         }
 
@@ -1278,53 +1276,57 @@ public class TRSDigitalPanel extends Activity {
 
                         if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
                             get_tl84_delay();
-                            sCommand = "S11100" + get_tl84_delay() + "$" + newLine;
+                            sCommand = "S11100" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + newLine;
+                            Log.d(TAG, " *** NEW TL84 command (ON): " + sCommand);
                             send_via_bt(sCommand);
                             lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                             blTL84_ON = true;
                         } else {
-                            sCommand = "S11000" + newLine;
+                            sCommand = "S11000$" + newLine;
                             blTL84_ON = false;
                             send_via_bt(sCommand);
+                            sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
+                            sCommand += "$" + newLine;
+                            Log.d(TAG, " *** NEW TL84 command (OFF): " + sCommand);
+                            send_via_bt(sCommand);
+                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+
+                            sCommand = "B," + button.getTag().toString() + "1$" + newLine;
+                            send_via_bt(sCommand);
+                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                         }
-
-                        sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
-                        sCommand += "$" + newLine;
-                        send_via_bt(sCommand);
-                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-
-                        sCommand = "B," + button.getTag().toString() + "1$" + newLine;
-                        send_via_bt(sCommand);
-                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                     } else {
                         //LOW MODE!
                         /*SharedPreferences prefsLamps = getSharedPreferences(SHAREDPREFS_CURRENT_LAMPS, 0);
                         Map<String, ?> keys = prefsLamps.getAll(); */
                         Log.d (TAG, "LOW mode! Changing " + sPresetRGBValues + " to LOW values.");
-                        String[] sRGB_in = sPresetRGBValues.split(",");
-                        String[] sRGB_out = sRGB_in;
-                        for (int i = 0; i < sRGB_in.length; i++) {
-                            int iRGB = Integer.valueOf(sRGB_in[i]);
-                            iRGB /= (BL_LOW_MODE ? 2 : 1);
-                            sRGB_out[i] = String.valueOf(iRGB);
-                        }
-                        String concatValues = TextUtils.join(",", sRGB_out);
-                        String sHex = convertRGBwithCommasToHexString(concatValues);
-                        sCommand = "S" + sHex + "$" + newLine;
-                        send_via_bt(sCommand);
-                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                        Log.d(TAG, "I'm in LOW mode");
-                        Log.d(TAG, "Illuminating lamps with: " + sCommand);
+
 
                         if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
-                            sCommand = "S11050" + get_tl84_delay() + "$" + newLine;
+                            sCommand = "S11050" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + newLine;
+                            Log.d(TAG, " *** NEW TL84 command (LOW): " + sCommand);
                             send_via_bt(sCommand);
                             lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                             blTL84_ON = true;
                         } else {
-                            sCommand = "S11000" + newLine;
+                            sCommand = "S11000$" + newLine;
                             blTL84_ON = false;
+                            Log.d(TAG, " *** NEW TL84 command (OFF): " + sCommand);
                             send_via_bt(sCommand);
+                            String[] sRGB_in = sPresetRGBValues.split(",");
+                            String[] sRGB_out = sRGB_in;
+                            for (int i = 0; i < sRGB_in.length; i++) {
+                                int iRGB = Integer.valueOf(sRGB_in[i]);
+                                iRGB /= (BL_LOW_MODE ? 2 : 1);
+                                sRGB_out[i] = String.valueOf(iRGB);
+                            }
+                            String concatValues = TextUtils.join(",", sRGB_out);
+                            String sHex = convertRGBwithCommasToHexString(concatValues);
+                            sCommand = "S" + sHex + "$" + newLine;
+                            send_via_bt(sCommand);
+                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                            Log.d(TAG, "I'm in LOW mode");
+                            Log.d(TAG, "Illuminating lamps with: " + sCommand);
                         }
                     }
 
@@ -1352,7 +1354,7 @@ public class TRSDigitalPanel extends Activity {
     }
 
     private void TL84_OFF() {
-        String sCommand = "S11000" + newLine;
+        String sCommand = "S11000$" + newLine;
         blTL84_ON = false;
         send_via_bt(sCommand);
     }
@@ -1478,7 +1480,7 @@ public class TRSDigitalPanel extends Activity {
         dlg.show();
     }
 
-    public void switch_all_off() {
+    public void mark_all_buttons_off_on_mobile() {
         blLamp1_ON = false;
         btnL1.setBackgroundResource(R.drawable.buttonselector_main);
         btnL1.setTextColor(Color.WHITE);
@@ -1544,6 +1546,7 @@ public class TRSDigitalPanel extends Activity {
         }
 
         blTL84_ON = false;
+        TL84_OFF();
         String sCommand = "S00000000000000000000$" + newLine;
         send_via_bt(sCommand);
 
@@ -1552,7 +1555,7 @@ public class TRSDigitalPanel extends Activity {
         sCommand= "B,OFF1$" + newLine;
         send_via_bt(sCommand);
         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-        TL84_OFF();
+
         updateLampValue("000,000,000,000,000,000,000,000,000,000");
     }
 
@@ -1983,7 +1986,7 @@ public class TRSDigitalPanel extends Activity {
     }
 
     public void updateLampValue (String sCommand) {
-        SharedPreferences prefsCurrentState = getSharedPreferences(SHAREDPREFS_CURRENT_LAMPS, 0);
+        SharedPreferences prefsCurrentState = getSharedPreferences(Constants.SHAREDPREFS_CURRENT_LAMPS, 0);
         SharedPreferences.Editor editor = prefsCurrentState.edit();
         String[] RGBValues = sCommand.split(",");
         Map<String, String> map = new HashMap<>();
@@ -2005,10 +2008,12 @@ public class TRSDigitalPanel extends Activity {
     }
 
     public void btnLOW(View v) {
-
+        SharedPreferences spLampDefinitions = getSharedPreferences(Constants.SHAREDPREFS_LAMP_DEFINITIONS, 0);
         if (blTL84_ON) {
+            String sPresetRGBValues = spLampDefinitions.getString(Constants.TL84_TAG, null);
             if (!BL_LOW_MODE) {
-                String sCommand = "S11050" + newLine;
+
+                String sCommand = "S11050" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + newLine;
                 if (mBoundBT) {
                     Log.d(TAG, "LOW function - Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
                     lclBTServiceInstance.sendData(sCommand);
@@ -2020,7 +2025,7 @@ public class TRSDigitalPanel extends Activity {
                 lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                 blTL84_ON = true;
             } else {
-                String sCommand = "S11100" + newLine;
+                String sCommand = "S11100" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + newLine;
                 if (mBoundBT) {
                     Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
                     lclBTServiceInstance.sendData(sCommand);
@@ -2046,7 +2051,7 @@ public class TRSDigitalPanel extends Activity {
         String sCommand= "B,LOW" + (BL_LOW_MODE ? 0 : 1) + "$" + newLine;
         lclBTServiceInstance.sendData(sCommand);
         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-        SharedPreferences prefsLamps = getSharedPreferences(SHAREDPREFS_CURRENT_LAMPS, 0);
+        SharedPreferences prefsLamps = getSharedPreferences(Constants.SHAREDPREFS_CURRENT_LAMPS, 0);
         Map<String, ?> keys = prefsLamps.getAll();
         TreeMap<String, String> sorted = new TreeMap<>();
         for (Map.Entry<String, ?> entry : keys.entrySet()) {

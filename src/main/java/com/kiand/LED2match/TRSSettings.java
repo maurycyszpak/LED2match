@@ -324,12 +324,8 @@ public class TRSSettings extends Activity implements ServiceConnection {
     private boolean check_for_BT_connection() {
         SharedPreferences prefs = getSharedPreferences(BT_CONNECTED_PREFS, Context.MODE_PRIVATE);
 
-        if (prefs.getBoolean("CONNECTED", false)) {
-            return true;
-            //aSwitch.setChecked(true);
-        }
-
-        return false;
+        //aSwitch.setChecked(true);
+        return prefs.getBoolean("CONNECTED", false);
     }
 
     private void startBluetoothService() {
@@ -389,10 +385,7 @@ public class TRSSettings extends Activity implements ServiceConnection {
     }
 
     boolean validate_tl84_delay(Integer value) {
-        if (value > 0 && value < 4000) {
-            return true;
-        }
-        return false;
+        return value >= 100 && value <= 1200;
     }
 
     public void saveSettings(View v) {

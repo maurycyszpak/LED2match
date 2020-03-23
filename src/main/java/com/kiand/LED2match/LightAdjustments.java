@@ -73,7 +73,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import static com.kiand.LED2match.BtScannerActivity.BT_PREFS;
+import static com.kiand.LED2match.TRSDigitalPanel.newLine;
 import static com.kiand.LED2match.TRSRecertificationPage.PREFS_PSU_CURRENT;
+import static com.kiand.LED2match.TRSSettings.TL84_DELAY_KEY;
 
 public class LightAdjustments extends Activity implements ServiceConnection {
 
@@ -84,6 +86,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 	public static final String MSG_SET_SEEKBAR_PROGRESS = "custom-event-name";
     public static final String PRESETS_DEFINITION = "presets_definition"; //Mauricio
     public static final String SHAREDPREFS_UNITNAME = "unit_name";
+	//public static final String TL84_TAG = "TL84";
 
     Button startButton, stopButton;
 	private static final int MSG_SHOW_TOAST = 1;
@@ -176,7 +179,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
     };*/
 
 	private ProgressDialog dlgProgressSplash;
-	public Spinner spinnerPresets; // Mauricio
+	public Spinner spinner_control_preset_list; // Mauricio
 	public Button btnStore, btnRemove, btnRead; // Mauricio
 	private Button btnL1, btnL2, btnL3;
 	Button btnSend;
@@ -470,7 +473,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 		Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 	}
 
-	public void LEDoff(View v) {
+	public void switch_all_lights_off(View v) {
 		edRed.setText("0");
 		edGreen.setText("0");
 		edBlue.setText("0");
@@ -503,6 +506,17 @@ public class LightAdjustments extends Activity implements ServiceConnection {
             Log.d(TAG, "Service btService not connected!");
         }
         usbService.write(sCommand.getBytes());
+
+        //switch off TL84
+		sCommand = "S11000";
+		//if (btService.connected) {
+		if (mBoundBT) {
+			Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
+			lclBTServiceInstance.sendData(sCommand);
+		} else {
+			Log.d(TAG, "Service btService not connected!");
+		}
+		usbService.write(sCommand.getBytes());
 
     }
 
@@ -570,7 +584,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 		display = findViewById(R.id.textTestControl);
         display.setMovementMethod(new ScrollingMovementMethod());
 
-		spinnerPresets = findViewById(R.id.spinner2); // Mauricio
+		spinner_control_preset_list = findViewById(R.id.spinner2); // Mauricio
 		btnStore = findViewById(R.id.btnstore); // Mauricio
 		btnSend = findViewById(R.id.btnSend); // Mauricio
 		edtPresetName = findViewById(R.id.edtpresetname); //Mauricio
@@ -645,8 +659,8 @@ public class LightAdjustments extends Activity implements ServiceConnection {
         registerReceiver(broadcastReceiver, filter);*/
 		
 		spnPresetsAdapter = new ArrayAdapter<>(this, R.layout.spinner_row, spnPresetsArrayList); // Mauricio
-		spinnerPresets.setAdapter(spnPresetsAdapter); // Mauricio
-		spinnerPresets.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() { // Mauricio
+		spinner_control_preset_list.setAdapter(spnPresetsAdapter); // Mauricio
+		spinner_control_preset_list.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() { // Mauricio
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View view, int pos, long id) { // Mauricio
 				InputMethodManager inputManager = (InputMethodManager)
@@ -656,7 +670,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 				Log.d (TAG, "Executing spinnerPresets onItemSelectedListener. spnPresetsArrayList: " + spnPresetsArrayList.size());
 
 				if (spnPresetsArrayList.size() > 0) {
-					colorizeLayout214(spinnerPresets.getSelectedItem().toString() , PRESETS_DEFINITION);
+					colorizeLayout214(spinner_control_preset_list.getSelectedItem().toString() , PRESETS_DEFINITION);
 				}
 			}
 
@@ -1235,8 +1249,8 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 
 					blSilent = true;
 					if (spnPresetsArrayList.size() > 0) {
-						spinnerPresets.setSelection(0);
-						colorizeLayout214(spinnerPresets.getSelectedItem().toString(), PRESETS_DEFINITION);
+						spinner_control_preset_list.setSelection(0);
+						colorizeLayout214(spinner_control_preset_list.getSelectedItem().toString(), PRESETS_DEFINITION);
 					}
 					blSilent = false;
 
@@ -1266,10 +1280,10 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 					InputMethodManager.HIDE_NOT_ALWAYS);
 
 			String sPrefsKeyToBeDeleted = "";
-			if (spinnerPresets.getSelectedItem() == null) {
+			if (spinner_control_preset_list.getSelectedItem() == null) {
 				return;
 			}
-			sPrefsKeyToBeDeleted = spinnerPresets.getSelectedItem().toString();
+			sPrefsKeyToBeDeleted = spinner_control_preset_list.getSelectedItem().toString();
 
 			SharedPreferences prefs_presets = getSharedPreferences(PRESETS_DEFINITION, 0);
 			SharedPreferences spsValues_write = getSharedPreferences(APP_SHAREDPREFS_WRITE, 0);
@@ -1302,8 +1316,8 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 
 				blSilent = true;
 				if (spnPresetsArrayList.size()>0) {
-					spinnerPresets.setSelection(0);
-					colorizeLayout214(spinnerPresets.getSelectedItem().toString(), APP_SHAREDPREFS_READ);
+					spinner_control_preset_list.setSelection(0);
+					colorizeLayout214(spinner_control_preset_list.getSelectedItem().toString(), APP_SHAREDPREFS_READ);
 					//spnPresetsAdapter.notifyDataSetChanged(); // Mauricio - this might not be needed.
 				}
 				blSilent = false;
@@ -1810,6 +1824,22 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 			Log.d(TAG, "Service btService not connected!");
 		}
 		usbService.write(sCommand.getBytes());
+
+		//Check if the TL84 preset has been selected - if yes, switch on additional lamp (S11 command)
+		if (spinner_control_preset_list.getSelectedItem().toString().equalsIgnoreCase(Constants.TL84_TAG)) {
+			sCommand = "S11100";
+			sCommand = "S11100" + get_tl84_delay() + "$" + newLine;
+			//if (btService.connected) {
+			if (mBoundBT) {
+				Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
+				lclBTServiceInstance.sendData(sCommand);
+			} else {
+				Log.d(TAG, "Service btService not connected!");
+			}
+			usbService.write(sCommand.getBytes());
+		}
+
+
 		Toast.makeText(getBaseContext(), "Color applied!", Toast.LENGTH_SHORT).show();
 	}
 
@@ -1891,6 +1921,13 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 		}
 		Log.d (TAG, "No more preset light to check. Overall light power is: " + iPower);
 		return iPower;
+	}
+
+	public String get_tl84_delay() {
+		SharedPreferences config_prefs = getSharedPreferences(Constants.CONFIG_SETTINGS, 0);
+		Log.d(TAG, " ** TL84_delay from file: " + String.format(Locale.US, "%04d", config_prefs.getInt(TL84_DELAY_KEY, 0)));
+		return String.format(Locale.US, "%04d", config_prefs.getInt(TL84_DELAY_KEY, 0));
+
 	}
 
 	private Integer get_max_power() {

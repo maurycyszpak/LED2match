@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TRSSequence">
+    tools:context=".TRSLightOperatingHours">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -80,7 +80,6 @@
                     android:gravity="center"
                     android:text="A\n1540"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:onClick="btnClicked2"
                     android:layout_weight="4"
                     android:background="@android:color/transparent"
                     android:scaleType="fitCenter"
@@ -109,7 +108,6 @@
                     android:layout_height="@dimen/digital_panel_button_height"
                     android:gravity="center"
                     android:text="LED\n1540"
-                    android:onClick="btnClicked2"
                     android:layout_weight="4"
                     android:background="@android:color/transparent"
                     android:scaleType="fitCenter"
@@ -127,7 +125,6 @@
                     android:gravity="center"
                     android:text="TL84\n1540"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:onClick="btnClicked2"
                     android:layout_weight="4"
                     android:background="@android:color/transparent"
                     android:scaleType="fitCenter"
@@ -144,7 +141,6 @@
                     android:gravity="center"
                     android:text="UVA\n1540"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:onClick="btnClicked2"
                     android:layout_weight="4"
                     android:background="@android:color/transparent"
                     android:scaleType="fitCenter"

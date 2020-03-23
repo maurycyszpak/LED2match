@@ -119,7 +119,7 @@
                     android:layout_width="0px"
                     android:layout_height="@dimen/main_btn_height"
                     android:background="@drawable/buttonselector_main"
-                    android:onClick="LEDoff"
+                    android:onClick="switch_all_lights_off"
                     android:text="SWITCH ALL OFF"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
