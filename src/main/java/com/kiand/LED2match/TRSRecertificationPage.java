@@ -28,9 +28,6 @@ import android.widget.Toast;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_CONTROLLER_FILEIMAGE;
-import static com.kiand.LED2match.TRSDigitalPanel.SHAREDPREFS_LAMP_ASSIGNMENTS;
-
 public class TRSRecertificationPage extends Activity {
 
     public static final String SHAREDPREFS_ONE_OFF_SEEKBARS = "one-off-seekbar-values.txt"; //Mauricio
@@ -114,6 +111,8 @@ public class TRSRecertificationPage extends Activity {
         //populateLampsState();
         readDACvalue();
         readPSUpower();
+        //populateButtonNames();
+        repopulate_button_assignments();
     }
 
     @Override
@@ -171,8 +170,7 @@ public class TRSRecertificationPage extends Activity {
         btnL6.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_main));
         btnL6.setTextColor(Color.WHITE);
 
-        //populateButtonNames();
-        repopulate_button_assignments();
+
 
         btnL1.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -274,7 +272,7 @@ public class TRSRecertificationPage extends Activity {
     }
 
     public void repopulate_button_assignments() {
-        SharedPreferences myPrefs = this.getSharedPreferences(SHAREDPREFS_LAMP_ASSIGNMENTS, 0);
+        SharedPreferences myPrefs = this.getSharedPreferences(Constants.SHAREDPREFS_LAMP_ASSIGNMENTS, 0);
         TreeMap<String, ?> keys = new TreeMap<String, Object>(myPrefs.getAll());
 
         btnL1.setText(NO_PRESET_TEXT);
@@ -384,7 +382,7 @@ public class TRSRecertificationPage extends Activity {
 
     public void populateButtonNames() {
         //String sUnitName = "";
-        SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
         JSON_analyst json_analyst = new JSON_analyst(spFile);
 
         //Log.d(TAG, "bluetoothAskReply(V1)");

@@ -31,6 +31,7 @@ import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.AsyncTask;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -133,7 +134,6 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 	public static final String APP_SHAREDPREFS_READ = "EEPROM_PRESETS_read"; //Mauricio
 	public static final String APP_SHAREDPREFS_WRITE = "EEPROM_PRESETS_write"; //Mauricio
 	public static final String SHAREDPREFS_LED_TIMERS = "led_timers"; //Mauricio
-	public static final String SHAREDPREFS_CONTROLLER_FILEIMAGE = "LEDbar.json"; //Mauricio
 	public static final String SHAREDPREFS_LAMP_STATE = "current_lamps_state"; //Mauricio
 	public static final String SHAREDPREFS_COMMS_LOG = "serial_communication.txt"; //Mauricio
 	public static final String BTCOMMSLOG_SHAREDPREFS = "Controller-communication-log"; //Mauricio
@@ -1493,7 +1493,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 			} else if ((sDataArray[0]).equals("FILE")) {
 				//process the reply for 'FILE'
 				//makeToast("Processing preset response " + sReplyDataPart + ". Length: " + sDataArray.length);
-				SharedPreferences spsControllerData = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+				SharedPreferences spsControllerData = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
 				SharedPreferences.Editor spsEditor = spsControllerData.edit();
 				spsEditor.clear(); //Delete previous presets
 				spsEditor.apply();
@@ -1552,7 +1552,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 
     public String extractJSONvalue(String sJSONbody_ref, String sKeyScanned) {
 		String sReturn = "";
-		String sJSONbody = getJsonBody(SHAREDPREFS_CONTROLLER_FILEIMAGE);
+		String sJSONbody = getJsonBody(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE);
 		if (sJSONbody.length() == 0) {
 			return sReturn;
 		}
@@ -1684,7 +1684,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 		SharedPreferences.Editor spsEditor = spsPresets.edit();
 
 		spsEditor.clear();
-		String sJsonBody = getJsonBody(SHAREDPREFS_CONTROLLER_FILEIMAGE);
+		String sJsonBody = getJsonBody(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE);
 		String sValue = extractJSONvalue(sJsonBody, "preset_counter");
 		makeToast("preset_counter: " + sValue);
 
@@ -2313,8 +2313,8 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 
 	private void openJSONReport() {
 
-		String sJSONbody = getJsonBody(SHAREDPREFS_CONTROLLER_FILEIMAGE);
-		long lJSONFileTimestamp = getJsonBodyTimestamp(SHAREDPREFS_CONTROLLER_FILEIMAGE);
+		String sJSONbody = getJsonBody(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE);
+		long lJSONFileTimestamp = getJsonBodyTimestamp(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE);
 
 		Date date = new Date(lJSONFileTimestamp); // *1000 is to convert seconds to milliseconds
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm"); // the format of your date
@@ -2336,7 +2336,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 	}
 
 	public void btnClicked(View v) {
-		SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+		SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
 		String sPresetRGBValues = "000";
 		String sCommand = "";
 		JSON_analyst json_analyst = new JSON_analyst(spFile);

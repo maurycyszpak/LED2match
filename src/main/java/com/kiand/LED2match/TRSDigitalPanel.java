@@ -47,7 +47,7 @@ import java.util.TreeSet;
 
 import static com.kiand.LED2match.BtCOMMsService.SHAREDPREFS_UNITNAME;
 import static com.kiand.LED2match.BtCOMMsService.BT_CONNECTED_PREFS;
-import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_CONTROLLER_FILEIMAGE;
+import static com.kiand.LED2match.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 import static com.kiand.LED2match.LightAdjustments.TOAST_MESSAGE;
 import static com.kiand.LED2match.LightAdjustments.sNewLine;
 import static com.kiand.LED2match.TRSRecertificationPage.PREFS_PSU_CURRENT;
