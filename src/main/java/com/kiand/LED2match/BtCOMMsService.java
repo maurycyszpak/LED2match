@@ -33,7 +33,6 @@ import java.util.TreeMap;
 import java.util.UUID;
 import java.util.regex.PatternSyntaxException;
 
-import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_LAMP_STATE;
 import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_LED_TIMERS;
 import static com.kiand.LED2match.TRSDigitalPanel.SHAREDPREFS_LAMP_ASSIGNMENTS;
@@ -224,12 +223,12 @@ public class BtCOMMsService extends Service {
                 spsEditor.putString("LAMPS", sDataPart);
                 spsEditor.putLong("timestamp", lMillisEpoch);
                 spsEditor.apply();
-                makeToast("Current lamp state read.\nTimestamp: " + String.valueOf(timestamp));
+                makeToast("Current lamp state read.\nTimestamp: " + timestamp);
 
             } else if ((sDataArray[0]).equals("FILE")) {
                 //process the reply for 'FILE'
                 //makeToast("Processing preset response " + sReplyDataPart + ". Length: " + sDataArray.length);
-                SharedPreferences spsControllerData = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+                SharedPreferences spsControllerData = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
                 SharedPreferences.Editor spsEditor = spsControllerData.edit();
                 spsEditor.clear(); //Delete previous presets
                 spsEditor.apply();
@@ -543,7 +542,7 @@ public class BtCOMMsService extends Service {
             Log.d(TAG, "BT UUID : " + BTMODULEUUID);
             try {
                 temp = mmDevice.createRfcommSocketToServiceRecord(BTMODULEUUID);
-                temp = (BluetoothSocket) device.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(device,1);
+                temp = (BluetoothSocket) device.getClass().getMethod("createRfcommSocket", int.class).invoke(device,1);
                 Log.d(TAG, "SOCKET CREATED : " + temp.toString());
             } catch (IOException  | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 Log.d(TAG, "SOCKET CREATION FAILED :" + e.toString());

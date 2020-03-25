@@ -42,7 +42,6 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_LED_TIMERS;
 import static com.kiand.LED2match.LightAdjustments.bluetoothAskReply;
 //import static com.kiand.LED2match.LightAdjustments.sendDataOverSerialAsync;
@@ -95,9 +94,9 @@ public class ServicePageActivity extends Activity implements Serializable {
         setContentView(R.layout.activity_service);
         lclHandler = new Handler();
 
-        textViewDate = (TextView)findViewById(R.id.textViewDate);
-        edtUnitName = (EditText) findViewById(R.id.editTextUnitName);
-        spsFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, MODE_PRIVATE);
+        textViewDate = findViewById(R.id.textViewDate);
+        edtUnitName = findViewById(R.id.editTextUnitName);
+        spsFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, MODE_PRIVATE);
 
         textCounter1 = findViewById(R.id.textCounterLED1);
         textCounter2 = findViewById(R.id.textCounterLED2);
@@ -111,7 +110,7 @@ public class ServicePageActivity extends Activity implements Serializable {
         textCounter10 = findViewById(R.id.textCounterLED10);
 
 
-        spinLamps = (Spinner) findViewById(R.id.spinnerLamps); // Mauricio
+        spinLamps = findViewById(R.id.spinnerLamps); // Mauricio
         spinLampsAdapter = new ArrayAdapter<String>(ServicePageActivity.this, R.layout.spinner_row, spinLampsArrList); // Mauricio
         spinLampsArrList.clear();
         hmLamps.clear();
@@ -480,7 +479,7 @@ public class ServicePageActivity extends Activity implements Serializable {
 
         // set changelampname.xml to be the layout file of the alertdialog builder
         alertDialogBuilder.setView(lampNameView);
-        final EditText edtInput = (EditText) lampNameView.findViewById(R.id.newLampName);
+        final EditText edtInput = lampNameView.findViewById(R.id.newLampName);
 
 
         // setup a dialog window
@@ -537,16 +536,16 @@ public class ServicePageActivity extends Activity implements Serializable {
         //writeLampName(view, newLampName);
         //checkForNewLampName();
         Log.d(TAG, "changing lamp no " + iSpinLampCount + " to: " + newLampName);
-        String sLampNo = "0" + Integer.toString(iSpinLampCount);
+        String sLampNo = "0" + iSpinLampCount;
 
         String sReply = bluetoothAskReply("M" + sLampNo + "," + newLampName);
-        Toast.makeText(this, "Lamp " + Integer.toString(iSpinLampCount) + " renamed to '" + newLampName + "'.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Lamp " + iSpinLampCount + " renamed to '" + newLampName + "'.", Toast.LENGTH_SHORT).show();
     }
 
     public void updateLampNameSerial(View view, String newLampName) {
         int iResult = -1;
         Log.d(TAG, "changing lamp no " + iSpinLampCount + " to: " + newLampName);
-        String sLampNo = "0" + Integer.toString(iSpinLampCount);
+        String sLampNo = "0" + iSpinLampCount;
 
         String sCommand = "M" + sLampNo + "," + newLampName + sNewLine;
         //String sReply = bluetoothAskReply("M" + sLampNo + "," + newLampName);
@@ -561,7 +560,7 @@ public class ServicePageActivity extends Activity implements Serializable {
             Toast.makeText(this.getBaseContext(), "Stream was null, no request sent", Toast.LENGTH_SHORT).show();
         }
 
-        Toast.makeText(this, "Lamp " + Integer.toString(iSpinLampCount) + " renamed to '" + newLampName + "'.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Lamp " + iSpinLampCount + " renamed to '" + newLampName + "'.", Toast.LENGTH_SHORT).show();
         SystemClock.sleep(250);
 
         String sCommand2 = "F" + sNewLine;
@@ -597,10 +596,10 @@ public class ServicePageActivity extends Activity implements Serializable {
         //SystemClock.sleep(50);
         sWhite = bluetoothAskReply("w");
 
-        TextView txtCtrRED = (TextView) findViewById(textCounterLED1);
-        TextView txtCtrGREEN = (TextView) findViewById(R.id.textCounterLED2);
-        TextView txtCtrBLUE = (TextView) findViewById(R.id.textCounterLED3);
-        TextView txtCtrWHITE = (TextView) findViewById(R.id.textCounterLED4);
+        TextView txtCtrRED = findViewById(textCounterLED1);
+        TextView txtCtrGREEN = findViewById(R.id.textCounterLED2);
+        TextView txtCtrBLUE = findViewById(R.id.textCounterLED3);
+        TextView txtCtrWHITE = findViewById(R.id.textCounterLED4);
 
         formatTextCounter(txtCtrRED, sRed);
         formatTextCounter(txtCtrGREEN, sGreen);
@@ -684,7 +683,7 @@ public class ServicePageActivity extends Activity implements Serializable {
                         @Override
                         public void run() {
                             Toast.makeText(context2,"1. No timer values found in the file", Toast.LENGTH_SHORT).show();
-                            TextView txtCounterLED1 = (TextView) findViewById(R.id.textCounterLED1);
+                            TextView txtCounterLED1 = findViewById(R.id.textCounterLED1);
                             //formatTextCounter(txtCounterLED1, "1131");
                         }
                     });
@@ -699,7 +698,7 @@ public class ServicePageActivity extends Activity implements Serializable {
                         }
                     });*/
 
-                    String arrTimerValues[] = sCurrTimers.split("\\|");
+                    String[] arrTimerValues = sCurrTimers.split("\\|");
                     if (arrTimerValues.length == 2) {
                         Long lTimeWritten = Long.parseLong(arrTimerValues[1]);
                         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -730,7 +729,7 @@ public class ServicePageActivity extends Activity implements Serializable {
                                 });*/
 
 
-                                String arrTimers[] = arrTimerValues[0].split(",");
+                                String[] arrTimers = arrTimerValues[0].split(",");
                                 if (arrTimers.length == 14) {
 
                                     lclHandler.post(new Runnable() {
@@ -744,16 +743,16 @@ public class ServicePageActivity extends Activity implements Serializable {
                                                 }
                                             });*/
 
-                                            TextView txtCounterLED1 = (TextView) findViewById(R.id.textCounterLED1);
-                                            TextView txtCounterLED2 = (TextView) findViewById(R.id.textCounterLED2);
-                                            TextView txtCounterLED3 = (TextView) findViewById(R.id.textCounterLED3);
-                                            TextView txtCounterLED4 = (TextView) findViewById(R.id.textCounterLED4);
-                                            TextView txtCounterLED5 = (TextView) findViewById(R.id.textCounterLED5);
-                                            TextView txtCounterLED6 = (TextView) findViewById(R.id.textCounterLED6);
-                                            TextView txtCounterLED7 = (TextView) findViewById(R.id.textCounterLED7);
-                                            TextView txtCounterLED8 = (TextView) findViewById(R.id.textCounterLED8);
-                                            TextView txtCounterLED9 = (TextView) findViewById(R.id.textCounterLED9);
-                                            TextView txtCounterLED10 = (TextView) findViewById(R.id.textCounterLED10);
+                                            TextView txtCounterLED1 = findViewById(R.id.textCounterLED1);
+                                            TextView txtCounterLED2 = findViewById(R.id.textCounterLED2);
+                                            TextView txtCounterLED3 = findViewById(R.id.textCounterLED3);
+                                            TextView txtCounterLED4 = findViewById(R.id.textCounterLED4);
+                                            TextView txtCounterLED5 = findViewById(R.id.textCounterLED5);
+                                            TextView txtCounterLED6 = findViewById(R.id.textCounterLED6);
+                                            TextView txtCounterLED7 = findViewById(R.id.textCounterLED7);
+                                            TextView txtCounterLED8 = findViewById(R.id.textCounterLED8);
+                                            TextView txtCounterLED9 = findViewById(R.id.textCounterLED9);
+                                            TextView txtCounterLED10 = findViewById(R.id.textCounterLED10);
 
                                             formatTextCounter(txtCounterLED1, arrTimers[0]);
                                             formatTextCounter(txtCounterLED2, arrTimers[1]);
@@ -948,69 +947,69 @@ public class ServicePageActivity extends Activity implements Serializable {
     }
 
     public void hideMiddleColumn(View view ) {
-        textLampCell = (TextView) findViewById(R.id.textViewCOL2Header);
+        textLampCell = findViewById(R.id.textViewCOL2Header);
         textLampCell.setVisibility(View.GONE);
 
-        textLampCell = (TextView) findViewById(R.id.textViewRED);
+        textLampCell = findViewById(R.id.textViewRED);
         textLampCell.setVisibility(View.GONE);
 
-        textLampCell = (TextView) findViewById(R.id.textViewGREEN);
+        textLampCell = findViewById(R.id.textViewGREEN);
         textLampCell.setVisibility(View.GONE);
 
-        textLampCell = (TextView) findViewById(R.id.textViewBLUE);
+        textLampCell = findViewById(R.id.textViewBLUE);
         textLampCell.setVisibility(View.GONE);
 
-        textLampCell = (TextView) findViewById(R.id.textViewWHITE);
+        textLampCell = findViewById(R.id.textViewWHITE);
         textLampCell.setVisibility(View.GONE);
 
-        textLampCell = (TextView) findViewById(R.id.textViewLED5);
+        textLampCell = findViewById(R.id.textViewLED5);
         textLampCell.setVisibility(View.GONE);
-        textLampCell = (TextView) findViewById(R.id.textViewLED6);
+        textLampCell = findViewById(R.id.textViewLED6);
         textLampCell.setVisibility(View.GONE);
-        textLampCell = (TextView) findViewById(R.id.textViewLED7);
+        textLampCell = findViewById(R.id.textViewLED7);
         textLampCell.setVisibility(View.GONE);
-        textLampCell = (TextView) findViewById(R.id.textViewLED8);
+        textLampCell = findViewById(R.id.textViewLED8);
         textLampCell.setVisibility(View.GONE);
-        textLampCell = (TextView) findViewById(R.id.textViewLED9);
+        textLampCell = findViewById(R.id.textViewLED9);
         textLampCell.setVisibility(View.GONE);
-        textLampCell = (TextView) findViewById(R.id.textViewLED10);
+        textLampCell = findViewById(R.id.textViewLED10);
         textLampCell.setVisibility(View.GONE);
     }
 
     public void showMiddleColumn(View view ) {
-        textLampCell = (TextView) findViewById(R.id.textViewCOL2Header);
+        textLampCell = findViewById(R.id.textViewCOL2Header);
         textLampCell.setVisibility(View.VISIBLE);
 
-        textLampCell = (TextView) findViewById(R.id.textViewRED);
+        textLampCell = findViewById(R.id.textViewRED);
         textLampCell.setVisibility(View.VISIBLE);
 
-        textLampCell = (TextView) findViewById(R.id.textViewGREEN);
+        textLampCell = findViewById(R.id.textViewGREEN);
         textLampCell.setVisibility(View.VISIBLE);
 
-        textLampCell = (TextView) findViewById(R.id.textViewBLUE);
+        textLampCell = findViewById(R.id.textViewBLUE);
         textLampCell.setVisibility(View.VISIBLE);
 
-        textLampCell = (TextView) findViewById(R.id.textViewWHITE);
+        textLampCell = findViewById(R.id.textViewWHITE);
         textLampCell.setVisibility(View.VISIBLE);
 
-        textLampCell = (TextView) findViewById(R.id.textViewLED5);
+        textLampCell = findViewById(R.id.textViewLED5);
         textLampCell.setVisibility(View.VISIBLE);
-        textLampCell = (TextView) findViewById(R.id.textViewLED6);
+        textLampCell = findViewById(R.id.textViewLED6);
         textLampCell.setVisibility(View.VISIBLE);
-        textLampCell = (TextView) findViewById(R.id.textViewLED7);
+        textLampCell = findViewById(R.id.textViewLED7);
         textLampCell.setVisibility(View.VISIBLE);
-        textLampCell = (TextView) findViewById(R.id.textViewLED8);
+        textLampCell = findViewById(R.id.textViewLED8);
         textLampCell.setVisibility(View.VISIBLE);
-        textLampCell = (TextView) findViewById(R.id.textViewLED9);
+        textLampCell = findViewById(R.id.textViewLED9);
         textLampCell.setVisibility(View.VISIBLE);
-        textLampCell = (TextView) findViewById(R.id.textViewLED10);
+        textLampCell = findViewById(R.id.textViewLED10);
         textLampCell.setVisibility(View.VISIBLE);
     }
 
     private void check_LampButton_stage() {
         Log.d(TAG, "Checking Lamp Button layout state");
         SharedPreferences spsValues = getSharedPreferences(LAMPBAR_SHAREDPREFS, 0);
-        Button btn = (Button)findViewById(R.id.buttonLampLayoutOnOff);
+        Button btn = findViewById(R.id.buttonLampLayoutOnOff);
         int iVisFlag = spsValues.getInt("LAMP_LAYOUT", -1);
         if (iVisFlag == 1) {
             Log.d(TAG, "Lamp Button state: 1, trying to switch on the button");
@@ -1038,7 +1037,7 @@ public class ServicePageActivity extends Activity implements Serializable {
             spsEditor.commit();
             spsEditor.putInt("LAMP_LAYOUT", 0);
             spsEditor.commit();
-            Button btn = (Button)findViewById(R.id.buttonLampLayoutOnOff);
+            Button btn = findViewById(R.id.buttonLampLayoutOnOff);
             btn.setText ("LAMP buttons: OFF");
             switchButtonOff(btn);
         } else if (iVisibility == 0) {
@@ -1047,7 +1046,7 @@ public class ServicePageActivity extends Activity implements Serializable {
             spsEditor.commit();
             spsEditor.putInt("LAMP_LAYOUT", 1);
             spsEditor.commit();
-            Button btn = (Button) findViewById(R.id.buttonLampLayoutOnOff);
+            Button btn = findViewById(R.id.buttonLampLayoutOnOff);
             btn.setText ("LAMP buttons: ON");
             switchButtonOn(btn);
         }

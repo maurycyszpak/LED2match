@@ -16,8 +16,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_CONTROLLER_FILEIMAGE;
-
 public class DigitalPanelActivity extends Activity {
 
     public static final String SHAREDPREFS_ONE_OFF_SEEKBARS = "one-off-seekbar-values.txt"; //Mauricio
@@ -182,7 +180,7 @@ public class DigitalPanelActivity extends Activity {
 
     public void populateButtonNames() {
         //String sUnitName = "";
-        SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
         JSON_analyst json_analyst = new JSON_analyst(spFile);
 
         //Log.d(TAG, "bluetoothAskReply(V1)");
@@ -247,7 +245,7 @@ public class DigitalPanelActivity extends Activity {
 
     public void btnClicked(View v) {
 
-        SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
         String sPresetRGBValues = "0,0,0,0,0,0,0,0,0,0";
         String sCommand = "";
         JSON_analyst json_analyst = new JSON_analyst(spFile);

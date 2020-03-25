@@ -111,8 +111,11 @@ public class TRSRecertificationPage extends Activity {
         //populateLampsState();
         readDACvalue();
         readPSUpower();
-        //populateButtonNames();
-        repopulate_button_assignments();
+        if (shared_prefs_exists(Constants.SHAREDPREFS_LAMP_ASSIGNMENTS, "1")) {
+            repopulate_button_assignments();
+        } else {
+            populateButtonNames();
+        }
     }
 
     @Override
@@ -269,6 +272,11 @@ public class TRSRecertificationPage extends Activity {
         } else {
             Log.d(TAG, "Service btService not connected!");
         }
+    }
+
+    public boolean shared_prefs_exists(String sFileName, String sKey) {
+        SharedPreferences spFile = getSharedPreferences(sFileName, 0);
+        return spFile.contains(sKey);
     }
 
     public void repopulate_button_assignments() {

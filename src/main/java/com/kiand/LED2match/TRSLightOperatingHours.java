@@ -28,7 +28,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 import static com.kiand.LED2match.LightAdjustments.sNewLine;
 import static com.kiand.LED2match.TRSDigitalPanel.SHAREDPREFS_LAMP_ASSIGNMENTS;
 
@@ -131,7 +130,7 @@ public class TRSLightOperatingHours extends Activity {
         SystemClock.sleep(1500);
         populate_button_timers();
 
-        SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
         JSON_analyst json_analyst = new JSON_analyst(spFile);
         String sFWVersion = json_analyst.getJSONValue("firmware_version");
         TextView tvInfoBox = findViewById(R.id.infobox);
@@ -238,10 +237,10 @@ public class TRSLightOperatingHours extends Activity {
         SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_LED_TIMERS, 0);
         String sCounters = spFile.getString("currTimers", "");
         if (sCounters.length() > 0) {
-            String sArray[] = sCounters.split("\\|");
+            String[] sArray = sCounters.split("\\|");
             for (String sPiece: sArray) {
                 if (sPiece.contains(",")) {
-                    String sTimers[] = sPiece.split(",");
+                    String[] sTimers = sPiece.split(",");
 
                     try {
                         Log.d(TAG, "Button1 tag: " + btnL1.getTag().toString());
@@ -358,7 +357,7 @@ public class TRSLightOperatingHours extends Activity {
 
     public void populateButtonNames() {
         //String sUnitName = "";
-        SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
         JSON_analyst json_analyst = new JSON_analyst(spFile);
 
         //Log.d(TAG, "bluetoothAskReply(V1)");

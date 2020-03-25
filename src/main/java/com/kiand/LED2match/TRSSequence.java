@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.TreeMap;
 
-import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 import static com.kiand.LED2match.LightAdjustments.sNewLine;
 import static com.kiand.LED2match.TRSDigitalPanel.NO_PRESET_TEXT;
 import static com.kiand.LED2match.TRSDigitalPanel.SHAREDPREFS_LAMP_ASSIGNMENTS;
@@ -359,7 +358,7 @@ public class TRSSequence extends Activity {
         String sSequence= "D";
         String sPresetName = "";
 
-        SharedPreferences spControlerFileimage = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        SharedPreferences spControlerFileimage = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
         SharedPreferences spLampTimers = getSharedPreferences(SP_LAMP_TIMERS, 0);
 
         String sLamp1Timers = spLampTimers.getString("lamp1_timer", "0");
@@ -406,7 +405,7 @@ public class TRSSequence extends Activity {
 
     public void populateButtonNames() {
         //String sUnitName = "";
-        SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
         JSON_analyst json_analyst = new JSON_analyst(spFile);
 
         final String sLamp1Name = json_analyst.getJSONValue("preset1_name");
@@ -646,7 +645,7 @@ public class TRSSequence extends Activity {
 
     public void btnClicked(View v) {
 
-        SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
         JSON_analyst json_analyst = new JSON_analyst(spFile);
         String sHEX = "";
         String sButtonCaption = "";

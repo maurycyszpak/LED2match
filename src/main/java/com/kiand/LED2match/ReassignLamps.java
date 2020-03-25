@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_CONTROLLER_FILEIMAGE;
-
 
 public class ReassignLamps extends Activity {
 
@@ -38,14 +36,14 @@ public class ReassignLamps extends Activity {
         String[] sValues = sTags.split(",");
         //makeToast("Number of items: "+ sValues.length);
 
-        spinner1 = (Spinner) findViewById(R.id.spinner1);
-        spinner2 = (Spinner) findViewById(R.id.spinner2);
-        spinner3 = (Spinner) findViewById(R.id.spinner3);
-        spinner4 = (Spinner) findViewById(R.id.spinner4);
-        spinner5 = (Spinner) findViewById(R.id.spinner5);
-        spinner6 = (Spinner) findViewById(R.id.spinner6);
+        spinner1 = findViewById(R.id.spinner1);
+        spinner2 = findViewById(R.id.spinner2);
+        spinner3 = findViewById(R.id.spinner3);
+        spinner4 = findViewById(R.id.spinner4);
+        spinner5 = findViewById(R.id.spinner5);
+        spinner6 = findViewById(R.id.spinner6);
 
-        SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
         JSON_analyst json_analyst = new JSON_analyst(spFile);
         arrayListLampNames.clear();
 
