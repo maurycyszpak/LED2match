@@ -217,7 +217,7 @@
                     />
 
                 <CheckedTextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Slave"
                     android:checked="false"
@@ -240,10 +240,16 @@
                         />
 
                     <EditText
+                        android:id="@+id/edit_slave_address"
                         android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:hint="Slave address"
-                        android:textSize="13sp"/>
+                        android:textSize="13sp"
+                        android:nextFocusForward="@+id/edit_DACvalue"
+                        android:imeOptions="actionNext"
+                        android:singleLine="true"
+
+                        />
                 </LinearLayout>
 
 
@@ -276,7 +282,11 @@
                     android:layout_height="wrap_content"
                     android:textSize="13sp"
                     android:singleLine="true"
-                    android:hint="DAC value (600-800)"/>
+                    android:hint="DAC value (600-800)"
+                    android:nextFocusForward="@+id/edit_PSU_current"
+                    android:imeOptions="actionNext"
+
+                    />
 
 
             </LinearLayout>
@@ -308,7 +318,10 @@
                     android:layout_height="wrap_content"
                     android:textSize="13sp"
                     android:singleLine="true"
-                    android:hint="Amps"/>
+                    android:hint="Amps"
+                    android:nextFocusForward="@+id/edit_slave_address"
+                    android:imeOptions="actionNext"
+                    />
 
 
             </LinearLayout>
@@ -320,7 +333,7 @@
                 android:layout_gravity="right|end"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="0dp"
                 >
 
                 <Button
@@ -375,8 +388,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="3dp"
                 android:baselineAligned="true"
                 android:layout_alignParentBottom="true"
                 >

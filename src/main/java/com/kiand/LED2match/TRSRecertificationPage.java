@@ -32,7 +32,6 @@ public class TRSRecertificationPage extends Activity {
 
     public static final String SHAREDPREFS_ONE_OFF_SEEKBARS = "one-off-seekbar-values.txt"; //Mauricio
     public static final String PREFS_DAC_VALUE = "dac-value";
-    public static final String PREFS_PSU_CURRENT = "psu_max_power";
     public static final String prefs_psu_value_tag = "psu_current";
     public static final String newLine = System.getProperty("line.separator");
     public static final String NO_PRESET_TEXT = "#n/a";
@@ -450,7 +449,7 @@ public class TRSRecertificationPage extends Activity {
             makeToast("Power supply max current should be between 1 and 120 amps.");
             return;
         } else {
-            SharedPreferences spFile = getSharedPreferences(PREFS_PSU_CURRENT, 0);
+            SharedPreferences spFile = getSharedPreferences(Constants.PREFS_PSU_CURRENT, 0);
             SharedPreferences.Editor editor = spFile.edit();
             editor.clear();
             editor.putInt(prefs_psu_value_tag, value);
@@ -474,7 +473,7 @@ public class TRSRecertificationPage extends Activity {
 
     private void readPSUpower() {
         EditText edit_psu = findViewById(R.id.edit_PSU_current);
-        SharedPreferences spFile = getSharedPreferences(PREFS_PSU_CURRENT, 0);
+        SharedPreferences spFile = getSharedPreferences(Constants.PREFS_PSU_CURRENT, 0);
         Integer value = spFile.getInt(prefs_psu_value_tag, 0);
         if (value > 0) {
             edit_psu.setText(String.valueOf(value));
