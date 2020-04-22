@@ -12,6 +12,8 @@ class Constants {
     static final String CONFIG_SETTINGS = "config_settings";
     static final String SHAREDPREFS_LAMP_ASSIGNMENTS = "lamp_button_assignments";
     public static final String SHAREDPREFS_CONTROLLER_FILEIMAGE = "LEDbar.json"; //Mauricio
+    public static final String PREFS_PSU_CURRENT = "psu_max_power";
+    public static final int DEFAULT_PSU_POWER = 2200;
 
     // values have to be unique within each app
     static final int NOTIFY_MANAGER_START_FOREGROUND_SERVICE = 1001;

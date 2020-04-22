@@ -75,7 +75,6 @@ import org.json.JSONObject;
 
 import static com.kiand.LED2match.BtScannerActivity.BT_PREFS;
 import static com.kiand.LED2match.TRSDigitalPanel.newLine;
-import static com.kiand.LED2match.TRSRecertificationPage.PREFS_PSU_CURRENT;
 import static com.kiand.LED2match.TRSSettings.TL84_DELAY_KEY;
 
 public class LightAdjustments extends Activity implements ServiceConnection {
@@ -1931,7 +1930,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 	}
 
 	private Integer get_max_power() {
-		SharedPreferences spFile = getSharedPreferences(PREFS_PSU_CURRENT, 0);
+		SharedPreferences spFile = getSharedPreferences(Constants.PREFS_PSU_CURRENT, 0);
 		Integer iPower = spFile.getInt("psu_current", 0) * 1000;
 		Log.d (TAG, "Max power for this PSU is " + iPower);
 		return iPower;

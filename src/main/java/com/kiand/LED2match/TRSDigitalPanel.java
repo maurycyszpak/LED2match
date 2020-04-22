@@ -47,10 +47,10 @@ import java.util.TreeSet;
 
 import static com.kiand.LED2match.BtCOMMsService.SHAREDPREFS_UNITNAME;
 import static com.kiand.LED2match.BtCOMMsService.BT_CONNECTED_PREFS;
+import static com.kiand.LED2match.Constants.DEFAULT_PSU_POWER;
 import static com.kiand.LED2match.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 import static com.kiand.LED2match.LightAdjustments.TOAST_MESSAGE;
 import static com.kiand.LED2match.LightAdjustments.sNewLine;
-import static com.kiand.LED2match.TRSRecertificationPage.PREFS_PSU_CURRENT;
 import static com.kiand.LED2match.TRSSequence.SP_LAMP_TIMERS;
 import static com.kiand.LED2match.TRSSettings.TL84_DELAY_KEY;
 
@@ -312,8 +312,12 @@ public class TRSDigitalPanel extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-        unbindService(mConnection);
-        unbindService(btConnection);
+        if (mBound) {
+            unbindService(mConnection);
+        }
+        if (mBoundBT) {
+            unbindService(btConnection);
+        }
         mBoundBT = false;
         mBound = false;
 
@@ -1395,6 +1399,13 @@ public class TRSDigitalPanel extends Activity {
         Integer light_power = check_light_power(convertRGBwithCommasToHexString(sPresetRGBValues));
         Integer max_power = get_max_power();
 
+        if (max_power == 0) {
+
+            String msg = "No PSU definition found!\nUsing a default value of " + Constants.DEFAULT_PSU_POWER/1000.0 + "A";
+            makeToast(msg);
+            max_power = DEFAULT_PSU_POWER;
+        }
+
         if (light_power/100 > max_power/100) {
             String toast = getString(R.string.light_power_warning);
             toast = toast.replace("%light_power%", String.format(Locale.US, "%.1f", light_power/1000.0));
@@ -1465,7 +1476,7 @@ public class TRSDigitalPanel extends Activity {
     }
 
     private Integer get_max_power() {
-        SharedPreferences spFile = getSharedPreferences(PREFS_PSU_CURRENT, 0);
+        SharedPreferences spFile = getSharedPreferences(Constants.PREFS_PSU_CURRENT, 0);
         Integer iPower = spFile.getInt("psu_current", 0) * 1000;
         Log.d (TAG, "Max power for this PSU is " + iPower);
         return iPower;
