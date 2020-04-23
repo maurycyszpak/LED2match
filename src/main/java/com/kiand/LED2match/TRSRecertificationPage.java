@@ -474,7 +474,7 @@ public class TRSRecertificationPage extends Activity {
     private void readPSUpower() {
         EditText edit_psu = findViewById(R.id.edit_PSU_current);
         SharedPreferences spFile = getSharedPreferences(Constants.PREFS_PSU_CURRENT, 0);
-        Integer value = spFile.getInt(prefs_psu_value_tag, 0);
+        Float value = spFile.getFloat(prefs_psu_value_tag, 0.0f);
         if (value > 0) {
             edit_psu.setText(String.valueOf(value));
         }
