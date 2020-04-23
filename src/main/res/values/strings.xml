@@ -40,7 +40,7 @@ Donec semper sagittis tellus, id molestie quam suscipit sit amet. Aenean posuere
     </string>
     <string name="unitycolor_led_light_label">UnityColor (R) LED Light Control System</string>
     <string name="light_power_warning">Selected light drains circa %light_power% A\nSelected power supply handles: %psu_current% A\n\nDecrease the light intensity or set the power of PSU to higher on the Recertification Page.</string>
-    <string name="factory_reset_info_warning">Are you sure you wish to reset the lamp definitions to its factory settings?\n\nYou will lose any custom lamp definitions and all lamp counters will be reset to 0!</string>
+    <string name="factory_reset_info_warning">Are you sure you wish to reset the lamp definitions to its factory settings?\n\nYou will lose any custom lamp definitions and all lamp counters will be reset to 0! Also locally stored cache files will be deleted. This means the app will revert to as if it was installed on the phone for the first time.\n\nThe application will restart</string>
 
 
 
