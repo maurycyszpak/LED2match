@@ -262,7 +262,7 @@
                 android:layout_below="@+id/lLayout5"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="15dp"
                 android:orientation="horizontal"
                 android:id="@+id/lLayout6"
                 >
@@ -320,8 +320,8 @@
                     android:textSize="13sp"
                     android:singleLine="true"
                     android:hint="Amps"
-                    android:nextFocusForward="@+id/edit_slave_address"
-                    android:imeOptions="actionNext"
+                    android:nextFocusForward="@+id/btnSave"
+
                     />
 
 
