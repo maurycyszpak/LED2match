@@ -36,7 +36,7 @@ import java.util.regex.PatternSyntaxException;
 import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_LAMP_STATE;
 import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_LED_TIMERS;
 import static com.kiand.LED2match.TRSDigitalPanel.SHAREDPREFS_LAMP_ASSIGNMENTS;
-import static com.kiand.LED2match.TRSDigitalPanel.newLine;
+import static com.kiand.LED2match.Constants.sNewLine;
 
 public class BtCOMMsService extends Service {
 
@@ -88,7 +88,7 @@ public class BtCOMMsService extends Service {
                 if (flag == 1) {
                     Log.d(TAG, "Received signal - shutting down lamps");
                     String sCommand = "S00000000000000000000";
-                    sCommand += "$" + newLine;
+                    sCommand += "$" + sNewLine;
                     sendData(sCommand);
                 }
             } catch (NumberFormatException e) { e.printStackTrace(); }

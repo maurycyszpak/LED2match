@@ -49,14 +49,14 @@ import static com.kiand.LED2match.BtCOMMsService.SHAREDPREFS_UNITNAME;
 import static com.kiand.LED2match.BtCOMMsService.BT_CONNECTED_PREFS;
 import static com.kiand.LED2match.Constants.DEFAULT_PSU_POWER;
 import static com.kiand.LED2match.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
-import static com.kiand.LED2match.LightAdjustments.TOAST_MESSAGE;
-import static com.kiand.LED2match.LightAdjustments.sNewLine;
+import static com.kiand.LED2match.Constants.sNewLine;
 import static com.kiand.LED2match.TRSSequence.SP_LAMP_TIMERS;
 import static com.kiand.LED2match.TRSSettings.TL84_DELAY_KEY;
 
 public class TRSDigitalPanel extends Activity {
 
     public static final String TAG = "morris-TRSDigitalPanel";
+    private static final int TOAST_MESSAGE = 1;
 
     public String S_CURRENT_SEQ_ITEM = "";
     public boolean BL_LOW_MODE = false;
@@ -66,8 +66,6 @@ public class TRSDigitalPanel extends Activity {
     private static final String password = "hokus";
     private static final int MSG_SHOW_TOAST = 1;
     private static final int ICON_HEIGHT = 80;
-
-    public static final String newLine = System.getProperty("line.separator");
 
     boolean blLamp1_ON, blLamp2_ON, blLamp3_ON, blLamp4_ON, blLamp5_ON, blLamp6_ON, blLamp7_ON, blTL84_ON;
     Button btnL1, btnL2, btnL3, btnL4, btnL5, btnL6, btnL7, btnLOW, btnL9, btnL10;
@@ -219,7 +217,7 @@ public class TRSDigitalPanel extends Activity {
 
             SystemClock.sleep(50);
             if (mBound) {
-                String sCommand = "F" + sNewLine;
+                String sCommand = "F" + Constants.sNewLine;
                 lclUsbServiceInstance.sendBytes(sCommand.getBytes());
             }
             mBound = true;
@@ -847,7 +845,7 @@ public class TRSDigitalPanel extends Activity {
                         if (btnL1.getText().toString().equalsIgnoreCase("UV")) {
                             //complementary light - keep current on and add UV definition for non-zeros - when switching ON UV mode. Otherwise switch off additional lamps
                             sCommand = "P" + convertRGB2complementaryLight(sPresetRGBValues, (!BL_UV_MODE));
-                            sCommand += "$" + newLine;
+                            sCommand += "$" + sNewLine;
                             if (mBoundBT) {
                                 Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
                                 lclBTServiceInstance.sendData(sCommand);
@@ -856,7 +854,7 @@ public class TRSDigitalPanel extends Activity {
                             }
                             lclUsbServiceInstance.sendBytes(sCommand.getBytes());
 
-                            sCommand = "B," + btnL1.getTag().toString() + (BL_UV_MODE ? 0 : 1) + "$" + newLine;
+                            sCommand = "B," + btnL1.getTag().toString() + (BL_UV_MODE ? 0 : 1) + "$" + sNewLine;
                             if (mBoundBT) {
                                 Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
                                 lclBTServiceInstance.sendData(sCommand);
@@ -878,7 +876,7 @@ public class TRSDigitalPanel extends Activity {
                         } else {
 
                             sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
-                            sCommand += "$" + newLine;
+                            sCommand += "$" + sNewLine;
                             //if (btService.connected) {
                             if (mBoundBT) {
                                 Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
@@ -887,7 +885,7 @@ public class TRSDigitalPanel extends Activity {
                                 Log.d(TAG, "Service btService not connected!");
                             }
                             lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                            sCommand = "B," + btnL1.getTag().toString() + "1$" + newLine;
+                            sCommand = "B," + btnL1.getTag().toString() + "1$" + sNewLine;
                             if (mBoundBT) {
                                 Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
                                 lclBTServiceInstance.sendData(sCommand);
@@ -898,9 +896,9 @@ public class TRSDigitalPanel extends Activity {
 
                             if (btnL1.getText().toString().equalsIgnoreCase(TL84_TAG)) {
                                 if (BL_LOW_MODE) {
-                                    sCommand = "S11050" + newLine;
+                                    sCommand = "S11050" + sNewLine;
                                 } else {
-                                    sCommand = "S11100" + newLine;
+                                    sCommand = "S11100" + sNewLine;
                                 }
                                 if (mBoundBT) {
                                     //Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
@@ -911,7 +909,7 @@ public class TRSDigitalPanel extends Activity {
                                 lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                                 blTL84_ON = true;
                             } else {
-                                sCommand = "S11000" + newLine;
+                                sCommand = "S11000" + sNewLine;
                                 blTL84_ON = false;
                                 if (mBoundBT) {
                                     lclBTServiceInstance.sendData(sCommand);
@@ -933,7 +931,7 @@ public class TRSDigitalPanel extends Activity {
                 if (spLampDefinitions.contains(btnL2.getText().toString())) {
                     sPresetRGBValues = spLampDefinitions.getString(btnL2.getText().toString(), null);
                     sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
-                    sCommand += "$" + newLine;
+                    sCommand += "$" + sNewLine;
                     //if (btService.connected) {
                     if (mBoundBT) {
                         Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
@@ -942,7 +940,7 @@ public class TRSDigitalPanel extends Activity {
                         Log.d(TAG, "Service btService not connected!");
                     }
                     lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                    sCommand = "B," + btnL2.getTag().toString() + "1$" + newLine;
+                    sCommand = "B," + btnL2.getTag().toString() + "1$" + sNewLine;
                     if (mBoundBT) {
                         Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
                         lclBTServiceInstance.sendData(sCommand);
@@ -953,9 +951,9 @@ public class TRSDigitalPanel extends Activity {
 
                     if (btnL2.getText().toString().equalsIgnoreCase(TL84_TAG)) {
                         if (BL_LOW_MODE) {
-                            sCommand = "S11050" + newLine;
+                            sCommand = "S11050" + sNewLine;
                         } else {
-                            sCommand = "S11100" + newLine;
+                            sCommand = "S11100" + sNewLine;
                         }
                         if (mBoundBT) {
                             Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
@@ -967,7 +965,7 @@ public class TRSDigitalPanel extends Activity {
                         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                         blTL84_ON = true;
                     } else {
-                        sCommand = "S11000" + newLine;
+                        sCommand = "S11000" + sNewLine;
                         blTL84_ON = false;
                         if (mBoundBT) {
                             lclBTServiceInstance.sendData(sCommand);
@@ -987,7 +985,7 @@ public class TRSDigitalPanel extends Activity {
                 if (spLampDefinitions.contains(btnL3.getText().toString())) {
                     sPresetRGBValues = spLampDefinitions.getString(btnL3.getText().toString(), null);
                     sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
-                    sCommand += "$" + newLine;
+                    sCommand += "$" + sNewLine;
                     //if (btService.connected) {
                     if (mBoundBT) {
                         Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
@@ -996,7 +994,7 @@ public class TRSDigitalPanel extends Activity {
                         Log.d(TAG, "Service btService not connected!");
                     }
                     lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                    sCommand = "B," + btnL3.getTag().toString() + "1$" + newLine;
+                    sCommand = "B," + btnL3.getTag().toString() + "1$" + sNewLine;
                     if (mBoundBT) {
                         Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
                         lclBTServiceInstance.sendData(sCommand);
@@ -1007,9 +1005,9 @@ public class TRSDigitalPanel extends Activity {
 
                     if (btnL3.getText().toString().equalsIgnoreCase(TL84_TAG)) {
                         if (BL_LOW_MODE) {
-                            sCommand = "S11050" + newLine;
+                            sCommand = "S11050" + sNewLine;
                         } else {
-                            sCommand = "S11100" + newLine;
+                            sCommand = "S11100" + sNewLine;
                         }
                         if (mBoundBT) {
                             Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
@@ -1021,7 +1019,7 @@ public class TRSDigitalPanel extends Activity {
                         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                         blTL84_ON = true;
                     } else {
-                        sCommand = "S11000" + newLine;
+                        sCommand = "S11000" + sNewLine;
                         blTL84_ON = false;
                         if (mBoundBT) {
                             lclBTServiceInstance.sendData(sCommand);
@@ -1040,7 +1038,7 @@ public class TRSDigitalPanel extends Activity {
                 if (spLampDefinitions.contains(btnL4.getText().toString())) {
                     sPresetRGBValues = spLampDefinitions.getString(btnL4.getText().toString(), null);
                     sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
-                    sCommand += "$" + newLine;
+                    sCommand += "$" + sNewLine;
                     //if (btService.connected) {
                     if (mBoundBT) {
                         Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
@@ -1049,7 +1047,7 @@ public class TRSDigitalPanel extends Activity {
                         Log.d(TAG, "Service btService not connected!");
                     }
                     lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                    sCommand = "B," + btnL4.getTag().toString() + "1$" + newLine;
+                    sCommand = "B," + btnL4.getTag().toString() + "1$" + sNewLine;
                     if (mBoundBT) {
                         Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
                         lclBTServiceInstance.sendData(sCommand);
@@ -1060,9 +1058,9 @@ public class TRSDigitalPanel extends Activity {
 
                     if (btnL4.getText().toString().equalsIgnoreCase(TL84_TAG)) {
                         if (BL_LOW_MODE) {
-                            sCommand = "S11050" + newLine;
+                            sCommand = "S11050" + sNewLine;
                         } else {
-                            sCommand = "S11100" + newLine;
+                            sCommand = "S11100" + sNewLine;
                         }
                         if (mBoundBT) {
                             Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
@@ -1074,7 +1072,7 @@ public class TRSDigitalPanel extends Activity {
                         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                         blTL84_ON = true;
                     } else {
-                        sCommand = "S11000" + newLine;
+                        sCommand = "S11000" + sNewLine;
                         blTL84_ON = false;
                         if (mBoundBT) {
                             lclBTServiceInstance.sendData(sCommand);
@@ -1093,7 +1091,7 @@ public class TRSDigitalPanel extends Activity {
                 if (spLampDefinitions.contains(btnL5.getText().toString())) {
                     sPresetRGBValues = spLampDefinitions.getString(btnL5.getText().toString(), null);
                     sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
-                    sCommand += "$" + newLine;
+                    sCommand += "$" + sNewLine;
                     //if (btService.connected) {
                     if (mBoundBT) {
                         Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
@@ -1102,7 +1100,7 @@ public class TRSDigitalPanel extends Activity {
                         Log.d(TAG, "Service btService not connected!");
                     }
                     lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                    sCommand = "B," + btnL5.getTag().toString() + "1$" + newLine;
+                    sCommand = "B," + btnL5.getTag().toString() + "1$" + sNewLine;
                     if (mBoundBT) {
                         Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
                         lclBTServiceInstance.sendData(sCommand);
@@ -1113,9 +1111,9 @@ public class TRSDigitalPanel extends Activity {
 
                     if (btnL5.getText().toString().equalsIgnoreCase(TL84_TAG)) {
                         if (BL_LOW_MODE) {
-                            sCommand = "S11050" + newLine;
+                            sCommand = "S11050" + sNewLine;
                         } else {
-                            sCommand = "S11100" + newLine;
+                            sCommand = "S11100" + sNewLine;
                         }
                         if (mBoundBT) {
                             Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
@@ -1127,7 +1125,7 @@ public class TRSDigitalPanel extends Activity {
                         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                         blTL84_ON = true;
                     } else {
-                        sCommand = "S11000" + newLine;
+                        sCommand = "S11000" + sNewLine;
                         blTL84_ON = false;
                         if (mBoundBT) {
                             //lclBTServiceInstance.sendData(sCommand);
@@ -1146,7 +1144,7 @@ public class TRSDigitalPanel extends Activity {
                 if (spLampDefinitions.contains(btnL6.getText().toString())) {
                     sPresetRGBValues = spLampDefinitions.getString(btnL6.getText().toString(), null);
                     sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
-                    sCommand += "$" + newLine;
+                    sCommand += "$" + sNewLine;
                     //if (btService.connected) {
                     if (mBoundBT) {
                         Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
@@ -1155,7 +1153,7 @@ public class TRSDigitalPanel extends Activity {
                         Log.d(TAG, "Service btService not connected!");
                     }
                     lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                    sCommand = "B," + btnL6.getTag().toString() + "1$" + newLine;
+                    sCommand = "B," + btnL6.getTag().toString() + "1$" + sNewLine;
                     if (mBoundBT) {
                         Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
                         lclBTServiceInstance.sendData(sCommand);
@@ -1166,9 +1164,9 @@ public class TRSDigitalPanel extends Activity {
 
                     if (btnL6.getText().toString().equalsIgnoreCase(TL84_TAG)) {
                         if (BL_LOW_MODE) {
-                            sCommand = "S11050" + newLine;
+                            sCommand = "S11050" + sNewLine;
                         } else {
-                            sCommand = "S11100" + newLine;
+                            sCommand = "S11100" + sNewLine;
                         }
                         if (mBoundBT) {
                             Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
@@ -1180,7 +1178,7 @@ public class TRSDigitalPanel extends Activity {
                         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                         blTL84_ON = true;
                     } else {
-                        sCommand = "S11000" + newLine;
+                        sCommand = "S11000" + sNewLine;
                         blTL84_ON = false;
                         if (mBoundBT) {
                             lclBTServiceInstance.sendData(sCommand);
@@ -1253,11 +1251,11 @@ public class TRSDigitalPanel extends Activity {
                 if (button.getText().toString().equalsIgnoreCase("UV")) {
                     //complementary light - keep current on and add UV definition for non-zeros - when switching ON UV mode. Otherwise switch off additional lamps
                     sCommand = "P" + convertRGB2complementaryLight(sPresetRGBValues, (!BL_UV_MODE));
-                    sCommand += "$" + newLine;
+                    sCommand += "$" + sNewLine;
                     send_via_bt(sCommand);
                     lclUsbServiceInstance.sendBytes(sCommand.getBytes());
 
-                    sCommand = "B," + button.getTag().toString() + (BL_UV_MODE ? 0 : 1) + "$" + newLine;
+                    sCommand = "B," + button.getTag().toString() + (BL_UV_MODE ? 0 : 1) + "$" + sNewLine;
                     Log.d(TAG, "sendviabt ** B command with tag: "+ button.getTag().toString() + " text: " + button.getText());
                     send_via_bt(sCommand);
                     lclUsbServiceInstance.sendBytes(sCommand.getBytes());
@@ -1280,22 +1278,22 @@ public class TRSDigitalPanel extends Activity {
 
                         if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
                             get_tl84_delay();
-                            sCommand = "S11100" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + newLine;
+                            sCommand = "S11100" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + sNewLine;
                             Log.d(TAG, " *** NEW TL84 command (ON): " + sCommand);
                             send_via_bt(sCommand);
                             lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                             blTL84_ON = true;
                         } else {
-                            sCommand = "S11000$" + newLine;
+                            sCommand = "S11000$" + sNewLine;
                             blTL84_ON = false;
                             send_via_bt(sCommand);
                             sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
-                            sCommand += "$" + newLine;
+                            sCommand += "$" + sNewLine;
                             Log.d(TAG, " *** NEW TL84 command (OFF): " + sCommand);
                             send_via_bt(sCommand);
                             lclUsbServiceInstance.sendBytes(sCommand.getBytes());
 
-                            sCommand = "B," + button.getTag().toString() + "1$" + newLine;
+                            sCommand = "B," + button.getTag().toString() + "1$" + sNewLine;
                             send_via_bt(sCommand);
                             lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                         }
@@ -1307,13 +1305,13 @@ public class TRSDigitalPanel extends Activity {
 
 
                         if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
-                            sCommand = "S11050" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + newLine;
+                            sCommand = "S11050" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + sNewLine;
                             Log.d(TAG, " *** NEW TL84 command (LOW): " + sCommand);
                             send_via_bt(sCommand);
                             lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                             blTL84_ON = true;
                         } else {
-                            sCommand = "S11000$" + newLine;
+                            sCommand = "S11000$" + sNewLine;
                             blTL84_ON = false;
                             Log.d(TAG, " *** NEW TL84 command (OFF): " + sCommand);
                             send_via_bt(sCommand);
@@ -1326,7 +1324,7 @@ public class TRSDigitalPanel extends Activity {
                             }
                             String concatValues = TextUtils.join(",", sRGB_out);
                             String sHex = convertRGBwithCommasToHexString(concatValues);
-                            sCommand = "S" + sHex + "$" + newLine;
+                            sCommand = "S" + sHex + "$" + sNewLine;
                             send_via_bt(sCommand);
                             lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                             Log.d(TAG, "I'm in LOW mode");
@@ -1358,7 +1356,7 @@ public class TRSDigitalPanel extends Activity {
     }
 
     private void TL84_OFF() {
-        String sCommand = "S11000$" + newLine;
+        String sCommand = "S11000$" + sNewLine;
         blTL84_ON = false;
         send_via_bt(sCommand);
     }
@@ -1397,7 +1395,7 @@ public class TRSDigitalPanel extends Activity {
 
     private Boolean power_drain_check(String sPresetRGBValues) {
         Integer light_power = check_light_power(convertRGBwithCommasToHexString(sPresetRGBValues));
-        Integer max_power = get_max_power();
+        Float max_power = get_max_power();
 
         if (max_power == 0) {
 
@@ -1475,11 +1473,11 @@ public class TRSDigitalPanel extends Activity {
         return iPower;
     }
 
-    private Integer get_max_power() {
+    private Float get_max_power() {
         SharedPreferences spFile = getSharedPreferences(Constants.PREFS_PSU_CURRENT, 0);
-        Integer iPower = spFile.getInt("psu_current", 0) * 1000;
-        Log.d (TAG, "Max power for this PSU is " + iPower);
-        return iPower;
+        Float fPower = spFile.getFloat("psu_current", 0.0f) * 1000;
+        Log.d (TAG, "Max power for this PSU is " + fPower);
+        return fPower;
     }
 
     private void display_popup_message(String title, String message) {
@@ -1558,12 +1556,12 @@ public class TRSDigitalPanel extends Activity {
 
         blTL84_ON = false;
         TL84_OFF();
-        String sCommand = "S00000000000000000000$" + newLine;
+        String sCommand = "S00000000000000000000$" + sNewLine;
         send_via_bt(sCommand);
 
         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
         BL_UV_MODE = false;
-        sCommand= "B,OFF1$" + newLine;
+        sCommand= "B,OFF1$" + sNewLine;
         send_via_bt(sCommand);
         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
 
@@ -1804,10 +1802,10 @@ public class TRSDigitalPanel extends Activity {
         String[] sRGB = sPresetRGBValues.split(",");
         for (int i=0; i < sRGB.length; i++) {
             if (i < 9) {
-                sCommand = "S0" + (i+1) + sRGB[i] + newLine;
+                sCommand = "S0" + (i+1) + sRGB[i] + sNewLine;
                 lclUsbServiceInstance.sendBytes(sCommand.getBytes());
             } else {
-                sCommand = "S" + (i+1) + sRGB[i] + newLine;
+                sCommand = "S" + (i+1) + sRGB[i] + sNewLine;
                 lclUsbServiceInstance.sendBytes(sCommand.getBytes());
             }
             //Toast.makeText(context, sCommand, Toast.LENGTH_LONG).show();
@@ -2024,7 +2022,7 @@ public class TRSDigitalPanel extends Activity {
             String sPresetRGBValues = spLampDefinitions.getString(Constants.TL84_TAG, null);
             if (!BL_LOW_MODE) {
 
-                String sCommand = "S11050" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + newLine;
+                String sCommand = "S11050" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + sNewLine;
                 if (mBoundBT) {
                     Log.d(TAG, "LOW function - Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
                     lclBTServiceInstance.sendData(sCommand);
@@ -2036,7 +2034,7 @@ public class TRSDigitalPanel extends Activity {
                 lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                 blTL84_ON = true;
             } else {
-                String sCommand = "S11100" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + newLine;
+                String sCommand = "S11100" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + sNewLine;
                 if (mBoundBT) {
                     Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
                     lclBTServiceInstance.sendData(sCommand);
@@ -2059,7 +2057,7 @@ public class TRSDigitalPanel extends Activity {
         }
 
 
-        String sCommand= "B,LOW" + (BL_LOW_MODE ? 0 : 1) + "$" + newLine;
+        String sCommand= "B,LOW" + (BL_LOW_MODE ? 0 : 1) + "$" + sNewLine;
         lclBTServiceInstance.sendData(sCommand);
         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
         SharedPreferences prefsLamps = getSharedPreferences(Constants.SHAREDPREFS_CURRENT_LAMPS, 0);
@@ -2076,7 +2074,7 @@ public class TRSDigitalPanel extends Activity {
         }
 
         String sHex = convertRGBwithCommasToHexString(TextUtils.join(",", concatValues));
-        sCommand = "S" + sHex + "$" + newLine;
+        sCommand = "S" + sHex + "$" + sNewLine;
         Log.d("MORRIS-TRSDIGITAL", "btnLOW: sending command:" + sCommand);
         lclBTServiceInstance.sendData(sCommand);
         lclUsbServiceInstance.sendBytes(sCommand.getBytes());

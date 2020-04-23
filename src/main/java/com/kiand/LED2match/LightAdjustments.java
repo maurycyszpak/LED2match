@@ -74,7 +74,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import static com.kiand.LED2match.BtScannerActivity.BT_PREFS;
-import static com.kiand.LED2match.TRSDigitalPanel.newLine;
+import static com.kiand.LED2match.Constants.sNewLine;
 import static com.kiand.LED2match.TRSSettings.TL84_DELAY_KEY;
 
 public class LightAdjustments extends Activity implements ServiceConnection {
@@ -1827,7 +1827,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 		//Check if the TL84 preset has been selected - if yes, switch on additional lamp (S11 command)
 		if (spinner_control_preset_list.getSelectedItem().toString().equalsIgnoreCase(Constants.TL84_TAG)) {
 			sCommand = "S11100";
-			sCommand = "S11100" + get_tl84_delay() + "$" + newLine;
+			sCommand = "S11100" + get_tl84_delay() + "$" + sNewLine;
 			//if (btService.connected) {
 			if (mBoundBT) {
 				Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
