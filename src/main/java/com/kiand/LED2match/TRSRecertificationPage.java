@@ -444,18 +444,18 @@ public class TRSRecertificationPage extends Activity {
             return;
         }
 
-        value = Integer.valueOf(ed_amps.getText().toString());
-        if (value < 1 || value > 120) {
+        float ampValue = Float.valueOf(ed_amps.getText().toString());
+        if (ampValue < 1 || ampValue > 120) {
             makeToast("Power supply max current should be between 1 and 120 amps.");
             return;
         } else {
             SharedPreferences spFile = getSharedPreferences(Constants.PREFS_PSU_CURRENT, 0);
             SharedPreferences.Editor editor = spFile.edit();
             editor.clear();
-            editor.putInt(prefs_psu_value_tag, value);
+            editor.putFloat(prefs_psu_value_tag, ampValue);
             editor.apply();
-            Log.d(TAG, "PSU current of '" + value + "' stored in prefs file");
-            makeToast( "PSU current value of '" + value + " amps' successfully stored.");
+            Log.d(TAG, "PSU current of '" + ampValue + "' stored in prefs file");
+            makeToast( "PSU current value of '" + ampValue + " Amps' successfully stored.");
             //int value = spFile.getInt("dac_value", 0);
         }
 
