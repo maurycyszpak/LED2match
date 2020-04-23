@@ -1,7 +1,9 @@
 package com.kiand.LED2match;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,6 +16,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -25,6 +28,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -243,8 +247,11 @@ public class TRSRecertificationPage extends Activity {
                 .setCancelable(true)
                 .setPositiveButton("OK", (dialog, id) -> {
                     //brace for reset!
+                    delete_all_shared_prefs();
                     String sCommand = "T" + newLine;
                     send_via_bt(sCommand);
+                    restart_app();
+
                 })
                 .setNegativeButton("Cancel",
                         (dialog, id) -> dialog.cancel());
@@ -270,6 +277,29 @@ public class TRSRecertificationPage extends Activity {
             lclBTServiceInstance.sendData(command);
         } else {
             Log.d(TAG, "Service btService not connected!");
+        }
+    }
+
+    void delete_all_shared_prefs() {
+        String sPath = "/data/data/"+ getPackageName()+ "/shared_prefs/";
+        //makeToast(sPath);
+        File sharedPreferenceFile = new File(sPath);
+        File[] listFiles = sharedPreferenceFile.listFiles();
+        for (File file : listFiles) {
+            file.delete();
+        }
+    }
+
+    void restart_app() {
+        try{
+            Intent mStartActivity = new Intent(context, TRSDigitalPanel.class);
+            int mPendingIntentId = 123456;
+            PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId,    mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+            AlarmManager mgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+            System.exit(0);
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -412,16 +442,25 @@ public class TRSRecertificationPage extends Activity {
 
     public void saveSettings(View v) {
         //We need to store the DAC Value if present
+        boolean bl_valid_DAC_value;
+        boolean bl_valid_psu_power = false;
         EditText ed_DAC = findViewById(R.id.edit_DACvalue);
-        if (TextUtils.isEmpty(ed_DAC.getText().toString())) {
-            return;
+
+        Integer value = 0;
+        if (!TextUtils.isEmpty(ed_DAC.getText().toString())) {
+            value = Integer.valueOf(ed_DAC.getText().toString());
         }
 
-        Integer value = Integer.valueOf(ed_DAC.getText().toString());
         if (value < 600 || value > 800) {
             makeToast("DAC value should be between 600 and 800.");
-            return;
+            bl_valid_DAC_value = false;
+            //return;
         } else {
+            bl_valid_DAC_value = true;
+        }
+
+        if (bl_valid_DAC_value) {
+
             SharedPreferences spFile = getSharedPreferences(PREFS_DAC_VALUE, 0);
             SharedPreferences.Editor editor = spFile.edit();
             editor.clear();
@@ -439,16 +478,19 @@ public class TRSRecertificationPage extends Activity {
             lclUsbServiceInstance.sendBytes(sCommand.getBytes());
         }
 
+        Float ampValue = 0.0f;
         EditText ed_amps = findViewById(R.id.edit_PSU_current);
-        if (TextUtils.isEmpty(ed_amps.getText().toString())) {
-            return;
+        if (!TextUtils.isEmpty(ed_amps.getText().toString())) {
+            ampValue = Float.valueOf(ed_amps.getText().toString());
         }
 
-        float ampValue = Float.valueOf(ed_amps.getText().toString());
         if (ampValue < 1 || ampValue > 120) {
             makeToast("Power supply max current should be between 1 and 120 amps.");
-            return;
+            bl_valid_psu_power = false;
         } else {
+            bl_valid_psu_power = true;
+        }
+        if (bl_valid_psu_power) {
             SharedPreferences spFile = getSharedPreferences(Constants.PREFS_PSU_CURRENT, 0);
             SharedPreferences.Editor editor = spFile.edit();
             editor.clear();
