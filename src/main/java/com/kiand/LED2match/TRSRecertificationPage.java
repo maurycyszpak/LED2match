@@ -479,25 +479,34 @@ public class TRSRecertificationPage extends Activity {
         }
 
         Float ampValue = 0.0f;
+        int milliAmpValue = 0;
         EditText ed_amps = findViewById(R.id.edit_PSU_current);
         if (!TextUtils.isEmpty(ed_amps.getText().toString())) {
             ampValue = Float.valueOf(ed_amps.getText().toString());
+            try {
+                milliAmpValue = Integer.valueOf(ed_amps.getText().toString());
+                if (milliAmpValue/1000.0 < 1.0 || milliAmpValue/1000.0 > 120.0) {
+                    makeToast("Power supply max current should be between 1 and 120 amps.");
+                    bl_valid_psu_power = false;
+                } else {
+                    bl_valid_psu_power = true;
+                }
+            } catch (NumberFormatException e) {
+                makeToast("PSU power value does not look like an integer value.");
+            }
+
         }
 
-        if (ampValue < 1 || ampValue > 120) {
-            makeToast("Power supply max current should be between 1 and 120 amps.");
-            bl_valid_psu_power = false;
-        } else {
-            bl_valid_psu_power = true;
-        }
+
         if (bl_valid_psu_power) {
             SharedPreferences spFile = getSharedPreferences(Constants.PREFS_PSU_CURRENT, 0);
             SharedPreferences.Editor editor = spFile.edit();
             editor.clear();
-            editor.putFloat(prefs_psu_value_tag, ampValue);
+            //editor.putFloat(prefs_psu_value_tag, ampValue);
+            editor.putInt(prefs_psu_value_tag, milliAmpValue);
             editor.apply();
-            Log.d(TAG, "PSU current of '" + ampValue + "' stored in prefs file");
-            makeToast( "PSU current value of '" + ampValue + " Amps' successfully stored.");
+            Log.d(TAG, "PSU current of '" + milliAmpValue + "' stored in prefs file");
+            makeToast( "PSU current value of '" + milliAmpValue + " milli Amps' successfully stored.");
             //int value = spFile.getInt("dac_value", 0);
         }
 
@@ -516,11 +525,18 @@ public class TRSRecertificationPage extends Activity {
     private void readPSUpower() {
         EditText edit_psu = findViewById(R.id.edit_PSU_current);
         SharedPreferences spFile = getSharedPreferences(Constants.PREFS_PSU_CURRENT, 0);
-        Float value = spFile.getFloat(prefs_psu_value_tag, 0.0f);
-        if (value > 0) {
-            edit_psu.setText(String.valueOf(value));
+        //Float value = spFile.getFloat(prefs_psu_value_tag, 0.0f);
+        try {
+            int value = spFile.getInt(prefs_psu_value_tag, 0);
+            if (value > 0) {
+                edit_psu.setText(String.valueOf(value));
+            }
+        } catch (NumberFormatException e) {
+            makeToast("Unable to read the stored PSU power value");
         }
+
     }
+
 
     public void setLampName(int i, String sName) {
         if (i == 1) {

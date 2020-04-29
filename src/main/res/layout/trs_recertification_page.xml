@@ -308,7 +308,7 @@
                     android:layout_width="@dimen/recertification_label_width"
                     android:layout_height="wrap_content"
                     android:id="@+id/DACmax_power_label"
-                    android:text="Max PSU current (A): "
+                    android:text="Max PSU current (mA): "
                     android:layout_marginEnd="10dp"
                     />
 
@@ -319,7 +319,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="13sp"
                     android:singleLine="true"
-                    android:hint="Amps"
+                    android:hint="milli Amps"
                     android:nextFocusForward="@+id/btnSave"
 
                     />

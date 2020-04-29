@@ -1851,7 +1851,8 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 
 	private Boolean power_drain_check(String sHexRGBvalues) {
 		Integer light_power = check_light_power(sHexRGBvalues);
-		Float max_power = get_max_power();
+		//Float max_power = get_max_power();
+		int max_power = get_max_power();
 
 		if (light_power/100 > max_power/100) {
 			String toast = getString(R.string.light_power_warning);
@@ -1929,11 +1930,23 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 
 	}
 
-	private Float get_max_power() {
+	/*private Float get_max_power() {
 		SharedPreferences spFile = getSharedPreferences(Constants.PREFS_PSU_CURRENT, 0);
 		Float fPower = spFile.getFloat("psu_current", 0.0f) * 1000;
 		Log.d (TAG, "Max power for this PSU is " + fPower);
 		return fPower;
+	}*/
+
+	private int get_max_power() {
+		SharedPreferences spFile = getSharedPreferences(Constants.PREFS_PSU_CURRENT, 0);
+		//Float fPower = spFile.getFloat("psu_current", 0.0f) * 1000;
+		int power = 0;
+		try {
+			power = spFile.getInt("psu_current", 0);
+		} catch (NumberFormatException e) {
+			makeToast("Unable to get the stored PSU power value");
+		}
+		return power;
 	}
 
 	private void display_popup_message(String title, String message) {

@@ -13,7 +13,7 @@ class Constants {
     static final String SHAREDPREFS_LAMP_ASSIGNMENTS = "lamp_button_assignments";
     public static final String SHAREDPREFS_CONTROLLER_FILEIMAGE = "LEDbar.json"; //Mauricio
     public static final String PREFS_PSU_CURRENT = "psu_max_power";
-    public static final float DEFAULT_PSU_POWER = 2200.0f;
+    public static final int DEFAULT_PSU_POWER = 2200;
     public static final String sNewLine = System.getProperty("line.separator");
 
     // values have to be unique within each app

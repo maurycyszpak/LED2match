@@ -486,45 +486,50 @@ public class TRSSequence extends Activity {
                 btnL1.setText(sName);
                 btnL1.setTag(sName);
             } else {
-                btnL1.setText("Button1");
+                btnL1.setText(NO_PRESET_TEXT);
+                btnL1.setTag(NO_PRESET_TEXT);
             }
         } else if (i == 2) {
             if (sName.length() > 0) {
                 btnL2.setText(sName);
                 btnL2.setTag(sName);
             } else {
-                btnL2.setText("Button2");
+                btnL2.setText(NO_PRESET_TEXT);
+                btnL2.setTag(NO_PRESET_TEXT);
             }
         } else if (i == 3) {
             if (sName.length() > 0) {
                 btnL3.setText(sName);
                 btnL3.setTag(sName);
             } else {
-                btnL3.setText("Button3");
+                btnL3.setText(NO_PRESET_TEXT);
+                btnL3.setTag(NO_PRESET_TEXT);
             }
         } else if (i == 4) {
             if (sName.length() > 0) {
                 btnL4.setText(sName);
                 btnL4.setTag(sName);
             } else {
-                btnL4.setText("Button4");
+                btnL4.setText(NO_PRESET_TEXT);
+                btnL4.setTag(NO_PRESET_TEXT);
             }
         } else if (i == 5) {
             if (sName.length() > 0) {
                 btnL5.setText(sName);
                 btnL5.setTag(sName);
             } else {
-                btnL5.setText("Button5");
+                btnL5.setText(NO_PRESET_TEXT);
+                btnL5.setTag(NO_PRESET_TEXT);
             }
         } else if (i == 6) {
             if (sName.length() > 0) {
                 btnL6.setText(sName);
                 btnL6.setTag(sName);
             } else {
-                btnL6.setText("Button6");
+                btnL6.setText(NO_PRESET_TEXT);
+                btnL6.setTag(NO_PRESET_TEXT);
             }
         }
-
     }
 
     public void updateLampHEXsequence (String sKey, String sSequence) {
