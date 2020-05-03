@@ -59,7 +59,7 @@ public class BtCore extends Thread {
 
 		public void executeBTCommand(String sCommand) {
 			String sReply = "";
-			sReply = LightAdjustments.bluetoothAskReply(sCommand);
+			sReply = LightSettings.bluetoothAskReply(sCommand);
 
 			//return sReply;
 		}
@@ -107,11 +107,7 @@ public class BtCore extends Thread {
 
 	public static boolean Connected() {
 		try {
-			if (btSocket.isConnected()) {
-				socketConnected = true;
-			} else {
-				socketConnected = false;
-			}
+            socketConnected = btSocket.isConnected();
 		} catch (NullPointerException e) {
 			socketConnected = false;
 		}
@@ -163,7 +159,7 @@ public class BtCore extends Thread {
 		try {
 			outStream.flush(); // Mauricio
 			outStream.write(msgBuffer);
-			LightAdjustments.BTCommsLog btLog = new LightAdjustments.BTCommsLog("IN", message);
+			LightSettings.BTCommsLog btLog = new LightSettings.BTCommsLog("IN", message);
 			btLog.appendMessage("IN", message);
 			//Log.d("MORRIS-SENDMSGBT", "SENT: " + message);
 		} catch (IOException e) {

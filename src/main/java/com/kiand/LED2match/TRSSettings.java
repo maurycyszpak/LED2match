@@ -49,7 +49,7 @@ public class TRSSettings extends Activity implements ServiceConnection {
     boolean mBound = false;
     boolean mBoundBT = false;
     final Context context = this;
-    private LightAdjustments.MyHandler mHandler;
+    private LightSettings.MyHandler mHandler;
     public final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     private boolean bl_bluetooth_forced_on;
     private CountDownTimer shutdownTimer;

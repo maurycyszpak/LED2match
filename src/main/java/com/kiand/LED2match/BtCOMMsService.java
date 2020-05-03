@@ -33,8 +33,8 @@ import java.util.TreeMap;
 import java.util.UUID;
 import java.util.regex.PatternSyntaxException;
 
-import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_LAMP_STATE;
-import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_LED_TIMERS;
+import static com.kiand.LED2match.LightSettings.SHAREDPREFS_LAMP_STATE;
+import static com.kiand.LED2match.LightSettings.SHAREDPREFS_LED_TIMERS;
 import static com.kiand.LED2match.TRSDigitalPanel.SHAREDPREFS_LAMP_ASSIGNMENTS;
 import static com.kiand.LED2match.Constants.sNewLine;
 

@@ -1395,7 +1395,8 @@ public class TRSDigitalPanel extends Activity {
 
     private Boolean power_drain_check(String sPresetRGBValues) {
         Integer light_power = check_light_power(convertRGBwithCommasToHexString(sPresetRGBValues));
-        Float max_power = get_max_power();
+        //Float max_power = get_max_power();
+        int max_power = get_max_power();
 
         if (max_power == 0) {
 
@@ -1473,11 +1474,16 @@ public class TRSDigitalPanel extends Activity {
         return iPower;
     }
 
-    private Float get_max_power() {
+    private int get_max_power() {
         SharedPreferences spFile = getSharedPreferences(Constants.PREFS_PSU_CURRENT, 0);
-        Float fPower = spFile.getFloat("psu_current", 0.0f) * 1000;
-        Log.d (TAG, "Max power for this PSU is " + fPower);
-        return fPower;
+        //Float fPower = spFile.getFloat("psu_current", 0.0f) * 1000;
+        int power = 0;
+        try {
+             power = spFile.getInt("psu_current", 0);
+        } catch (NumberFormatException e) {
+            makeToast("Unable to get the stored PSU power value");
+        }
+        return power;
     }
 
     private void display_popup_message(String title, String message) {
@@ -1569,7 +1575,7 @@ public class TRSDigitalPanel extends Activity {
     }
 
     public void populateLampsState() {
-        SharedPreferences spsValues = getSharedPreferences(LightAdjustments.SHAREDPREFS_LAMP_STATE, MODE_PRIVATE);
+        SharedPreferences spsValues = getSharedPreferences(LightSettings.SHAREDPREFS_LAMP_STATE, MODE_PRIVATE);
         String sReturn = spsValues.getString("LAMPS", "");
         String[] sLampState = sReturn.split(",");
 
@@ -1687,7 +1693,7 @@ public class TRSDigitalPanel extends Activity {
 
         switch (item.getItemId()) {
             case 0:
-                Intent intent0 = new Intent(TRSDigitalPanel.this, LightAdjustments.class);
+                Intent intent0 = new Intent(TRSDigitalPanel.this, LightSettings.class);
                 startActivity(intent0);
                 break;
 
@@ -2057,9 +2063,6 @@ public class TRSDigitalPanel extends Activity {
         }
 
 
-        String sCommand= "B,LOW" + (BL_LOW_MODE ? 0 : 1) + "$" + sNewLine;
-        lclBTServiceInstance.sendData(sCommand);
-        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
         SharedPreferences prefsLamps = getSharedPreferences(Constants.SHAREDPREFS_CURRENT_LAMPS, 0);
         Map<String, ?> keys = prefsLamps.getAll();
         TreeMap<String, String> sorted = new TreeMap<>();
@@ -2074,8 +2077,12 @@ public class TRSDigitalPanel extends Activity {
         }
 
         String sHex = convertRGBwithCommasToHexString(TextUtils.join(",", concatValues));
-        sCommand = "S" + sHex + "$" + sNewLine;
+        String sCommand = "S" + sHex + "$" + sNewLine;
         Log.d("MORRIS-TRSDIGITAL", "btnLOW: sending command:" + sCommand);
+        lclBTServiceInstance.sendData(sCommand);
+        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+
+        sCommand= "B,LOW" + (BL_LOW_MODE ? 0 : 1) + "$" + sNewLine;
         lclBTServiceInstance.sendData(sCommand);
         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
         BL_LOW_MODE = !BL_LOW_MODE;

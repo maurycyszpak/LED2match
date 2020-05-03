@@ -23,6 +23,7 @@ public class ReassignLamps extends Activity {
     Spinner spinner1, spinner2, spinner3, spinner4, spinner5, spinner6;
     ArrayAdapter arrayAdapterLampNames;
     public ArrayList<String> arrayListLampNames = new ArrayList<String>();
+    public Boolean blDirty = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,7 +179,9 @@ public class ReassignLamps extends Activity {
 
         Set<String> deduped = new HashSet<String>(stringSpinnerValues);
 
-        if (deduped.size() != stringSpinnerValues.size()) {
+        if (deduped.size() == 0) {
+            makeToast("No button assignments changed");
+        } else if (deduped.size() != stringSpinnerValues.size()) {
             makeToast("Duplicate values found at assignments. Please correct");
         } else {
             blReturn = true;

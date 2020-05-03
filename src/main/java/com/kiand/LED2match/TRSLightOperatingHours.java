@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,14 +20,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.util.Log;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static com.kiand.LED2match.LightAdjustments.sNewLine;
+import static com.kiand.LED2match.LightSettings.sNewLine;
 import static com.kiand.LED2match.TRSDigitalPanel.SHAREDPREFS_LAMP_ASSIGNMENTS;
 
 public class TRSLightOperatingHours extends Activity {
@@ -111,7 +109,7 @@ public class TRSLightOperatingHours extends Activity {
         if (!mBoundBT) {
             Intent intentBT = new Intent(this, BtCOMMsService.class);
             bindService(intentBT, btConnection, Context.BIND_AUTO_CREATE);
-            Toast.makeText(this.getBaseContext(),"Service bound (onResume)", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this.getBaseContext(),"Service bound (onResume)", Toast.LENGTH_SHORT).show();
             mBoundBT = true;
             Log.d(TAG, "BT service bound");
         }
@@ -119,7 +117,7 @@ public class TRSLightOperatingHours extends Activity {
         if (mBoundBT) {
             try {
                 String sSequence = "J";
-                sSequence = sSequence.concat(System.lineSeparator());
+                sSequence = sSequence.concat(sNewLine);
                 lclBTServiceInstance.sendData(sSequence);
                 Log.d(TAG, "Requesting timers via commmand J");
             } catch (NullPointerException e) {
@@ -207,27 +205,27 @@ public class TRSLightOperatingHours extends Activity {
     public void populate_button_timers_empty() {
         Log.d(TAG, "Populating EMPTY button timers");
         if (!btnL1.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-            btnL1.setText(btnL1.getTag().toString() + System.lineSeparator() + sEmptyTimerValue);
+            btnL1.setText(btnL1.getTag().toString() + sNewLine + sEmptyTimerValue);
         }
 
         if (!btnL2.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-            btnL2.setText(btnL2.getTag().toString() + System.lineSeparator() + sEmptyTimerValue);
+            btnL2.setText(btnL2.getTag().toString() + sNewLine + sEmptyTimerValue);
         }
 
         if (!btnL3.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-            btnL3.setText(btnL3.getTag().toString() + System.lineSeparator() + sEmptyTimerValue);
+            btnL3.setText(btnL3.getTag().toString() + sNewLine + sEmptyTimerValue);
         }
 
         if (!btnL4.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-            btnL4.setText(btnL4.getTag().toString() + System.lineSeparator() + sEmptyTimerValue);
+            btnL4.setText(btnL4.getTag().toString() + sNewLine + sEmptyTimerValue);
         }
 
         if (!btnL5.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-            btnL5.setText(btnL5.getTag().toString() + System.lineSeparator() + sEmptyTimerValue);
+            btnL5.setText(btnL5.getTag().toString() + sNewLine + sEmptyTimerValue);
         }
 
         if (!btnL6.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-            btnL6.setText(btnL6.getTag().toString() + System.lineSeparator() + sEmptyTimerValue);
+            btnL6.setText(btnL6.getTag().toString() + sNewLine + sEmptyTimerValue);
         }
     }
 
@@ -248,27 +246,27 @@ public class TRSLightOperatingHours extends Activity {
 
 
                         if (!btnL1.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-                            btnL1.setText(btnL1.getTag().toString() + System.lineSeparator() + convert_secs_to_hhmm(sTimers[0]));
+                            btnL1.setText(btnL1.getTag().toString() + sNewLine + convert_secs_to_hhmm(sTimers[0]));
                         }
 
                         if (!btnL2.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-                            btnL2.setText(btnL2.getTag().toString() + System.lineSeparator() + convert_secs_to_hhmm(sTimers[1]));
+                            btnL2.setText(btnL2.getTag().toString() + sNewLine + convert_secs_to_hhmm(sTimers[1]));
                         }
 
                         if (!btnL3.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-                            btnL3.setText(btnL3.getTag().toString() + System.lineSeparator() + convert_secs_to_hhmm(sTimers[2]));
+                            btnL3.setText(btnL3.getTag().toString() + sNewLine + convert_secs_to_hhmm(sTimers[2]));
                         }
 
                         if (!btnL4.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-                            btnL4.setText(btnL4.getTag().toString() + System.lineSeparator() + convert_secs_to_hhmm(sTimers[3]));
+                            btnL4.setText(btnL4.getTag().toString() + sNewLine + convert_secs_to_hhmm(sTimers[3]));
                         }
 
                         if (!btnL5.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-                            btnL5.setText(btnL5.getTag().toString() + System.lineSeparator() + convert_secs_to_hhmm(sTimers[4]));
+                            btnL5.setText(btnL5.getTag().toString() + sNewLine + convert_secs_to_hhmm(sTimers[4]));
                         }
 
                         if (!btnL6.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-                            btnL6.setText(btnL6.getTag().toString() + System.lineSeparator() + convert_secs_to_hhmm(sTimers[5]));
+                            btnL6.setText(btnL6.getTag().toString() + sNewLine + convert_secs_to_hhmm(sTimers[5]));
                         }
                     } catch (ArrayIndexOutOfBoundsException e) {
                         makeToast("Unable to read the LED timers from file");
@@ -665,7 +663,7 @@ public class TRSLightOperatingHours extends Activity {
     }*/
 
     public void populateLampsState() {
-        SharedPreferences spsValues = getSharedPreferences(LightAdjustments.SHAREDPREFS_LAMP_STATE, MODE_PRIVATE);
+        SharedPreferences spsValues = getSharedPreferences(LightSettings.SHAREDPREFS_LAMP_STATE, MODE_PRIVATE);
         String sReturn = spsValues.getString("LAMPS", "");
         String[] sLampState = sReturn.split(",");
 

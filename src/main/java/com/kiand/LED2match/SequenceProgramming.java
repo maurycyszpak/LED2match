@@ -88,56 +88,56 @@ public class SequenceProgramming extends Activity implements Runnable {
             }
         });*/
 
-        edTextDebug = (EditText)findViewById(R.id.editTextTime1);
-        spinSequences = (Spinner) findViewById(R.id.spinnerStoredSequences); // Mauricio
+        edTextDebug = findViewById(R.id.editTextTime1);
+        spinSequences = findViewById(R.id.spinnerStoredSequences); // Mauricio
         arrAdapterSequences = new ArrayAdapter<String>(SequenceProgramming.this, R.layout.spinner_row, arrListSequences); // Mauricio
         spinSequences.setAdapter (arrAdapterSequences);
 
-        Spinner spinnerLampsRow1 = (Spinner) findViewById(R.id.spinnerLampsRow1);
-        Spinner spinnerLampsRow2 = (Spinner) findViewById(R.id.spinnerLampsRow2);
-        Spinner spinnerLampsRow3 = (Spinner) findViewById(R.id.spinnerLampsRow3);
-        Spinner spinnerLampsRow4 = (Spinner) findViewById(R.id.spinnerLampsRow4);
-        Spinner spinnerLampsRow5 = (Spinner) findViewById(R.id.spinnerLampsRow5);
-        Spinner spinnerLampsRow6 = (Spinner) findViewById(R.id.spinnerLampsRow6);
+        Spinner spinnerLampsRow1 = findViewById(R.id.spinnerLampsRow1);
+        Spinner spinnerLampsRow2 = findViewById(R.id.spinnerLampsRow2);
+        Spinner spinnerLampsRow3 = findViewById(R.id.spinnerLampsRow3);
+        Spinner spinnerLampsRow4 = findViewById(R.id.spinnerLampsRow4);
+        Spinner spinnerLampsRow5 = findViewById(R.id.spinnerLampsRow5);
+        Spinner spinnerLampsRow6 = findViewById(R.id.spinnerLampsRow6);
 
-        final EditText editTextRed1 = (EditText) findViewById(R.id.editTextRed1);
-        final EditText editTextRed2 = (EditText) findViewById(R.id.editTextRed2);
-        final EditText editTextRed3 = (EditText) findViewById(R.id.editTextRed3);
-        final EditText editTextRed4 = (EditText) findViewById(R.id.editTextRed4);
-        final EditText editTextRed5 = (EditText) findViewById(R.id.editTextRed5);
-        final EditText editTextRed6 = (EditText) findViewById(R.id.editTextRed6);
+        final EditText editTextRed1 = findViewById(R.id.editTextRed1);
+        final EditText editTextRed2 = findViewById(R.id.editTextRed2);
+        final EditText editTextRed3 = findViewById(R.id.editTextRed3);
+        final EditText editTextRed4 = findViewById(R.id.editTextRed4);
+        final EditText editTextRed5 = findViewById(R.id.editTextRed5);
+        final EditText editTextRed6 = findViewById(R.id.editTextRed6);
 
-        final EditText editTextGreen1 = (EditText) findViewById(R.id.editTextGreen1);
-        final EditText editTextGreen2 = (EditText) findViewById(R.id.editTextGreen2);
-        final EditText editTextGreen3 = (EditText) findViewById(R.id.editTextGreen3);
-        final EditText editTextGreen4 = (EditText) findViewById(R.id.editTextGreen4);
-        final EditText editTextGreen5 = (EditText) findViewById(R.id.editTextGreen5);
-        final EditText editTextGreen6 = (EditText) findViewById(R.id.editTextGreen6);
+        final EditText editTextGreen1 = findViewById(R.id.editTextGreen1);
+        final EditText editTextGreen2 = findViewById(R.id.editTextGreen2);
+        final EditText editTextGreen3 = findViewById(R.id.editTextGreen3);
+        final EditText editTextGreen4 = findViewById(R.id.editTextGreen4);
+        final EditText editTextGreen5 = findViewById(R.id.editTextGreen5);
+        final EditText editTextGreen6 = findViewById(R.id.editTextGreen6);
 
-        final EditText editTextBlue1 = (EditText) findViewById(R.id.editTextBlue1);
-        final EditText editTextBlue2 = (EditText) findViewById(R.id.editTextBlue2);
-        final EditText editTextBlue3 = (EditText) findViewById(R.id.editTextBlue3);
-        final EditText editTextBlue4 = (EditText) findViewById(R.id.editTextBlue4);
-        final EditText editTextBlue5 = (EditText) findViewById(R.id.editTextBlue5);
-        final EditText editTextBlue6 = (EditText) findViewById(R.id.editTextBlue6);
+        final EditText editTextBlue1 = findViewById(R.id.editTextBlue1);
+        final EditText editTextBlue2 = findViewById(R.id.editTextBlue2);
+        final EditText editTextBlue3 = findViewById(R.id.editTextBlue3);
+        final EditText editTextBlue4 = findViewById(R.id.editTextBlue4);
+        final EditText editTextBlue5 = findViewById(R.id.editTextBlue5);
+        final EditText editTextBlue6 = findViewById(R.id.editTextBlue6);
 
-        final EditText editTextWhite1 = (EditText) findViewById(R.id.editTextWhite1);
-        final EditText editTextWhite2 = (EditText) findViewById(R.id.editTextWhite2);
-        final EditText editTextWhite3 = (EditText) findViewById(R.id.editTextWhite3);
-        final EditText editTextWhite4 = (EditText) findViewById(R.id.editTextWhite4);
-        final EditText editTextWhite5 = (EditText) findViewById(R.id.editTextWhite5);
-        final EditText editTextWhite6 = (EditText) findViewById(R.id.editTextWhite6);
+        final EditText editTextWhite1 = findViewById(R.id.editTextWhite1);
+        final EditText editTextWhite2 = findViewById(R.id.editTextWhite2);
+        final EditText editTextWhite3 = findViewById(R.id.editTextWhite3);
+        final EditText editTextWhite4 = findViewById(R.id.editTextWhite4);
+        final EditText editTextWhite5 = findViewById(R.id.editTextWhite5);
+        final EditText editTextWhite6 = findViewById(R.id.editTextWhite6);
 
-        final EditText editTextTime1 = (EditText) findViewById(R.id.editTextTime1);
-        final EditText editTextTime2 = (EditText) findViewById(R.id.editTextTime2);
-        final EditText editTextTime3 = (EditText) findViewById(R.id.editTextTime3);
-        final EditText editTextTime4 = (EditText) findViewById(R.id.editTextTime4);
-        final EditText editTextTime5 = (EditText) findViewById(R.id.editTextTime5);
-        final EditText editTextTime6 = (EditText) findViewById(R.id.editTextTime6);
+        final EditText editTextTime1 = findViewById(R.id.editTextTime1);
+        final EditText editTextTime2 = findViewById(R.id.editTextTime2);
+        final EditText editTextTime3 = findViewById(R.id.editTextTime3);
+        final EditText editTextTime4 = findViewById(R.id.editTextTime4);
+        final EditText editTextTime5 = findViewById(R.id.editTextTime5);
+        final EditText editTextTime6 = findViewById(R.id.editTextTime6);
 
-        textSeqCommand = (TextView) findViewById(R.id.textSequenceCommand);
+        textSeqCommand = findViewById(R.id.textSequenceCommand);
 
-        textCurrentActiveRow = (TextView) findViewById(R.id.textCurrentRow);
+        textCurrentActiveRow = findViewById(R.id.textCurrentRow);
         spinLampsAdapter = new ArrayAdapter<>(SequenceProgramming.this, R.layout.spinner_row, spinLampsArrList); // Mauricio
 
         iCurrRow = 1;
@@ -363,7 +363,7 @@ public class SequenceProgramming extends Activity implements Runnable {
 
     public void populateLampNames() {
         if (BtCore.Connected()) {
-            String sReply = LightAdjustments.bluetoothAskReply("P").trim();
+            String sReply = LightSettings.bluetoothAskReply("P").trim();
             spinLampsArrList.clear();
             spinLampsArrList.add(0, "LED-BAR");
 
@@ -389,13 +389,13 @@ public class SequenceProgramming extends Activity implements Runnable {
     }
 
     public void setTextCurrentActiveRow(int i) {
-        TextView tv = (TextView) findViewById(R.id.textCurrentRow);
+        TextView tv = findViewById(R.id.textCurrentRow);
         tv.setText(String.valueOf(iCurrRow));
     }
 
     public void generateSequenceCommand(View v) {
         EditText et;
-        TextView tsc = (TextView) findViewById(R.id.textSequenceCommand);
+        TextView tsc = findViewById(R.id.textSequenceCommand);
         String sCommand;
 
         String sSteps = "Initial Title2";
@@ -404,27 +404,27 @@ public class SequenceProgramming extends Activity implements Runnable {
         
         //splashSequenceSummary();
 
-        et = (EditText) findViewById(R.id.editSeqStep1);
+        et = findViewById(R.id.editSeqStep1);
         sCommand = et.getText().toString();
         sSteps.concat(sCommand+"\n");
 
-        et = (EditText) findViewById(R.id.editSeqStep2);
+        et = findViewById(R.id.editSeqStep2);
         sCommand = sCommand.concat(et.getText().toString());
         sSteps.concat(sCommand+"\n");
 
-        et = (EditText) findViewById(R.id.editSeqStep3);
+        et = findViewById(R.id.editSeqStep3);
         sCommand = sCommand.concat(et.getText().toString());
         sSteps.concat(sCommand+"\n");
 
-        et = (EditText) findViewById(R.id.editSeqStep4);
+        et = findViewById(R.id.editSeqStep4);
         sCommand = sCommand.concat(et.getText().toString());
         sSteps.concat(sCommand+"\n");
 
-        et = (EditText) findViewById(R.id.editSeqStep5);
+        et = findViewById(R.id.editSeqStep5);
         sCommand = sCommand.concat(et.getText().toString());
         sSteps.concat(sCommand+"\n");
 
-        et = (EditText) findViewById(R.id.editSeqStep6);
+        et = findViewById(R.id.editSeqStep6);
         sCommand = sCommand.concat(et.getText().toString());
         sSteps.concat(sCommand+"\n");
 
@@ -436,15 +436,15 @@ public class SequenceProgramming extends Activity implements Runnable {
         //String sSteps = LightAdjustments.bluetoothAskReply("D"+sCommand);
         //Log.d(TAG, "Sent SEQ data to controller, reply: " + sSteps);
 
-        TextView tsr = (TextView) findViewById(R.id.textSequenceResponse);
-        String sReply = LightAdjustments.bluetoothAskReply("E");
+        TextView tsr = findViewById(R.id.textSequenceResponse);
+        String sReply = LightSettings.bluetoothAskReply("E");
         tsr.setText(sReply);
         Toast.makeText(this, "SEQ data sent to controller.\nPress Execute to run", Toast.LENGTH_SHORT).show();
     }
 
     public void executeStoredSequence(View v) {
-        TextView tsr = (TextView) findViewById(R.id.textSequenceResponse);
-        String sReply = LightAdjustments.bluetoothAskReply("E");
+        TextView tsr = findViewById(R.id.textSequenceResponse);
+        String sReply = LightSettings.bluetoothAskReply("E");
         tsr.setText(sReply);
 
         String sResponse = sReply;
@@ -466,7 +466,7 @@ public class SequenceProgramming extends Activity implements Runnable {
                 int iBlue = Integer.parseInt(listSeqLineValues.get(3));
                 int iWhite = Integer.parseInt(listSeqLineValues.get(4));
                 long lTime = Long.parseLong(listSeqLineValues.get(5));
-                Log.d(TAG, "Line " + j + ":" + String.valueOf(iLampNo) + ",R"+iRed+",G"+iGreen+",B"+iBlue+",W"+iWhite+",TIME"+lTime);
+                Log.d(TAG, "Line " + j + ":" + iLampNo + ",R"+iRed+",G"+iGreen+",B"+iBlue+",W"+iWhite+",TIME"+lTime);
                 //String sTime = listSeqLineValues.get(5);
 
                 lNextStopTime = System.currentTimeMillis() + lTime*1000;
@@ -490,7 +490,7 @@ public class SequenceProgramming extends Activity implements Runnable {
                 //LightAdjustments.switchOffAllLamps();
 
                 if (j == listSeqLines.size()-1) {
-                    CheckBox cb = (CheckBox)findViewById(R.id.checkBoxLoop);
+                    CheckBox cb = findViewById(R.id.checkBoxLoop);
 
                     if (cb.isChecked()) {
                         j = -1;
@@ -520,19 +520,19 @@ public class SequenceProgramming extends Activity implements Runnable {
         textCurrentActiveRow.setText(String.valueOf(iCurrRow));
 
         if (iRowNum == 6) {
-            EditText et = (EditText) findViewById(R.id.editSeqStep6);
+            EditText et = findViewById(R.id.editSeqStep6);
             et.setText("");
         } else if (iRowNum == 5) {
-            EditText et = (EditText) findViewById(R.id.editSeqStep5);
+            EditText et = findViewById(R.id.editSeqStep5);
             et.setText("");
         } else if (iRowNum == 4) {
-            EditText et = (EditText) findViewById(R.id.editSeqStep4);
+            EditText et = findViewById(R.id.editSeqStep4);
             et.setText("");
         } else if (iRowNum == 3) {
-            EditText et = (EditText) findViewById(R.id.editSeqStep3);
+            EditText et = findViewById(R.id.editSeqStep3);
             et.setText("");
         } else if (iRowNum == 2) {
-            EditText et = (EditText) findViewById(R.id.editSeqStep2);
+            EditText et = findViewById(R.id.editSeqStep2);
             et.setText("");
         }
 
@@ -547,33 +547,33 @@ public class SequenceProgramming extends Activity implements Runnable {
         String sValue;
         if (iRow == 1) {
             sCommand="";
-            Spinner s = (Spinner) findViewById(R.id.spinnerLampsRow1);
+            Spinner s = findViewById(R.id.spinnerLampsRow1);
             iPos = (s.getSelectedItemPosition() == 0) ? 8 : s.getSelectedItemPosition();
             //iPos = (s.getSelectedItemPosition() == -1) ? 9 : s.getSelectedItemPosition();
             sValue = Integer.toString(iPos);
             sCommand = sCommand.concat(sValue);
 
-            et = (EditText) findViewById(R.id.editTextRed1);
+            et = findViewById(R.id.editTextRed1);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
 
-            et = (EditText) findViewById(R.id.editTextGreen1);
+            et = findViewById(R.id.editTextGreen1);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
 
-            et = (EditText) findViewById(R.id.editTextBlue1);
+            et = findViewById(R.id.editTextBlue1);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
 
-            et = (EditText) findViewById(R.id.editTextWhite1);
+            et = findViewById(R.id.editTextWhite1);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
 
-            et = (EditText) findViewById(R.id.editTextTime1);
+            et = findViewById(R.id.editTextTime1);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = sValue.equals("9999") ? "999999" : sValue;
             sValue = String.format(Locale.US, "%06d", Integer.parseInt(sValue));
@@ -583,44 +583,44 @@ public class SequenceProgramming extends Activity implements Runnable {
             if (sCommand.length() == 19) {
             //if (sCommand.length() > 0 ) {
                 bResult = true;
-                EditText editRowSum = (EditText) findViewById(R.id.editSeqStep1);
+                EditText editRowSum = findViewById(R.id.editSeqStep1);
                 editRowSum.setText(sCommand);
             } else {
                 Toast.makeText(this, sCommand + "\nRow doesn't have valid values). Is the phone connected to the controller?", Toast.LENGTH_SHORT).show();
             }
         } else if (iRow == 2) {
             sCommand="";
-            Spinner s = (Spinner) findViewById(R.id.spinnerLampsRow2);
+            Spinner s = findViewById(R.id.spinnerLampsRow2);
             iPos = (s.getSelectedItemPosition() == 0) ? 8 : s.getSelectedItemPosition();
             sValue = Integer.toString(iPos);
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextRed2);
+            et = findViewById(R.id.editTextRed2);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextGreen2);
+            et = findViewById(R.id.editTextGreen2);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextBlue2);
+            et = findViewById(R.id.editTextBlue2);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextWhite2);
+            et = findViewById(R.id.editTextWhite2);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextTime2);
+            et = findViewById(R.id.editTextTime2);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = sValue.equals("9999") ? "999999" : sValue;
             sValue = String.format(Locale.US, "%06d", Integer.parseInt(sValue));
@@ -629,44 +629,44 @@ public class SequenceProgramming extends Activity implements Runnable {
             if (sCommand.length() == 19) {
             //if (sCommand.length() > 0 ) {
                 bResult = true;
-                EditText editRowSum = (EditText) findViewById(R.id.editSeqStep2);
+                EditText editRowSum = findViewById(R.id.editSeqStep2);
                 editRowSum.setText(sCommand);
             } else {
                 Toast.makeText(this, "Row doesn't have valid values. Is the phone connected to the controller?", Toast.LENGTH_SHORT).show();
             }
         } else if (iRow == 3) {
             sCommand="";
-            Spinner s = (Spinner) findViewById(R.id.spinnerLampsRow3);
+            Spinner s = findViewById(R.id.spinnerLampsRow3);
             iPos = (s.getSelectedItemPosition() == 0) ? 8 : s.getSelectedItemPosition();
             sValue = Integer.toString(iPos);
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextRed3);
+            et = findViewById(R.id.editTextRed3);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextGreen3);
+            et = findViewById(R.id.editTextGreen3);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextBlue3);
+            et = findViewById(R.id.editTextBlue3);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextWhite3);
+            et = findViewById(R.id.editTextWhite3);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextTime3);
+            et = findViewById(R.id.editTextTime3);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = sValue.equals("9999") ? "999999" : sValue;
             sValue = String.format(Locale.US, "%06d", Integer.parseInt(sValue));
@@ -675,44 +675,44 @@ public class SequenceProgramming extends Activity implements Runnable {
 
             if (sCommand.length() == 19) {
                 bResult = true;
-                EditText editRowSum = (EditText) findViewById(R.id.editSeqStep3);
+                EditText editRowSum = findViewById(R.id.editSeqStep3);
                 editRowSum.setText(sCommand);
             } else {
                 Toast.makeText(this, "Row doesn't have valid values. Is the phone connected to the controller?", Toast.LENGTH_SHORT).show();
             }
         } else if (iRow == 4) {
             sCommand="";
-            Spinner s = (Spinner) findViewById(R.id.spinnerLampsRow4);
+            Spinner s = findViewById(R.id.spinnerLampsRow4);
             iPos = (s.getSelectedItemPosition() == 0) ? 8 : s.getSelectedItemPosition();
             sValue = Integer.toString(iPos);
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextRed4);
+            et = findViewById(R.id.editTextRed4);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextGreen4);
+            et = findViewById(R.id.editTextGreen4);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextBlue4);
+            et = findViewById(R.id.editTextBlue4);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextWhite4);
+            et = findViewById(R.id.editTextWhite4);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextTime4);
+            et = findViewById(R.id.editTextTime4);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = sValue.equals("9999") ? "999999" : sValue;
             sValue = String.format(Locale.US, "%06d", Integer.parseInt(sValue));
@@ -721,44 +721,44 @@ public class SequenceProgramming extends Activity implements Runnable {
 
             if (sCommand.length() == 19) {
                 bResult = true;
-                EditText editRowSum = (EditText) findViewById(R.id.editSeqStep4);
+                EditText editRowSum = findViewById(R.id.editSeqStep4);
                 editRowSum.setText(sCommand);
             } else {
                 Toast.makeText(this, "Row doesn't have valid values. Is the phone connected to the controller?", Toast.LENGTH_SHORT).show();
             }
         } else if (iRow == 5) {
             sCommand="";
-            Spinner s = (Spinner) findViewById(R.id.spinnerLampsRow5);
+            Spinner s = findViewById(R.id.spinnerLampsRow5);
             iPos = (s.getSelectedItemPosition() == 0) ? 8 : s.getSelectedItemPosition();
             sValue = Integer.toString(iPos);
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextRed5);
+            et = findViewById(R.id.editTextRed5);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextGreen5);
+            et = findViewById(R.id.editTextGreen5);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextBlue5);
+            et = findViewById(R.id.editTextBlue5);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextWhite5);
+            et = findViewById(R.id.editTextWhite5);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextTime5);
+            et = findViewById(R.id.editTextTime5);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = sValue.equals("9999") ? "999999" : sValue;
             sValue = String.format(Locale.US, "%06d", Integer.parseInt(sValue));
@@ -767,44 +767,44 @@ public class SequenceProgramming extends Activity implements Runnable {
 
             if (sCommand.length() == 19) {
                 bResult = true;
-                EditText editRowSum = (EditText) findViewById(R.id.editSeqStep5);
+                EditText editRowSum = findViewById(R.id.editSeqStep5);
                 editRowSum.setText(sCommand);
             } else {
                 Toast.makeText(this, "Row doesn't have valid values. Is the phone connected to the controller?", Toast.LENGTH_SHORT).show();
             }
         } else if (iRow == 6) {
             sCommand="";
-            Spinner s = (Spinner) findViewById(R.id.spinnerLampsRow6);
+            Spinner s = findViewById(R.id.spinnerLampsRow6);
             iPos = (s.getSelectedItemPosition() == 0) ? 8 : s.getSelectedItemPosition();
             sValue = Integer.toString(iPos);
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextRed6);
+            et = findViewById(R.id.editTextRed6);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextGreen6);
+            et = findViewById(R.id.editTextGreen6);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextBlue6);
+            et = findViewById(R.id.editTextBlue6);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextWhite6);
+            et = findViewById(R.id.editTextWhite6);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = String.format(Locale.US, "%03d", Integer.parseInt(sValue));
             sCommand = sCommand.concat(sValue);
             
 
-            et = (EditText) findViewById(R.id.editTextTime6);
+            et = findViewById(R.id.editTextTime6);
             sValue = (et.getText().toString().equals("")) ? "0" : et.getText().toString();
             sValue = sValue.equals("9999") ? "999999" : sValue;
             sValue = String.format(Locale.US, "%06d", Integer.parseInt(sValue));
@@ -813,7 +813,7 @@ public class SequenceProgramming extends Activity implements Runnable {
 
             if (sCommand.length() == 19) {
                 bResult = true;
-                EditText editRowSum = (EditText) findViewById(R.id.editSeqStep6);
+                EditText editRowSum = findViewById(R.id.editSeqStep6);
                 editRowSum.setText(sCommand);
             } else {
                 Toast.makeText(this, "Row doesn't have valid values. Is the phone connected to the controller?", Toast.LENGTH_SHORT).show();
@@ -860,11 +860,11 @@ public class SequenceProgramming extends Activity implements Runnable {
     */
 
     public void resetLayoutContent(int iLayoutID) {
-        LinearLayout ll = (LinearLayout) findViewById(iLayoutID);
+        LinearLayout ll = findViewById(iLayoutID);
         for ( int i = 0; i < ll.getChildCount();  i++ ){
             View view = ll.getChildAt(i);
             if (view instanceof EditText) {
-                EditText et = (EditText) findViewById(view.getId());
+                EditText et = findViewById(view.getId());
                 et.setText("");
             } /*else if (view instanceof Spinner) {
                 Spinner s = (Spinner) findViewById(view.getId());
@@ -873,11 +873,11 @@ public class SequenceProgramming extends Activity implements Runnable {
         }
     }
     public void disableLayoutContent(int iLayoutID) {
-        LinearLayout ll = (LinearLayout) findViewById(iLayoutID);
+        LinearLayout ll = findViewById(iLayoutID);
         for ( int i = 0; i < ll.getChildCount();  i++ ){
             View view = ll.getChildAt(i);
             if (view instanceof EditText) {
-                EditText et = (EditText) findViewById(view.getId());
+                EditText et = findViewById(view.getId());
                 et.setHintTextColor(getResources().getColor(R.color.light_gray));
                 et.setTextColor(getResources().getColor(R.color.light_gray));
             }
@@ -887,11 +887,11 @@ public class SequenceProgramming extends Activity implements Runnable {
     }
 
     public void enableLayoutContent(int iLayoutID) {
-        LinearLayout ll = (LinearLayout) findViewById(iLayoutID);
+        LinearLayout ll = findViewById(iLayoutID);
         for ( int i = 0; i < ll.getChildCount();  i++ ){
             View view = ll.getChildAt(i);
             if (view instanceof EditText) {
-                EditText et = (EditText) findViewById(view.getId());
+                EditText et = findViewById(view.getId());
                 et.setHintTextColor(getResources().getColor(R.color.hts_blue));
                 et.setTextColor(getResources().getColor(R.color.hts_blue));
             }
@@ -901,35 +901,35 @@ public class SequenceProgramming extends Activity implements Runnable {
 
     public void makeLayoutVisible(int iRowNum) {
         if (iRowNum == 1) {
-            LinearLayout ll = (LinearLayout)findViewById(R.id.layoutSeqStep1);
+            LinearLayout ll = findViewById(R.id.layoutSeqStep1);
             ll.setVisibility(View.VISIBLE);
 
         } else if(iRowNum == 2) {
-            LinearLayout ll = (LinearLayout)findViewById(R.id.layoutSeqStep2);
+            LinearLayout ll = findViewById(R.id.layoutSeqStep2);
             ll.setVisibility(View.VISIBLE);
 
             int iLayoutID = R.id.layoutSeqStep1;
             disableLayoutContent(iLayoutID);
         } else if (iRowNum == 3) {
-            LinearLayout ll = (LinearLayout)findViewById(R.id.layoutSeqStep3);
+            LinearLayout ll = findViewById(R.id.layoutSeqStep3);
             ll.setVisibility(View.VISIBLE);
 
             int iLayoutID = R.id.layoutSeqStep2;
             disableLayoutContent(iLayoutID);
         } else if (iRowNum == 4) {
-            LinearLayout ll = (LinearLayout)findViewById(R.id.layoutSeqStep4);
+            LinearLayout ll = findViewById(R.id.layoutSeqStep4);
             ll.setVisibility(View.VISIBLE);
 
             int iLayoutID = R.id.layoutSeqStep3;
             disableLayoutContent(iLayoutID);
         } else if (iRowNum == 5) {
-            LinearLayout ll = (LinearLayout)findViewById(R.id.layoutSeqStep5);
+            LinearLayout ll = findViewById(R.id.layoutSeqStep5);
             ll.setVisibility(View.VISIBLE);
 
             int iLayoutID = R.id.layoutSeqStep4;
             disableLayoutContent(iLayoutID);
         } else if (iRowNum == 6) {
-            LinearLayout ll = (LinearLayout)findViewById(R.id.layoutSeqStep6);
+            LinearLayout ll = findViewById(R.id.layoutSeqStep6);
             ll.setVisibility(View.VISIBLE);
 
             int iLayoutID = R.id.layoutSeqStep5;
@@ -939,35 +939,35 @@ public class SequenceProgramming extends Activity implements Runnable {
 
     public void makeLayoutInvisible(int iRowNum) {
         if (iRowNum == 1) {
-            LinearLayout ll = (LinearLayout)findViewById(R.id.layoutSeqStep1);
+            LinearLayout ll = findViewById(R.id.layoutSeqStep1);
             ll.setVisibility(View.GONE);
 
         } else if(iRowNum == 2) {
-            LinearLayout ll = (LinearLayout)findViewById(R.id.layoutSeqStep2);
+            LinearLayout ll = findViewById(R.id.layoutSeqStep2);
             ll.setVisibility(View.GONE);
 
             int iLayoutID = R.id.layoutSeqStep1;
             enableLayoutContent(iLayoutID);
         } else if (iRowNum == 3) {
-            LinearLayout ll = (LinearLayout)findViewById(R.id.layoutSeqStep3);
+            LinearLayout ll = findViewById(R.id.layoutSeqStep3);
             ll.setVisibility(View.GONE);
 
             int iLayoutID = R.id.layoutSeqStep2;
             enableLayoutContent(iLayoutID);
         } else if(iRowNum == 4) {
-            LinearLayout ll = (LinearLayout)findViewById(R.id.layoutSeqStep4);
+            LinearLayout ll = findViewById(R.id.layoutSeqStep4);
             ll.setVisibility(View.GONE);
 
             int iLayoutID = R.id.layoutSeqStep3;
             enableLayoutContent(iLayoutID);
         } else if(iRowNum == 5) {
-            LinearLayout ll = (LinearLayout)findViewById(R.id.layoutSeqStep5);
+            LinearLayout ll = findViewById(R.id.layoutSeqStep5);
             ll.setVisibility(View.GONE);
 
             int iLayoutID = R.id.layoutSeqStep4;
             enableLayoutContent(iLayoutID);
         } else if(iRowNum == 6) {
-            LinearLayout ll = (LinearLayout)findViewById(R.id.layoutSeqStep6);
+            LinearLayout ll = findViewById(R.id.layoutSeqStep6);
             ll.setVisibility(View.GONE);
 
             int iLayoutID = R.id.layoutSeqStep5;
@@ -1034,7 +1034,7 @@ public class SequenceProgramming extends Activity implements Runnable {
 
         // set changelampname.xml to be the layout file of the alertdialog builder
         alertDialogBuilder.setView(seqNameView);
-        final EditText edtInput = (EditText) seqNameView.findViewById(R.id.newSequenceName);
+        final EditText edtInput = seqNameView.findViewById(R.id.newSequenceName);
 
         // setup a dialog window
         alertDialogBuilder
@@ -1067,17 +1067,17 @@ public class SequenceProgramming extends Activity implements Runnable {
         String sReturn = "";
         EditText et;
 
-        et = (EditText) findViewById(R.id.editSeqStep1);
+        et = findViewById(R.id.editSeqStep1);
         sReturn = sReturn.concat(et.getText().toString());
-        et = (EditText) findViewById(R.id.editSeqStep2);
+        et = findViewById(R.id.editSeqStep2);
         sReturn = sReturn.concat(et.getText().toString());
-        et = (EditText) findViewById(R.id.editSeqStep3);
+        et = findViewById(R.id.editSeqStep3);
         sReturn = sReturn.concat(et.getText().toString());
-        et = (EditText) findViewById(R.id.editSeqStep4);
+        et = findViewById(R.id.editSeqStep4);
         sReturn = sReturn.concat(et.getText().toString());
-        et = (EditText) findViewById(R.id.editSeqStep5);
+        et = findViewById(R.id.editSeqStep5);
         sReturn = sReturn.concat(et.getText().toString());
-        et = (EditText) findViewById(R.id.editSeqStep6);
+        et = findViewById(R.id.editSeqStep6);
         sReturn = sReturn.concat(et.getText().toString());
 
         return sReturn;
@@ -1088,7 +1088,7 @@ public class SequenceProgramming extends Activity implements Runnable {
         //checkForNewLampName();
         SharedPreferences spsSequence = getSharedPreferences(APP_SEQ_PRESET, 0);
         SharedPreferences.Editor spsEditor = spsSequence.edit();
-        TextView tv = (TextView) findViewById(R.id.textSequenceCommand);
+        TextView tv = findViewById(R.id.textSequenceCommand);
 
         if (newSeqName.length() > 0) {
             //spsEditor.clear(); //Delete previous presets
@@ -1114,15 +1114,15 @@ public class SequenceProgramming extends Activity implements Runnable {
         Log.d(TAG, "function populateRow:" + sLamp+","+sRed+","+sGreen+","+sBlue+","+sWhite+","+sTime);
         if (i==1) {
 
-            ll = (LinearLayout)findViewById(R.id.layoutSeqStep1);
+            ll = findViewById(R.id.layoutSeqStep1);
             if (ll.getVisibility() == View.GONE) { ll.setVisibility(View.VISIBLE);}
 
-            etRed = (EditText)findViewById(R.id.editTextRed1);
-            etGreen = (EditText)findViewById(R.id.editTextGreen1);
-            etBlue = (EditText)findViewById(R.id.editTextBlue1);
-            etWhite = (EditText)findViewById(R.id.editTextWhite1);
-            etTime = (EditText)findViewById(R.id.editTextTime1);
-            sp = (Spinner)findViewById(R.id.spinnerLampsRow1);
+            etRed = findViewById(R.id.editTextRed1);
+            etGreen = findViewById(R.id.editTextGreen1);
+            etBlue = findViewById(R.id.editTextBlue1);
+            etWhite = findViewById(R.id.editTextWhite1);
+            etTime = findViewById(R.id.editTextTime1);
+            sp = findViewById(R.id.spinnerLampsRow1);
             if (sLamp.equals("8")) {
                 
                 sRed = (sRed.equals("000") ? "" : sRed);
@@ -1145,15 +1145,15 @@ public class SequenceProgramming extends Activity implements Runnable {
             Log.d(TAG, "("+i+")Populating EditTexts: RED:"+sRed + ",GREEN:"+sGreen+",BLUE:"+sBlue+",WHITE:"+sWhite+",TIME:"+sTime);
         } else if (i==2) {
 
-            ll = (LinearLayout)findViewById(R.id.layoutSeqStep2);
+            ll = findViewById(R.id.layoutSeqStep2);
             if (ll.getVisibility() == View.GONE) { ll.setVisibility(View.VISIBLE);}
 
-            etRed = (EditText)findViewById(R.id.editTextRed2);
-            etGreen = (EditText)findViewById(R.id.editTextGreen2);
-            etBlue = (EditText)findViewById(R.id.editTextBlue2);
-            etWhite = (EditText)findViewById(R.id.editTextWhite2);
-            etTime = (EditText)findViewById(R.id.editTextTime2);
-            sp = (Spinner)findViewById(R.id.spinnerLampsRow2);
+            etRed = findViewById(R.id.editTextRed2);
+            etGreen = findViewById(R.id.editTextGreen2);
+            etBlue = findViewById(R.id.editTextBlue2);
+            etWhite = findViewById(R.id.editTextWhite2);
+            etTime = findViewById(R.id.editTextTime2);
+            sp = findViewById(R.id.spinnerLampsRow2);
             if (sLamp.equals("8")) {
 
                 sRed = (sRed.equals("000") ? "" : sRed);
@@ -1173,15 +1173,15 @@ public class SequenceProgramming extends Activity implements Runnable {
             etTime.setText(sTime);
             Log.d(TAG, "("+i+")Populating EditTexts: RED:"+sRed + ",GREEN:"+sGreen+",BLUE:"+sBlue+",WHITE:"+sWhite+",TIME:"+sTime);
         } else if (i==3) {
-            ll = (LinearLayout)findViewById(R.id.layoutSeqStep3);
+            ll = findViewById(R.id.layoutSeqStep3);
             if (ll.getVisibility() == View.GONE) { ll.setVisibility(View.VISIBLE);}
 
-            etRed = (EditText)findViewById(R.id.editTextRed3);
-            etGreen = (EditText)findViewById(R.id.editTextGreen3);
-            etBlue = (EditText)findViewById(R.id.editTextBlue3);
-            etWhite = (EditText)findViewById(R.id.editTextWhite3);
-            etTime = (EditText)findViewById(R.id.editTextTime3);
-            sp = (Spinner)findViewById(R.id.spinnerLampsRow3);
+            etRed = findViewById(R.id.editTextRed3);
+            etGreen = findViewById(R.id.editTextGreen3);
+            etBlue = findViewById(R.id.editTextBlue3);
+            etWhite = findViewById(R.id.editTextWhite3);
+            etTime = findViewById(R.id.editTextTime3);
+            sp = findViewById(R.id.spinnerLampsRow3);
             if (sLamp.equals("8")) {
                 sRed = (sRed.equals("000") ? "" : sRed);
                 sGreen = (sGreen.equals("000") ? "" : sGreen);
@@ -1200,15 +1200,15 @@ public class SequenceProgramming extends Activity implements Runnable {
             etTime.setText(sTime);
             Log.d(TAG, "("+i+")Populating EditTexts: RED:"+sRed + ",GREEN:"+sGreen+",BLUE:"+sBlue+",WHITE:"+sWhite+",TIME:"+sTime);
         } else if (i==4) {
-            ll = (LinearLayout)findViewById(R.id.layoutSeqStep4);
+            ll = findViewById(R.id.layoutSeqStep4);
             if (ll.getVisibility() == View.GONE) { ll.setVisibility(View.VISIBLE);}
 
-            etRed = (EditText)findViewById(R.id.editTextRed4);
-            etGreen = (EditText)findViewById(R.id.editTextGreen4);
-            etBlue = (EditText)findViewById(R.id.editTextBlue4);
-            etWhite = (EditText)findViewById(R.id.editTextWhite4);
-            etTime = (EditText)findViewById(R.id.editTextTime4);
-            sp = (Spinner)findViewById(R.id.spinnerLampsRow4);
+            etRed = findViewById(R.id.editTextRed4);
+            etGreen = findViewById(R.id.editTextGreen4);
+            etBlue = findViewById(R.id.editTextBlue4);
+            etWhite = findViewById(R.id.editTextWhite4);
+            etTime = findViewById(R.id.editTextTime4);
+            sp = findViewById(R.id.spinnerLampsRow4);
             if (sLamp.equals("8")) {
                 sRed = (sRed.equals("000") ? "" : sRed);
                 sGreen = (sGreen.equals("000") ? "" : sGreen);
@@ -1227,15 +1227,15 @@ public class SequenceProgramming extends Activity implements Runnable {
             etTime.setText(sTime);
             Log.d(TAG, "("+i+")Populating EditTexts: RED:"+sRed + ",GREEN:"+sGreen+",BLUE:"+sBlue+",WHITE:"+sWhite+",TIME:"+sTime);
         } else if (i==5) {
-            ll = (LinearLayout)findViewById(R.id.layoutSeqStep5);
+            ll = findViewById(R.id.layoutSeqStep5);
             if (ll.getVisibility() == View.GONE) { ll.setVisibility(View.VISIBLE);}
 
-            etRed = (EditText)findViewById(R.id.editTextRed5);
-            etGreen = (EditText)findViewById(R.id.editTextGreen5);
-            etBlue = (EditText)findViewById(R.id.editTextBlue5);
-            etWhite = (EditText)findViewById(R.id.editTextWhite5);
-            etTime = (EditText)findViewById(R.id.editTextTime5);
-            sp = (Spinner)findViewById(R.id.spinnerLampsRow5);
+            etRed = findViewById(R.id.editTextRed5);
+            etGreen = findViewById(R.id.editTextGreen5);
+            etBlue = findViewById(R.id.editTextBlue5);
+            etWhite = findViewById(R.id.editTextWhite5);
+            etTime = findViewById(R.id.editTextTime5);
+            sp = findViewById(R.id.spinnerLampsRow5);
             if (sLamp.equals("8")) {
                 sRed = (sRed.equals("000") ? "" : sRed);
                 sGreen = (sGreen.equals("000") ? "" : sGreen);
@@ -1254,15 +1254,15 @@ public class SequenceProgramming extends Activity implements Runnable {
             etTime.setText(sTime);
             Log.d(TAG, "("+i+")Populating EditTexts: RED:"+sRed + ",GREEN:"+sGreen+",BLUE:"+sBlue+",WHITE:"+sWhite+",TIME:"+sTime);
         } else if (i==6) {
-            ll = (LinearLayout)findViewById(R.id.layoutSeqStep6);
+            ll = findViewById(R.id.layoutSeqStep6);
             if (ll.getVisibility() == View.GONE) { ll.setVisibility(View.VISIBLE);}
 
-            etRed = (EditText)findViewById(R.id.editTextRed6);
-            etGreen = (EditText)findViewById(R.id.editTextGreen6);
-            etBlue = (EditText)findViewById(R.id.editTextBlue6);
-            etWhite = (EditText)findViewById(R.id.editTextWhite6);
-            etTime = (EditText)findViewById(R.id.editTextTime6);
-            sp = (Spinner)findViewById(R.id.spinnerLampsRow6);
+            etRed = findViewById(R.id.editTextRed6);
+            etGreen = findViewById(R.id.editTextGreen6);
+            etBlue = findViewById(R.id.editTextBlue6);
+            etWhite = findViewById(R.id.editTextWhite6);
+            etTime = findViewById(R.id.editTextTime6);
+            sp = findViewById(R.id.spinnerLampsRow6);
             if (sLamp.equals("8")) {
 
                 sRed = (sRed.equals("000") ? "" : sRed);
@@ -1289,8 +1289,8 @@ public class SequenceProgramming extends Activity implements Runnable {
         clearPageState(v);
         SharedPreferences spsSequence = getSharedPreferences(APP_SEQ_PRESET, 0);
         //SharedPreferences.Editor spsEditor = spsSequence.edit();
-        Spinner ss = (Spinner) findViewById(R.id.spinnerStoredSequences);
-        TextView tv = (TextView) findViewById(R.id.textSequenceCommand);
+        Spinner ss = findViewById(R.id.spinnerStoredSequences);
+        TextView tv = findViewById(R.id.textSequenceCommand);
         String sSeqName = ss.getSelectedItem().toString();
         String sValue = "";
 
@@ -1321,7 +1321,7 @@ public class SequenceProgramming extends Activity implements Runnable {
             }
 
 
-            TextView tsc = (TextView) findViewById(R.id.textSequenceCommand);
+            TextView tsc = findViewById(R.id.textSequenceCommand);
             tsc.setText(sValue);
             Log.d(TAG, "Sending SEQ data to controller: D"+sValue);
             //String sReply = LightAdjustments.bluetoothAskReply("D"+sValue);
@@ -1331,23 +1331,23 @@ public class SequenceProgramming extends Activity implements Runnable {
     }
 
     public void clearPageState(View v) {
-        resetLayoutContent(((LinearLayout)findViewById((R.id.layoutSeqStep1))).getId());
-        resetLayoutContent(((LinearLayout)findViewById((R.id.layoutSeqStep2))).getId());
-        resetLayoutContent(((LinearLayout)findViewById((R.id.layoutSeqStep3))).getId());
-        resetLayoutContent(((LinearLayout)findViewById((R.id.layoutSeqStep4))).getId());
-        resetLayoutContent(((LinearLayout)findViewById((R.id.layoutSeqStep5))).getId());
-        resetLayoutContent(((LinearLayout)findViewById((R.id.layoutSeqStep6))).getId());
-        Spinner s = (Spinner) findViewById(R.id.spinnerLampsRow1);
+        resetLayoutContent(findViewById((R.id.layoutSeqStep1)).getId());
+        resetLayoutContent(findViewById((R.id.layoutSeqStep2)).getId());
+        resetLayoutContent(findViewById((R.id.layoutSeqStep3)).getId());
+        resetLayoutContent(findViewById((R.id.layoutSeqStep4)).getId());
+        resetLayoutContent(findViewById((R.id.layoutSeqStep5)).getId());
+        resetLayoutContent(findViewById((R.id.layoutSeqStep6)).getId());
+        Spinner s = findViewById(R.id.spinnerLampsRow1);
         s.setSelection(0, true);
-        s = (Spinner) findViewById(R.id.spinnerLampsRow2);
+        s = findViewById(R.id.spinnerLampsRow2);
         s.setSelection(0, true);
-        s = (Spinner) findViewById(R.id.spinnerLampsRow3);
+        s = findViewById(R.id.spinnerLampsRow3);
         s.setSelection(0, true);
-        s = (Spinner) findViewById(R.id.spinnerLampsRow4);
+        s = findViewById(R.id.spinnerLampsRow4);
         s.setSelection(0, true);
-        s = (Spinner) findViewById(R.id.spinnerLampsRow5);
+        s = findViewById(R.id.spinnerLampsRow5);
         s.setSelection(0, true);
-        s = (Spinner) findViewById(R.id.spinnerLampsRow6);
+        s = findViewById(R.id.spinnerLampsRow6);
         s.setSelection(0, true);
 
         makeLayoutInvisible(6);
@@ -1412,7 +1412,7 @@ public class SequenceProgramming extends Activity implements Runnable {
         String sReply = "";
         String sValue = "";
 
-        et = (EditText) findViewById(R.id.editSeqStep1);
+        et = findViewById(R.id.editSeqStep1);
         sValue = et.getText().toString();
         if (sValue.length() == 19 ) {
             sReply = sReply.concat(sValue);
@@ -1421,35 +1421,35 @@ public class SequenceProgramming extends Activity implements Runnable {
 
         //Toast.makeText(this, "Editbox value: "+ sValue +", sReply: " + sReply, Toast.LENGTH_SHORT).show();
 
-        et = (EditText) findViewById(R.id.editSeqStep2);
+        et = findViewById(R.id.editSeqStep2);
         sValue = et.getText().toString();
         if (sValue.length() == 19 ) {
             sReply = sReply.concat(sValue);
             sReply = sReply.concat("\n");
         }
 
-        et = (EditText) findViewById(R.id.editSeqStep3);
+        et = findViewById(R.id.editSeqStep3);
         sValue = et.getText().toString();
         if (sValue.length() == 19 ) {
             sReply = sReply.concat(sValue);
             sReply = sReply.concat("\n");
         }
 
-        et = (EditText) findViewById(R.id.editSeqStep4);
+        et = findViewById(R.id.editSeqStep4);
         sValue = et.getText().toString();
         if (sValue.length() == 19 ) {
             sReply = sReply.concat(sValue);
             sReply = sReply.concat("\n");
         }
 
-        et = (EditText) findViewById(R.id.editSeqStep5);
+        et = findViewById(R.id.editSeqStep5);
         sValue = et.getText().toString();
         if (sValue.length() == 19 ) {
             sReply = sReply.concat(sValue);
             sReply = sReply.concat("\n");
         }
 
-        et = (EditText) findViewById(R.id.editSeqStep6);
+        et = findViewById(R.id.editSeqStep6);
         sValue = et.getText().toString();
         if (sValue.length() == 19 ) {
             sReply = sReply.concat(sValue);
@@ -1470,22 +1470,22 @@ public class SequenceProgramming extends Activity implements Runnable {
         dlg.setTitle("Sequence to be executed:");
 
         EditText et;
-        et = (EditText) findViewById(R.id.editSeqStep1);
+        et = findViewById(R.id.editSeqStep1);
         sReply.concat(et.getText().toString());
         sReply.concat("\n");
-        et = (EditText) findViewById(R.id.editSeqStep2);
+        et = findViewById(R.id.editSeqStep2);
         sReply.concat(et.getText().toString());
         sReply.concat("\n");
-        et = (EditText) findViewById(R.id.editSeqStep3);
+        et = findViewById(R.id.editSeqStep3);
         sReply.concat(et.getText().toString());
         sReply.concat("\n");
-        et = (EditText) findViewById(R.id.editSeqStep4);
+        et = findViewById(R.id.editSeqStep4);
         sReply.concat(et.getText().toString());
         sReply.concat("\n");
-        et = (EditText) findViewById(R.id.editSeqStep5);
+        et = findViewById(R.id.editSeqStep5);
         sReply.concat(et.getText().toString());
         sReply.concat("\n");
-        et = (EditText) findViewById(R.id.editSeqStep6);
+        et = findViewById(R.id.editSeqStep6);
         sReply.concat(et.getText().toString());
         sReply.concat("\n");
 
@@ -1511,8 +1511,8 @@ public class SequenceProgramming extends Activity implements Runnable {
 
     public void executeStoredSequenceThreaded() {
         Log.d(TAG, "starting executeStoredSequenceThreaded()");
-        TextView tsr = (TextView) findViewById(R.id.textSequenceResponse);
-        String sReply = LightAdjustments.bluetoothAskReply("E");
+        TextView tsr = findViewById(R.id.textSequenceResponse);
+        String sReply = LightSettings.bluetoothAskReply("E");
         tsr.setText(sReply);
 
         String sResponse = sReply;
@@ -1534,7 +1534,7 @@ public class SequenceProgramming extends Activity implements Runnable {
                 int iBlue = Integer.parseInt(listSeqLineValues.get(3));
                 int iWhite = Integer.parseInt(listSeqLineValues.get(4));
                 long lTime = Long.parseLong(listSeqLineValues.get(5));
-                Log.d(TAG, "Line " + j + ":" + String.valueOf(iLampNo) + ",R" + iRed + ",G" + iGreen + ",B" + iBlue + ",W" + iWhite + ",TIME" + lTime);
+                Log.d(TAG, "Line " + j + ":" + iLampNo + ",R" + iRed + ",G" + iGreen + ",B" + iBlue + ",W" + iWhite + ",TIME" + lTime);
 
                 lNextStopTime = System.currentTimeMillis() + lTime * 1000;
                 Log.d(TAG, "Executing timer until: " + formatTime(lNextStopTime));
@@ -1554,7 +1554,7 @@ public class SequenceProgramming extends Activity implements Runnable {
                 if (!blRunningThread) iLimit = -1;
 
                 if (j == listSeqLines.size() - 1) {
-                    CheckBox cb = (CheckBox) findViewById(R.id.checkBoxLoop);
+                    CheckBox cb = findViewById(R.id.checkBoxLoop);
 
                     if (cb.isChecked()) {
                         j = -1;

@@ -42,12 +42,12 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.kiand.LED2match.LightAdjustments.SHAREDPREFS_LED_TIMERS;
-import static com.kiand.LED2match.LightAdjustments.bluetoothAskReply;
+import static com.kiand.LED2match.LightSettings.SHAREDPREFS_LED_TIMERS;
+import static com.kiand.LED2match.LightSettings.bluetoothAskReply;
 //import static com.kiand.LED2match.LightAdjustments.sendDataOverSerialAsync;
 //import static com.kiand.LED2match.LightAdjustments.extractJSONvalue;
-import static com.kiand.LED2match.LightAdjustments.sNewLine;
-import static com.kiand.LED2match.LightAdjustments.sUnitName;
+import static com.kiand.LED2match.LightSettings.sNewLine;
+import static com.kiand.LED2match.LightSettings.sUnitName;
 import static com.kiand.LED2match.R.id.textCounterLED1;
 
 public class ServicePageActivity extends Activity implements Serializable {
@@ -68,7 +68,7 @@ public class ServicePageActivity extends Activity implements Serializable {
     final Context context = this;
 
     //private UsbService usbService;
-    private LightAdjustments.MyHandler mHandler;
+    private LightSettings.MyHandler mHandler;
     private Handler lclHandler;
 
 /*    private final ServiceConnection usbConnection = new ServiceConnection() {
@@ -168,7 +168,7 @@ public class ServicePageActivity extends Activity implements Serializable {
             }
         });
 
-        if (BtCore.Connected() && LightAdjustments.check_eeprom_populated()) {
+        if (BtCore.Connected() && LightSettings.check_eeprom_populated()) {
             checkForNewUnitName();
             //checkForNewLampName();
             checkForLampInstallDate();
@@ -830,7 +830,7 @@ public class ServicePageActivity extends Activity implements Serializable {
                     }
                 });
 
-                if (LightAdjustments.sUnitName.length() > 0) {
+                if (LightSettings.sUnitName.length() > 0) {
 
                     lclHandler.post(new Runnable() {
                         @Override

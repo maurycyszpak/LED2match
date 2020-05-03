@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.kiand.LED2match"
-    android:versionCode="503"
-    android:versionName="5.03">
+    android:versionCode="550"
+    android:versionName="5.5">
 
 
     <uses-feature
@@ -29,7 +29,7 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".ReassignLamps"></activity>
         <activity
-            android:name=".LightAdjustments"
+            android:name=".LightSettings"
             android:label="Set Lights"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan"></activity>

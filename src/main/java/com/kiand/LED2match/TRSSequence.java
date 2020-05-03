@@ -8,7 +8,6 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
@@ -25,7 +24,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.TreeMap;
 
-import static com.kiand.LED2match.LightAdjustments.sNewLine;
+import static com.kiand.LED2match.LightSettings.sNewLine;
 import static com.kiand.LED2match.TRSDigitalPanel.NO_PRESET_TEXT;
 import static com.kiand.LED2match.TRSDigitalPanel.SHAREDPREFS_LAMP_ASSIGNMENTS;
 import static com.kiand.LED2match.TRSDigitalPanel.TL84_TAG;
@@ -355,7 +354,7 @@ public class TRSSequence extends Activity {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         String sTimeStamp = sdf.format(dteNow);
-        String sSequence= "D";
+        String sSequence = "D";
         String sPresetName = "";
 
         SharedPreferences spControlerFileimage = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
@@ -400,7 +399,21 @@ public class TRSSequence extends Activity {
             writeSequenceToFile(sPresetName, Integer.valueOf(sLamp6Timers), "6");
         }
 
-        Toast.makeText(this, "Sequence data stored on mobile device.\nPress PRG on main panel to run", Toast.LENGTH_SHORT).show();
+        if (get_prefs_contents_size(SP_LAMP_TIMERS) > 0) {
+            Toast.makeText(this, "Sequence data stored on mobile device.\nPress PRG on main panel to run", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Nothing to be saved", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private int get_prefs_contents_size(String prefs_file_name) {
+        int iSize=0;
+        SharedPreferences prefs = getSharedPreferences(prefs_file_name, MODE_PRIVATE);
+        Map<String, ?> allEntries = prefs.getAll();
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            iSize++;
+        }
+        return iSize;
     }
 
     public void populateButtonNames() {
@@ -486,45 +499,50 @@ public class TRSSequence extends Activity {
                 btnL1.setText(sName);
                 btnL1.setTag(sName);
             } else {
-                btnL1.setText("Button1");
+                btnL1.setText(NO_PRESET_TEXT);
+                btnL1.setTag(NO_PRESET_TEXT);
             }
         } else if (i == 2) {
             if (sName.length() > 0) {
                 btnL2.setText(sName);
                 btnL2.setTag(sName);
             } else {
-                btnL2.setText("Button2");
+                btnL2.setText(NO_PRESET_TEXT);
+                btnL2.setTag(NO_PRESET_TEXT);
             }
         } else if (i == 3) {
             if (sName.length() > 0) {
                 btnL3.setText(sName);
                 btnL3.setTag(sName);
             } else {
-                btnL3.setText("Button3");
+                btnL3.setText(NO_PRESET_TEXT);
+                btnL3.setTag(NO_PRESET_TEXT);
             }
         } else if (i == 4) {
             if (sName.length() > 0) {
                 btnL4.setText(sName);
                 btnL4.setTag(sName);
             } else {
-                btnL4.setText("Button4");
+                btnL4.setText(NO_PRESET_TEXT);
+                btnL4.setTag(NO_PRESET_TEXT);
             }
         } else if (i == 5) {
             if (sName.length() > 0) {
                 btnL5.setText(sName);
                 btnL5.setTag(sName);
             } else {
-                btnL5.setText("Button5");
+                btnL5.setText(NO_PRESET_TEXT);
+                btnL5.setTag(NO_PRESET_TEXT);
             }
         } else if (i == 6) {
             if (sName.length() > 0) {
                 btnL6.setText(sName);
                 btnL6.setTag(sName);
             } else {
-                btnL6.setText("Button6");
+                btnL6.setText(NO_PRESET_TEXT);
+                btnL6.setTag(NO_PRESET_TEXT);
             }
         }
-
     }
 
     public void updateLampHEXsequence (String sKey, String sSequence) {
@@ -829,7 +847,7 @@ public class TRSSequence extends Activity {
     }
 
     public void populateLampsState() {
-        SharedPreferences spsValues = getSharedPreferences(LightAdjustments.SHAREDPREFS_LAMP_STATE, MODE_PRIVATE);
+        SharedPreferences spsValues = getSharedPreferences(LightSettings.SHAREDPREFS_LAMP_STATE, MODE_PRIVATE);
         String sReturn = spsValues.getString("LAMPS", "");
         String[] sLampState = sReturn.split(",");
 
