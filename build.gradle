@@ -16,29 +16,60 @@ apply plugin: 'kotlin-android'
 
 
 android {
-    compileSdkVersion 27
     defaultConfig {
         applicationId "com.kiand.LED2match"
-        //minSdkVersion 19
-        minSdkVersion 14
-        //targetSdkVersion 27
-        targetSdkVersion 22
-        //versionCode 102
-        //versionName "1.01"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        compileSdkVersion 27
+        versionCode 550
+        versionName "5.50"
     }
+
+    flavorDimensions "api"
+
+    productFlavors {
+
+        minApi19 {
+            dimension "api"
+            minSdkVersion 19
+            targetSdkVersion 27
+            // To ensure the target device receives the version of the app with
+            // the highest compatible API level, assign version codes in increasing
+            // value with API level. To learn more about assigning version codes to
+            // support app updates and uploading to Google Play, read Multiple APK Support
+            versionCode 3000 + android.defaultConfig.versionCode
+            versionNameSuffix "-minApi19"
+
+        }
+
+        minApi14 {
+            dimension "api"
+            minSdkVersion 14
+            targetSdkVersion 22
+            // To ensure the target device receives the version of the app with
+            // the highest compatible API level, assign version codes in increasing
+            // value with API level. To learn more about assigning version codes to
+            // support app updates and uploading to Google Play, read Multiple APK Support
+            versionCode 2000 + android.defaultConfig.versionCode
+            versionNameSuffix "-minApi14"
+
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        debug {
+            applicationIdSuffix ".debug"
+            debuggable true
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-    }
-    productFlavors {
     }
 }
 
@@ -55,14 +86,7 @@ dependencies {
 allprojects {
     repositories {
         google()
-    }
-}
-repositories {
-    mavenCentral()
-}
-
-allprojects {
-    repositories {
+        mavenCentral()
         jcenter()
         maven { url "https://jitpack.io" }
     }

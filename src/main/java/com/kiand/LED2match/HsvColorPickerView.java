@@ -295,7 +295,7 @@ public class HsvColorPickerView extends View {
 
 			if (inHue) 
 			{
-				LightAdjustments.updateText =true;
+				LightSettings.updateText =true;
 				
 				float unit = x / mRectWidth;
 
@@ -320,7 +320,7 @@ public class HsvColorPickerView extends View {
 			} 
 			else if (inSaturation)
 			{
-				LightAdjustments.updateText =true;
+				LightSettings.updateText =true;
 				
 				mCurrentHSV[1] = Math.max(0, Math.min(x / mRectWidth, 1));
 
@@ -343,7 +343,7 @@ public class HsvColorPickerView extends View {
 			}
 			else if (inValue) 
 			{
-				LightAdjustments.updateText =true;
+				LightSettings.updateText =true;
 				
 				mCurrentHSV[2] = Math.max(0, Math.min(x / mRectWidth, 1));
 
@@ -383,7 +383,7 @@ public class HsvColorPickerView extends View {
 
 			cn.sendBroadcast(intentmediaPlayer);
 
-			LightAdjustments.updateText =true;
+			LightSettings.updateText =true;
 
 		}
 		

@@ -187,11 +187,7 @@ public class BtScannerActivity extends ListActivity implements ServiceConnection
 
 	public static boolean Connected() {
 		try {
-			if (btSocket.isConnected()) {
-				socketConnected = true;
-			} else {
-				socketConnected = false;
-			}
+            socketConnected = btSocket.isConnected();
 		} catch (NullPointerException e) {
 			socketConnected = false;
 		}
@@ -208,7 +204,7 @@ public class BtScannerActivity extends ListActivity implements ServiceConnection
 		try {
 			outStream.flush(); // Mauricio
 			outStream.write(msgBuffer);
-			LightAdjustments.BTCommsLog btLog = new LightAdjustments.BTCommsLog("IN", message);
+			LightSettings.BTCommsLog btLog = new LightSettings.BTCommsLog("IN", message);
 			btLog.appendMessage("IN", message);
 			//Log.d("MORRIS-SENDMSGBT", "SENT: " + message);
 		} catch (IOException e) {

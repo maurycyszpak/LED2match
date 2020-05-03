@@ -31,7 +31,6 @@ import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.AsyncTask;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -74,10 +73,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import static com.kiand.LED2match.BtScannerActivity.BT_PREFS;
-import static com.kiand.LED2match.Constants.sNewLine;
+import static com.kiand.LED2match.Constants.DEFAULT_PSU_POWER;
 import static com.kiand.LED2match.TRSSettings.TL84_DELAY_KEY;
 
-public class LightAdjustments extends Activity implements ServiceConnection {
+public class LightSettings extends Activity implements ServiceConnection {
 
 	private TextView display;
 
@@ -1825,17 +1824,22 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 		usbService.write(sCommand.getBytes());
 
 		//Check if the TL84 preset has been selected - if yes, switch on additional lamp (S11 command)
-		if (spinner_control_preset_list.getSelectedItem().toString().equalsIgnoreCase(Constants.TL84_TAG)) {
-			sCommand = "S11100";
-			sCommand = "S11100" + get_tl84_delay() + "$" + sNewLine;
-			//if (btService.connected) {
-			if (mBoundBT) {
-				Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-				lclBTServiceInstance.sendData(sCommand);
-			} else {
-				Log.d(TAG, "Service btService not connected!");
+		try {
+			if (spinner_control_preset_list.getSelectedItem().toString().equalsIgnoreCase(Constants.TL84_TAG)) {
+				sCommand = "S11100";
+				sCommand = "S11100" + get_tl84_delay() + "$" + sNewLine;
+				//if (btService.connected) {
+				if (mBoundBT) {
+					Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
+					lclBTServiceInstance.sendData(sCommand);
+				} else {
+					Log.d(TAG, "Service btService not connected!");
+				}
+				usbService.write(sCommand.getBytes());
 			}
-			usbService.write(sCommand.getBytes());
+		} catch (NullPointerException e) {
+			Log.i (TAG, "Pressing SEND on a null SpinnerPreset");
+			e.printStackTrace();
 		}
 
 
@@ -1849,22 +1853,29 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 		super.onStart();
 	}
 
-	private Boolean power_drain_check(String sHexRGBvalues) {
-		Integer light_power = check_light_power(sHexRGBvalues);
-		//Float max_power = get_max_power();
-		int max_power = get_max_power();
+    private Boolean power_drain_check(String sPresetRGBValues) {
+        Integer light_power = check_light_power(sPresetRGBValues);
+        //Float max_power = get_max_power();
+        int max_power = get_max_power();
 
-		if (light_power/100 > max_power/100) {
-			String toast = getString(R.string.light_power_warning);
-			toast = toast.replace("%light_power%", String.format(Locale.US, "%.1f", light_power/1000.0));
-			toast = toast.replace("%psu_current%", String.format(Locale.US, "%.1f", max_power/1000.0));
-			//makeToast(toast);
-			display_popup_message("Power drain warning!", toast);
-			return false;
-		} else {
-			return true;
-		}
-	}
+        if (max_power == 0) {
+
+            String msg = "No PSU definition found!\nUsing a default value of " + Constants.DEFAULT_PSU_POWER/1000.0 + "A";
+            makeToast(msg);
+            max_power = DEFAULT_PSU_POWER;
+        }
+
+        if (light_power/100 > max_power/100) {
+            String toast = getString(R.string.light_power_warning);
+            toast = toast.replace("%light_power%", String.format(Locale.US, "%.1f", light_power/1000.0));
+            toast = toast.replace("%psu_current%", String.format(Locale.US, "%.1f", max_power/1000.0));
+            //makeToast(toast);
+            display_popup_message("Power drain warning!", toast);
+            return false;
+        } else {
+            return true;
+        }
+    }
 
 	private Integer check_light_power(String sPresetRGBValues) {
 		Integer iPower = 0;
@@ -1979,7 +1990,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 
 	public static boolean check_eeprom_populated() {
 		boolean blEEPROM_populated = false;
-		String sEEPROMbyte = LightAdjustments.bluetoothAskReply("Y");
+		String sEEPROMbyte = LightSettings.bluetoothAskReply("Y");
 		//Toast.makeText(this.getBaseContext(),"Application title '" + unitName + "' set.", Toast.LENGTH_SHORT).show();
 		Log.d(TAG, "EEPROM first byte:" + sEEPROMbyte);
 		if (sEEPROMbyte.equals("")) sEEPROMbyte = Integer.toString(255);
@@ -2146,9 +2157,9 @@ public class LightAdjustments extends Activity implements ServiceConnection {
      * This handler will be passed to UsbService. Data received from serial port is displayed through this handler
      */
     public static class MyHandler extends Handler {
-        private final WeakReference<LightAdjustments> mActivity;
+        private final WeakReference<LightSettings> mActivity;
 
-        public MyHandler(LightAdjustments activity) {
+        public MyHandler(LightSettings activity) {
             mActivity = new WeakReference<>(activity);
         }
 
@@ -2215,7 +2226,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 	}
 
 	public void openSeqLayout (final View view) {
-		Intent intent = new Intent(LightAdjustments.this, SequenceProgramming.class);
+		Intent intent = new Intent(LightSettings.this, SequenceProgramming.class);
 		startActivity(intent);
 	}
 
@@ -2248,7 +2259,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 							Toast.makeText(context, "I think I've sent " + iResult + " bytes.", Toast.LENGTH_SHORT).show();
 							}*/
 
-							Intent intent = new Intent(LightAdjustments.this, ServicePageActivity.class);
+							Intent intent = new Intent(LightSettings.this, ServicePageActivity.class);
 							startActivity(intent);
 							// Intent sequencerIntent = new Intent(this, BtSequencerActivity.class);
 							// startActivity(sequencerIntent);
@@ -2291,22 +2302,22 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 			break;
 
 		case 4:
-			Intent intent4 = new Intent(LightAdjustments.this, TRSDigitalPanel.class);
+			Intent intent4 = new Intent(LightSettings.this, TRSDigitalPanel.class);
 			startActivity(intent4);
 			break;
 
 		case 5:
-			Intent intent5 = new Intent(LightAdjustments.this, TRSSequence.class);
+			Intent intent5 = new Intent(LightSettings.this, TRSSequence.class);
 			startActivity(intent5);
 			break;
 
 		case 6:
-			Intent intent6 = new Intent(LightAdjustments.this, TRSSettings.class);
+			Intent intent6 = new Intent(LightSettings.this, TRSSettings.class);
 			startActivity(intent6);
 			break;
 
 		case 7:
-			Intent intent7 = new Intent(LightAdjustments.this, TRSLightOperatingHours.class);
+			Intent intent7 = new Intent(LightSettings.this, TRSLightOperatingHours.class);
 			startActivity(intent7);
 			break;
 
@@ -2825,7 +2836,7 @@ public class LightAdjustments extends Activity implements ServiceConnection {
 	class firstTask extends TimerTask {
 		@Override
 		public void run(){
-			LightAdjustments.this.runOnUiThread(() -> {
+			LightSettings.this.runOnUiThread(() -> {
 				long starttime = 0;
 				long millis = System.currentTimeMillis() - starttime;
 				int seconds = (int) (millis/1000);

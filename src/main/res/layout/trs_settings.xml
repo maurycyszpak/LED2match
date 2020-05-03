@@ -226,13 +226,16 @@
                     android:layout_width="0dp"
                     android:layout_height="fill_parent"
                     android:layout_marginEnd="0dp"
+                    android:layout_marginRight="0dp"
                     android:layout_weight="0.16"
                     android:gravity="center"
                     android:maxLines="1"
                     android:singleLine="true"
                     android:inputType="number"
                     android:tooltipText="hh"
-                    android:textSize="@dimen/button_text_size" />
+                    android:textSize="@dimen/button_text_size"
+                    android:nextFocusForward="@+id/editAutoShutOFF_m"
+                    />
 
                 <TextView
                     android:layout_width="0dp"

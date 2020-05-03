@@ -596,7 +596,7 @@ public class DigitalPanelActivity extends Activity {
     }
 
     public void populateLampsState() {
-        SharedPreferences spsValues = getSharedPreferences(LightAdjustments.SHAREDPREFS_LAMP_STATE, MODE_PRIVATE);
+        SharedPreferences spsValues = getSharedPreferences(LightSettings.SHAREDPREFS_LAMP_STATE, MODE_PRIVATE);
         String sReturn = spsValues.getString("LAMPS", "");
         String[] sLampState = sReturn.split(",");
 
