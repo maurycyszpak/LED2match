@@ -652,7 +652,7 @@ public class TRSSequence extends Activity {
         if (!sBuffer.isEmpty()) {
             String[] value = sBuffer.split(",");
             sBuffer = value[1];
-            sTimer = sBuffer.substring(sBuffer.length() - 4, sBuffer.length() - 2);aaa, j
+            sTimer = sBuffer.substring(sBuffer.length() - 4, sBuffer.length() - 2);
             sTimer = sTimer.replaceFirst("^0+(?!$)", "");
             btn6Timer = Integer.valueOf(sTimer)/5;
             sTimer += " SEC";
