@@ -35,7 +35,7 @@ public class TRSSettings extends Activity implements ServiceConnection {
     public static final String CONFIG_SETTINGS = "config_settings";
     public static final String newLine = System.getProperty("line.separator");
 
-    public static final String TL84_DELAY_KEY = "TL884_delay";
+    public static final String TL84_DELAY_KEY = "TL84_delay";
     public static final int TL84_DELAY_DEFAULT = 600;
 
     Button btnSave;

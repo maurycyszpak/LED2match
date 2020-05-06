@@ -28,6 +28,7 @@ import static com.kiand.LED2match.LightSettings.sNewLine;
 import static com.kiand.LED2match.TRSDigitalPanel.NO_PRESET_TEXT;
 import static com.kiand.LED2match.TRSDigitalPanel.SHAREDPREFS_LAMP_ASSIGNMENTS;
 import static com.kiand.LED2match.TRSDigitalPanel.TL84_TAG;
+import static com.kiand.LED2match.TRSSettings.TL84_DELAY_KEY;
 
 
 public class TRSSequence extends Activity {
@@ -660,6 +661,13 @@ public class TRSSequence extends Activity {
         }
     }
 
+    public String get_tl84_delay() {
+        SharedPreferences config_prefs = getSharedPreferences(Constants.CONFIG_SETTINGS, 0);
+        Log.d(TAG, " ** TL84_delay from file: " + String.format(Locale.US, "%04d", config_prefs.getInt(TL84_DELAY_KEY, 0)));
+        return String.format(Locale.US, "%04d", config_prefs.getInt(TL84_DELAY_KEY, 0));
+
+    }
+
 
     public void btnClicked(View v) {
 
@@ -669,6 +677,7 @@ public class TRSSequence extends Activity {
         String sButtonCaption = "";
 
         switch_all_off();
+        String sDelay = "0000";
 
         switch (v.getId()) {
             case R.id.btnL1:
@@ -685,10 +694,12 @@ public class TRSSequence extends Activity {
                     int i_flag_TL84 = 0;
                     if (btnL1.getTag().toString().equalsIgnoreCase(TL84_TAG)) {
                         i_flag_TL84 = 1;
+                        sDelay = get_tl84_delay();
+
                     }
 
                     //makeToast(sHEX);
-                    updateLampHEXsequence(btnL1.getTag().toString(), System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
+                    updateLampHEXsequence(btnL1.getTag().toString(), System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00") + sDelay);
                     //updateLampHEXsequence("lamp1_timer", System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
 
                     btnL1.setText(sButtonCaption);
@@ -711,8 +722,9 @@ public class TRSSequence extends Activity {
                     int i_flag_TL84 = 0;
                     if (btnL2.getTag().toString().equalsIgnoreCase(TL84_TAG)) {
                         i_flag_TL84 = 1;
+                        sDelay = get_tl84_delay();
                     }
-                    updateLampHEXsequence(btnL2.getTag().toString(), System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
+                    updateLampHEXsequence(btnL2.getTag().toString(), System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00") + sDelay);
                     //updateLampHEXsequence("lamp2_timer", System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
 
                     btnL2.setText(sButtonCaption);
@@ -732,8 +744,9 @@ public class TRSSequence extends Activity {
                     int i_flag_TL84 = 0;
                     if (btnL3.getTag().toString().equalsIgnoreCase(TL84_TAG)) {
                         i_flag_TL84 = 1;
+                        sDelay = get_tl84_delay();
                     }
-                    updateLampHEXsequence(btnL3.getTag().toString(), System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
+                    updateLampHEXsequence(btnL3.getTag().toString(), System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00") + sDelay);
                     //updateLampHEXsequence("lamp3_timer", System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
 
                     sButtonCaption = btnL3.getTag().toString();
@@ -756,8 +769,9 @@ public class TRSSequence extends Activity {
                     int i_flag_TL84 = 0;
                     if (btnL4.getTag().toString().equalsIgnoreCase(TL84_TAG)) {
                         i_flag_TL84 = 1;
+                        sDelay = get_tl84_delay();
                     }
-                    updateLampHEXsequence(btnL4.getTag().toString(), System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
+                    updateLampHEXsequence(btnL4.getTag().toString(), System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00") + sDelay);
                     //updateLampHEXsequence("lamp4_timer", System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
 
                     sButtonCaption = btnL4.getTag().toString();
@@ -780,8 +794,9 @@ public class TRSSequence extends Activity {
                     int i_flag_TL84 = 0;
                     if (btnL5.getTag().toString().equalsIgnoreCase(TL84_TAG)) {
                         i_flag_TL84 = 1;
+                        sDelay = get_tl84_delay();
                     }
-                    updateLampHEXsequence(btnL5.getTag().toString(), System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
+                    updateLampHEXsequence(btnL5.getTag().toString(), System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00") + sDelay);
                     //updateLampHEXsequence("lamp5_timer", System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
 
                     sButtonCaption = btnL5.getTag().toString();
@@ -805,8 +820,9 @@ public class TRSSequence extends Activity {
                     int i_flag_TL84 = 0;
                     if (btnL6.getTag().toString().equalsIgnoreCase(TL84_TAG)) {
                         i_flag_TL84 = 1;
+                        sDelay = get_tl84_delay();
                     }
-                    updateLampHEXsequence(btnL6.getTag().toString(), System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
+                    updateLampHEXsequence(btnL6.getTag().toString(), System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00") + sDelay);
                     //updateLampHEXsequence("lamp6_timer", System.currentTimeMillis() + "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00"));
 
                     sButtonCaption = btnL6.getTag().toString();
