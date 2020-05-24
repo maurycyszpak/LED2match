@@ -258,7 +258,7 @@ public class BtCOMMsService extends Service {
 
                 spsEditor.putString("JSON", sTemp);
                 spsEditor.putLong("timestamp", lMillisEpoch);
-                spsEditor.apply();
+                spsEditor.commit();
                 //makeToast("Data from controller refreshed.\nTimestamp: " + String.valueOf(timestamp).substring(0, String.valueOf()));
                 makeToast("Data from controller refreshed.\nTimestamp: " + sdf.format(timestamp));
                 SystemClock.sleep(100);
@@ -287,6 +287,9 @@ public class BtCOMMsService extends Service {
                 }
                 spEditorPresets.apply();
                 Log.d (TAG, SHAREDPREFS_PRESETS +" file populated");
+                Intent intent = new Intent("controller_data_refreshed_event");
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+
 
                 //Also populate unit name
                 String sUnitName = json_analyst.getJSONValue("unit_name");
