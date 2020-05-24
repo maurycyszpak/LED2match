@@ -161,6 +161,13 @@ public class TRSDigitalPanel extends Activity {
                 }
                 switchButtonON(Integer.valueOf(index));
                 //Log.d(TAG, "Button: " + index + " highlighted");
+            } else if (intent.getAction().equals("controller_data_refreshed_event")) {
+                SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+                JSON_analyst json_analyst = new JSON_analyst(spFile);
+                String sFWVersion = json_analyst.getJSONValue("firmware_version");
+                TextView tv_firmware_version = findViewById(R.id.fw_version);
+                tv_firmware_version.setText(sFWVersion);
+                //makeToast("fw_version intent received");
             } else if (intent.getAction().equals("button_highlight_extra")) {
                 String name = intent.getStringExtra("button_name");
                 //Log.d(TAG, "Got additional button to highlight: " + name);
@@ -205,6 +212,7 @@ public class TRSDigitalPanel extends Activity {
 
         IntentFilter filter = new IntentFilter();
         filter.addAction("temperature_reading_event");
+        filter.addAction("controller_data_refreshed_event");
         filter.addAction("button_highlight_event");
         filter.addAction("button_highlight_extra");
 
@@ -268,12 +276,21 @@ public class TRSDigitalPanel extends Activity {
             }
         }
 
-        SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+
+        Float versionName = BuildConfig.VERSION_CODE / 1000.0f;
+        TextView tvInfoBox = findViewById(R.id.infobox);
+        String version_line = "APP version: " + versionName;
+        tvInfoBox.setText(version_line);
+
+        /*SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
         JSON_analyst json_analyst = new JSON_analyst(spFile);
         String sFWVersion = json_analyst.getJSONValue("firmware_version");
         TextView tvInfoBox = findViewById(R.id.infobox);
         String version_line = "FW Version: " + sFWVersion;
         tvInfoBox.setText(getString(R.string.system_footer) + "\n" + version_line);
+
+        TextView tv_firmware_version = findViewById(R.id.fw_version);
+        tv_firmware_version.setText(sFWVersion);*/
 
         // add check if ANY key exists!!!
 

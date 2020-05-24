@@ -593,7 +593,7 @@ public class TRSSequence extends Activity {
         if (!sBuffer.isEmpty()) {
             String[] value = sBuffer.split(",");
             sBuffer = value[1];
-            sTimer = sBuffer.substring(sBuffer.length() - 4, sBuffer.length() - 2);
+            sTimer = sBuffer.substring(sBuffer.length() - 8, sBuffer.length() - 6);
             sTimer = sTimer.replaceFirst("^0+(?!$)", "");
             btn1Timer = Integer.valueOf(sTimer)/5;
             sTimer += " SEC";
@@ -605,7 +605,7 @@ public class TRSSequence extends Activity {
         if (!sBuffer.isEmpty()) {
             String[] value = sBuffer.split(",");
             sBuffer = value[1];
-            sTimer = sBuffer.substring(sBuffer.length() - 4, sBuffer.length() - 2);
+            sTimer = sBuffer.substring(sBuffer.length() - 8, sBuffer.length() - 6);
             sTimer = sTimer.replaceFirst("^0+(?!$)", "");
             btn2Timer = Integer.valueOf(sTimer)/5;
             sTimer += " SEC";
@@ -617,7 +617,7 @@ public class TRSSequence extends Activity {
         if (!sBuffer.isEmpty()) {
             String[] value = sBuffer.split(",");
             sBuffer = value[1];
-            sTimer = sBuffer.substring(sBuffer.length() - 4, sBuffer.length() - 2);
+            sTimer = sBuffer.substring(sBuffer.length() - 8, sBuffer.length() - 6);
             sTimer = sTimer.replaceFirst("^0+(?!$)", "");
             btn3Timer = Integer.valueOf(sTimer)/5;
             sTimer += " SEC";
@@ -629,7 +629,7 @@ public class TRSSequence extends Activity {
         if (!sBuffer.isEmpty()) {
             String[] value = sBuffer.split(",");
             sBuffer = value[1];
-            sTimer = sBuffer.substring(sBuffer.length() - 4, sBuffer.length() - 2);
+            sTimer = sBuffer.substring(sBuffer.length() - 8, sBuffer.length() - 6);
             sTimer = sTimer.replaceFirst("^0+(?!$)", "");
             btn4Timer = Integer.valueOf(sTimer)/5;
             sTimer += " SEC";
@@ -641,7 +641,7 @@ public class TRSSequence extends Activity {
         if (!sBuffer.isEmpty()) {
             String[] value = sBuffer.split(",");
             sBuffer = value[1];
-            sTimer = sBuffer.substring(sBuffer.length() - 4, sBuffer.length() - 2);
+            sTimer = sBuffer.substring(sBuffer.length() - 8, sBuffer.length() - 6);
             sTimer = sTimer.replaceFirst("^0+(?!$)", "");
             btn5Timer = Integer.valueOf(sTimer)/5;
             sTimer += " SEC";
@@ -653,7 +653,7 @@ public class TRSSequence extends Activity {
         if (!sBuffer.isEmpty()) {
             String[] value = sBuffer.split(",");
             sBuffer = value[1];
-            sTimer = sBuffer.substring(sBuffer.length() - 4, sBuffer.length() - 2);
+            sTimer = sBuffer.substring(sBuffer.length() - 8, sBuffer.length() - 6);
             sTimer = sTimer.replaceFirst("^0+(?!$)", "");
             btn6Timer = Integer.valueOf(sTimer)/5;
             sTimer += " SEC";
