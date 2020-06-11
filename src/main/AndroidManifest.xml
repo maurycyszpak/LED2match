@@ -28,7 +28,8 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".TRSSequence"
-            android:label="@string/title_activity_list_view_demo" />
+            android:label="Sequence Programming (PRG)" />
+
         <activity android:name=".ReassignLamps" />
         <activity
             android:name=".LightSettings"

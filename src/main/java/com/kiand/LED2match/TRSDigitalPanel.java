@@ -1370,7 +1370,7 @@ public class TRSDigitalPanel extends Activity {
         }
     }
 
-    public void btnClicked_UV_as_normal(View v) {
+    public void btnClicked_UV_normal(View v) {
         SharedPreferences spLampDefinitions = getSharedPreferences(Constants.SHAREDPREFS_LAMP_DEFINITIONS, 0);
         String sPresetRGBValues;
         String sCommand;
@@ -1388,13 +1388,11 @@ public class TRSDigitalPanel extends Activity {
 
         /* scenarios:
         1. "clean" execution - switch on lamp
-        2. "clean" execution - special lamp - UV
-        3. "clean" execution - special lamp - TL84
-        4. "clean" execution - special lamp - LOW
-        5. a lamp is already on - special lamp - UV
-        6. a lamp is already on - special lamp - TL84
-        7. a lamp is already on - special lamp - LOW on
-        8. a lamp is already on - special lamp - LOW off
+        2. "clean" execution - special lamp - TL84
+        3. "clean" execution - special lamp - LOW
+        4. a lamp is already on - special lamp - TL84
+        5. a lamp is already on - special lamp - LOW on
+        6. a lamp is already on - special lamp - LOW off
          */
 
 
