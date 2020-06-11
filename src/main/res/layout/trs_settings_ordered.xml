@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TRSSettings">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Settings"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginTop="20dp"
+            android:textSize="15sp"
+            android:visibility="invisible"
+            />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/lLayout1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_marginTop="20dp"
+                android:baselineAligned="false"
+                >
+
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_label_width"
+                    android:gravity="right|center_vertical"
+                    android:text="Blower on"
+                    android:textSize="@dimen/button_text_size" />
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="45"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:textSize="@dimen/button_text_size"
+                    android:gravity="center"
+                    android:layout_weight="@dimen/settings_pg_value_width"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="0.16"
+                    android:gravity="center"
+                    android:text="° C"
+                    android:textSize="@dimen/button_text_size" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_below="@+id/lLayout1"
+                android:layout_marginTop="5dp"
+                android:baselineAligned="false"
+                >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_label_width"
+                    android:gravity="end|center_vertical"
+                    android:text="Blower off"
+                    android:textSize="@dimen/button_text_size" />
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="42"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:textSize="@dimen/button_text_size"
+                    android:gravity="center"
+                    android:layout_weight="@dimen/settings_pg_value_width"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="0.16"
+                    android:gravity="center"
+                    android:text="° C"
+                    android:textSize="@dimen/button_text_size" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lLayoutMID"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_below="@+id/lLayout2"
+                android:layout_marginTop="5dp"
+                android:baselineAligned="false"
+                >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_label_width"
+                    android:gravity="end|center_vertical"
+                    android:text="Blower installed"
+                    android:textSize="@dimen/button_text_size" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_value_width"
+                    android:gravity="center"
+                    android:text="NO"
+                    android:textSize="@dimen/button_text_size" />
+
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="0.16"
+                    android:gravity="center"
+                    android:textSize="@dimen/button_text_size" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lLayout3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_below="@+id/lLayoutMID"
+                android:layout_marginTop="40dp"
+                android:baselineAligned="false"
+                >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_label_width"
+                    android:gravity="end|center_vertical"
+                    android:text="TL84 delay"
+                    android:textSize="@dimen/button_text_size" />
+
+                <EditText
+                    android:id="@+id/edit_TL84_delay"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:hint="100 - 1200"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:textSize="@dimen/button_text_size"
+                    android:gravity="center"
+                    android:layout_weight="@dimen/settings_pg_value_width"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:digits="0123456789"
+                    android:inputType="numberDecimal"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="0.14"
+                    android:gravity="center"
+                    android:text="ms"
+                    android:textSize="@dimen/button_text_size" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lLayout4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_below="@+id/lLayout3"
+                android:layout_marginTop="10dp"
+                android:baselineAligned="false"
+                >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_label_width"
+                    android:gravity="end|center_vertical"
+                    android:text="Auto shut off"
+                    android:textSize="@dimen/button_text_size" />
+
+                <EditText
+                    android:id="@+id/editAutoShutOFF_h"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginRight="0dp"
+                    android:layout_weight="0.16"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:inputType="number"
+                    android:tooltipText="hh"
+                    android:textSize="@dimen/button_text_size"
+                    android:nextFocusForward="@+id/editAutoShutOFF_m"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_marginEnd="1dp"
+                    android:layout_marginStart="1dp"
+                    android:layout_weight="0.06"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text=":"
+                    android:textSize="@dimen/button_text_size" />
+
+                <EditText
+                    android:id="@+id/editAutoShutOFF_m"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="0.16"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:inputType="number"
+                    android:tooltipText="mm"
+                    android:textSize="@dimen/button_text_size" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="0.14"
+                    android:gravity="center"
+                    android:text="h"
+                    android:textSize="@dimen/button_text_size" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_below="@+id/lLayout4"
+                android:layout_marginTop="40dp"
+                android:baselineAligned="false"
+                >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_label_width"
+                    android:gravity="end|center_vertical"
+                    android:text="Connect BT"
+                    android:textSize="@dimen/button_text_size" />
+
+                <Switch
+                    android:id="@+id/switch_one"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text=""
+                    android:textSize="@dimen/button_text_size"
+                    android:layout_weight="@dimen/settings_pg_value_width"
+                    android:layout_gravity="left|center_vertical"
+                    android:theme="@style/MySwitch"
+                    />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="0.16"
+                    android:gravity="center"
+                    android:text=""
+                    android:visibility="invisible"
+                    android:textSize="@dimen/button_text_size" />
+
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/lLayoutbottomspace"
+                android:layout_gravity="right|end"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_marginBottom="40dp"
+                android:baselineAligned="false"
+
+                >
+
+
+                <Button
+                    android:id="@+id/btnSave"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:baselineAligned="false"
+                    android:gravity="center"
+                    android:text="SAVE"
+                    android:onClick="saveSettings"
+                    android:textSize="@dimen/button_text_size" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/lLayoutbottomspace"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="5dp"
+                android:baselineAligned="true"
+                android:layout_alignParentBottom="true"
+                >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="10sp"
+                    android:text="Torso-Verlag e.K. Obere Grussen 8\nDE-97877 Wertheim Tel. +49(0)93242 933970"
+
+                    />
+
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

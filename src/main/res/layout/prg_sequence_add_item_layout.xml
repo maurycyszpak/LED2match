@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:background="#EAEAEA"
+    >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/prg_sequence_new_item"
+        android:textSize="18sp"
+        android:textColor="@color/hts_blue"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+    <Spinner
+        android:id="@+id/spinner_new_lamp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/prg_sequence_new_item"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/black"
+        android:textSize="@dimen/larger_text_size"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:layout_weight="0.6"
+        />
+
+        <Spinner
+            android:id="@+id/spinner_lamp_delay"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/prg_sequence_new_item"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/black"
+            android:textSize="@dimen/larger_text_size"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:layout_weight="0.4"
+            />
+
+
+    </LinearLayout>
+
+
+
+
+</LinearLayout>

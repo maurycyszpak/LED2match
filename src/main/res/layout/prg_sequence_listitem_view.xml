@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:layout_marginBottom="20dp"
+    >
+
+    <TextView
+        android:id="@+id/stepNo"
+        android:text=""
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:textSize="16sp"
+        android:layout_weight="0.05"
+        android:gravity="center_vertical"
+        android:layout_marginStart="10dp"
+        android:paddingStart="5dp"
+        android:textColor="@color/hts_blue"
+        android:background="@color/white"
+
+        />
+
+
+    <TextView
+        android:id="@+id/title1"
+        android:text="Title1"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="10dp"
+        android:textSize="22sp"
+        android:layout_weight="0.75"
+        android:gravity="center_vertical"
+        android:paddingStart="5dp"
+        android:textColor="@color/hts_blue"
+        android:background="@color/white"
+
+
+         />
+
+    <TextView
+        android:id="@+id/title2"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:text="Timer1"
+        android:textSize="22sp"
+        android:layout_weight="0.25"
+        android:layout_marginEnd="5dp"
+        android:textColor="@color/black"
+        android:background="#80E5ECFB"
+        android:gravity="center_vertical"
+        android:visibility="gone"
+        android:paddingStart="3dp"
+        />
+
+
+
+
+</LinearLayout>
