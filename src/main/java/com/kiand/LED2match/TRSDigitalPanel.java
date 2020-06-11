@@ -1370,7 +1370,7 @@ public class TRSDigitalPanel extends Activity {
         }
     }
 
-    public void btnClicked_UV_as_normal(View v) {
+    public void btnClicked_UV_normal(View v) {
         SharedPreferences spLampDefinitions = getSharedPreferences(Constants.SHAREDPREFS_LAMP_DEFINITIONS, 0);
         String sPresetRGBValues;
         String sCommand;
@@ -1388,13 +1388,11 @@ public class TRSDigitalPanel extends Activity {
 
         /* scenarios:
         1. "clean" execution - switch on lamp
-        2. "clean" execution - special lamp - UV
-        3. "clean" execution - special lamp - TL84
-        4. "clean" execution - special lamp - LOW
-        5. a lamp is already on - special lamp - UV
-        6. a lamp is already on - special lamp - TL84
-        7. a lamp is already on - special lamp - LOW on
-        8. a lamp is already on - special lamp - LOW off
+        2. "clean" execution - special lamp - TL84
+        3. "clean" execution - special lamp - LOW
+        4. a lamp is already on - special lamp - TL84
+        5. a lamp is already on - special lamp - LOW on
+        6. a lamp is already on - special lamp - LOW off
          */
 
 
@@ -1406,113 +1404,86 @@ public class TRSDigitalPanel extends Activity {
             }
             Log.d(TAG, "sending " + sPresetRGBValues + " to controller");
             if (sPresetRGBValues != null) {
+                if (!BL_LOW_MODE) {
+                    Log.d(TAG, "I'm not in LOW mode");
 
-                if (button.getText().toString().equalsIgnoreCase("UV")) {
-                    //complementary light - keep current on and add UV definition for non-zeros - when switching ON UV mode. Otherwise switch off additional lamps
-                    sCommand = "P" + convertRGB2complementaryLight(sPresetRGBValues, (!BL_UV_MODE));
-                    sCommand += "$" + sNewLine;
-                    send_via_bt(sCommand);
-                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-
-                    sCommand = "B," + button.getTag().toString() + (BL_UV_MODE ? 0 : 1) + "$" + sNewLine;
-                    Log.d(TAG, "sendviabt ** B command with tag: "+ button.getTag().toString() + " text: " + button.getText());
-                    send_via_bt(sCommand);
-                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-
-                    BL_UV_MODE = !BL_UV_MODE;
-                    String s = (BL_UV_MODE ? "active" : "inactive");
-                    Log.d(TAG, "UV mode - " + s);
-                    if (BL_UV_MODE) {
-                        button.setBackgroundResource(R.drawable.buttonselector_active);
-                        button.setTextColor(Color.BLACK);
+                    if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
+                        get_tl84_delay();
+                        sCommand = "S11100" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + sNewLine;
+                        Log.d(TAG, " *** NEW TL84 command (ON): " + sCommand);
+                        send_via_bt(sCommand);
+                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                        blTL84_ON = true;
                     } else {
-                        button.setBackgroundResource(R.drawable.buttonselector_main);
-                        button.setTextColor(Color.WHITE);
-                    }
+                        //sCommand = "S11000$" + sNewLine; //actually we want to send a S11000^ffffffff(...)
+                        sCommand  = "S11000" + convertRGBwithCommasToHexString(sPresetRGBValues) + "$" + sNewLine;
+                        blTL84_ON = false;
+                        send_via_bt(sCommand);
 
-
-                } else {
-                    if (!BL_LOW_MODE) {
-                        Log.d(TAG, "I'm not in LOW mode");
-
-                        if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
-                            get_tl84_delay();
-                            sCommand = "S11100" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + sNewLine;
-                            Log.d(TAG, " *** NEW TL84 command (ON): " + sCommand);
-                            send_via_bt(sCommand);
-                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                            blTL84_ON = true;
-                        } else {
-                            //sCommand = "S11000$" + sNewLine; //actually we want to send a S11000^ffffffff(...)
-                            sCommand  = "S11000" + convertRGBwithCommasToHexString(sPresetRGBValues) + "$" + sNewLine;
-                            blTL84_ON = false;
-                            send_via_bt(sCommand);
-
-                            BL_COMMAND_SENT = true;
-                            if (!BL_COMMAND_SENT) {
-                                sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
-                                sCommand += "$" + sNewLine;
-                                Log.d(TAG, " *** NEW TL84 command (OFF): " + sCommand);
-                                send_via_bt(sCommand);
-                                lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                            }
-                            sCommand = "B," + button.getTag().toString() + "1$" + sNewLine;
-                            send_via_bt(sCommand);
-                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                        }
-                    } else {
-                        //LOW MODE!
-                        /*SharedPreferences prefsLamps = getSharedPreferences(SHAREDPREFS_CURRENT_LAMPS, 0);
-                        Map<String, ?> keys = prefsLamps.getAll(); */
-                        Log.d (TAG, "LOW mode! Changing " + sPresetRGBValues + " to LOW values.");
-
-
-                        if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
-                            sCommand = "S11050" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + sNewLine;
-                            Log.d(TAG, " *** NEW TL84 command (LOW): " + sCommand);
-                            send_via_bt(sCommand);
-                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                            blTL84_ON = true;
-                        } else {
-                            sCommand = "S11000$" + sNewLine;
-                            blTL84_ON = false;
+                        BL_COMMAND_SENT = true;
+                        if (!BL_COMMAND_SENT) {
+                            sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
+                            sCommand += "$" + sNewLine;
                             Log.d(TAG, " *** NEW TL84 command (OFF): " + sCommand);
                             send_via_bt(sCommand);
-                            String[] sRGB_in = sPresetRGBValues.split(",");
-                            String[] sRGB_out = sRGB_in;
-                            for (int i = 0; i < sRGB_in.length; i++) {
-                                int iRGB = Integer.valueOf(sRGB_in[i]);
-                                iRGB /= (BL_LOW_MODE ? 2 : 1);
-                                sRGB_out[i] = String.valueOf(iRGB);
-                            }
-                            String concatValues = TextUtils.join(",", sRGB_out);
-                            String sHex = convertRGBwithCommasToHexString(concatValues);
-                            sCommand = "S" + sHex + "$" + sNewLine;
-                            send_via_bt(sCommand);
                             lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                            Log.d(TAG, "I'm in LOW mode");
-                            Log.d(TAG, "Illuminating lamps with: " + sCommand);
                         }
+                        sCommand = "B," + button.getTag().toString() + "1$" + sNewLine;
+                        send_via_bt(sCommand);
+                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                     }
+                } else {
+                    //LOW MODE!
+                    /*SharedPreferences prefsLamps = getSharedPreferences(SHAREDPREFS_CURRENT_LAMPS, 0);
+                    Map<String, ?> keys = prefsLamps.getAll(); */
+                    Log.d (TAG, "LOW mode! Changing " + sPresetRGBValues + " to LOW values.");
 
-                    button.setBackgroundResource(R.drawable.buttonselector_active);
-                    button.setTextColor(Color.BLACK);
+
+                    if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
+                        sCommand = "S11050" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + sNewLine;
+                        Log.d(TAG, " *** NEW TL84 command (LOW): " + sCommand);
+                        send_via_bt(sCommand);
+                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                        blTL84_ON = true;
+                    } else {
+                        sCommand = "S11000$" + sNewLine;
+                        blTL84_ON = false;
+                        Log.d(TAG, " *** NEW TL84 command (OFF): " + sCommand);
+                        send_via_bt(sCommand);
+                        String[] sRGB_in = sPresetRGBValues.split(",");
+                        String[] sRGB_out = sRGB_in;
+                        for (int i = 0; i < sRGB_in.length; i++) {
+                            int iRGB = Integer.valueOf(sRGB_in[i]);
+                            iRGB /= (BL_LOW_MODE ? 2 : 1);
+                            sRGB_out[i] = String.valueOf(iRGB);
+                        }
+                        String concatValues = TextUtils.join(",", sRGB_out);
+                        String sHex = convertRGBwithCommasToHexString(concatValues);
+                        sCommand = "S" + sHex + "$" + sNewLine;
+                        send_via_bt(sCommand);
+                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                        Log.d(TAG, "I'm in LOW mode");
+                        Log.d(TAG, "Illuminating lamps with: " + sCommand);
+                    }
                 }
-                if (buttonID == R.id.btnL1) {
-                    blLamp1_ON = true;
-                } else if (buttonID == R.id.btnL2) {
-                    blLamp2_ON = true;
-                } else if (buttonID == R.id.btnL3) {
-                    blLamp3_ON = true;
-                } else if (buttonID == R.id.btnL4) {
-                    blLamp4_ON = true;
-                } else if (buttonID == R.id.btnL5) {
-                    blLamp5_ON = true;
-                } else if (buttonID == R.id.btnL6) {
-                    blLamp6_ON = true;
-                }
-                updateLampValue(sPresetRGBValues);
+                button.setBackgroundResource(R.drawable.buttonselector_active);
+                button.setTextColor(Color.BLACK);
             }
+            if (buttonID == R.id.btnL1) {
+                blLamp1_ON = true;
+            } else if (buttonID == R.id.btnL2) {
+                blLamp2_ON = true;
+            } else if (buttonID == R.id.btnL3) {
+                blLamp3_ON = true;
+            } else if (buttonID == R.id.btnL4) {
+                blLamp4_ON = true;
+            } else if (buttonID == R.id.btnL5) {
+                blLamp5_ON = true;
+            } else if (buttonID == R.id.btnL6) {
+                blLamp6_ON = true;
+            }
+            updateLampValue(sPresetRGBValues);
+
         } else {
             makeToast("No lamp preset assigned to this button!");
         }
