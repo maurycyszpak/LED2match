@@ -31,7 +31,7 @@ import static com.kiand.LED2match.TRSDigitalPanel.TL84_TAG;
 import static com.kiand.LED2match.TRSSettings.TL84_DELAY_KEY;
 
 
-public class TRSSequence extends Activity {
+public class TRSSequence_old extends Activity {
 
     public static final String SP_LAMP_TIMERS = "sequence_lamp_timers"; //Mauricio
     public static final String SP_SEQUENCE_COMMAND_GENERATE = "sequence_command_generated"; //Mauricio
@@ -150,7 +150,7 @@ public class TRSSequence extends Activity {
                 //checkedTextRead.setCheckMarkDrawable(checkedTextRead.isChecked() ? android.R.drawable.checkbox_on_background : android.R.drawable.checkbox_off_background);
 
                 String msg = getString(R.string.pre_msg) + " " + (checkedTextRead.isChecked() ? getString(R.string.checked) : getString(R.string.unchecked));
-                Toast.makeText(TRSSequence.this, msg, Toast.LENGTH_SHORT).show();
+                Toast.makeText(TRSSequence_old.this, msg, Toast.LENGTH_SHORT).show();
             });
         }
 
@@ -174,7 +174,7 @@ public class TRSSequence extends Activity {
                 //checkedTextSend.setCheckMarkDrawable(checkedTextSend.isChecked() ? android.R.drawable.checkbox_on_background : android.R.drawable.checkbox_off_background);
 
                 String msg = getString(R.string.pre_msg) + " " + (checkedTextSend.isChecked() ? getString(R.string.checked) : getString(R.string.unchecked));
-                Toast.makeText(TRSSequence.this, msg, Toast.LENGTH_SHORT).show();
+                Toast.makeText(TRSSequence_old.this, msg, Toast.LENGTH_SHORT).show();
             });
         }
 

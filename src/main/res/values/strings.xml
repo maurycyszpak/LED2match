@@ -41,8 +41,18 @@ Donec semper sagittis tellus, id molestie quam suscipit sit amet. Aenean posuere
     <string name="unitycolor_led_light_label">UnityColor (R) LED Light Control System</string>
     <string name="light_power_warning">Selected light drains circa %light_power% A\nSelected power supply handles: %psu_current% A\n\nDecrease the light intensity or set the power of PSU to higher on the Recertification Page.</string>
     <string name="factory_reset_info_warning">Are you sure you wish to reset the lamp definitions to its factory settings?\n\nYou will lose any custom lamp definitions and all lamp counters will be reset to 0! Also locally stored cache files will be deleted. This means the app will revert to as if it was installed on the phone for the first time.\n\nThe application will restart</string>
+    <string name="prg_sequence_new_item">Please choose the lamp and the delay below</string>
+    <string name="prg_sequence_longpress_prompt">What do you want to do with this sequence step?</string>
+    <string name="title_activity_list_view_demo">ListViewDemo</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
 
-
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="prg_sequence_hint_text">Press "ADD..." to add a step in sequence.\nPress short to add 5s.\nLong press to edit or remove step.</string>
 
 
 </resources>

@@ -689,7 +689,7 @@ public class TRSRecertificationPage extends Activity {
                 break;
 
             case 3:
-                Intent intent6 = new Intent(TRSRecertificationPage.this, TRSSequence.class);
+                Intent intent6 = new Intent(TRSRecertificationPage.this, TRSSequence_old.class);
                 startActivity(intent6);
                 break;
 

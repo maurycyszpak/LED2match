@@ -2307,7 +2307,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 			break;
 
 		case 5:
-			Intent intent5 = new Intent(LightSettings.this, TRSSequence.class);
+			Intent intent5 = new Intent(LightSettings.this, TRSSequence_old.class);
 			startActivity(intent5);
 			break;
 

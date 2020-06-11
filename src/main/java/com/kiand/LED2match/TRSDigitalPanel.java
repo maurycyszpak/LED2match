@@ -30,7 +30,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +50,7 @@ import static com.kiand.LED2match.BtCOMMsService.BT_CONNECTED_PREFS;
 import static com.kiand.LED2match.Constants.DEFAULT_PSU_POWER;
 import static com.kiand.LED2match.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 import static com.kiand.LED2match.Constants.sNewLine;
-import static com.kiand.LED2match.TRSSequence.SP_LAMP_TIMERS;
+import static com.kiand.LED2match.TRSSequence_old.SP_LAMP_TIMERS;
 import static com.kiand.LED2match.TRSSettings.TL84_DELAY_KEY;
 
 public class TRSDigitalPanel extends Activity {
@@ -1835,8 +1834,8 @@ public class TRSDigitalPanel extends Activity {
                 getResources().getDrawable(R.drawable.icon_information));
         menu.add(Menu.NONE, 6, 6, "Recertification page").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));
-        menu.add(Menu.NONE, 7, 7, "ListView page").setIcon(
-                getResources().getDrawable(R.drawable.icon_information));
+        /*menu.add(Menu.NONE, 7, 7, "ListView page").setIcon(
+                getResources().getDrawable(R.drawable.icon_information));*/
 
 
         getMenuInflater().inflate(R.menu.menu, menu);
@@ -1894,10 +1893,10 @@ public class TRSDigitalPanel extends Activity {
                 //startActivity(intent9);
                 break;
 
-            case 7:
-                Intent intent9 = new Intent(TRSDigitalPanel.this, ListViewDemo.class);
+            /*case 7:
+                Intent intent9 = new Intent(TRSDigitalPanel.this, TRSSequence.class);
                 startActivity(intent9);
-                break;
+                break;*/
 
         }
         return true;
@@ -1963,7 +1962,7 @@ public class TRSDigitalPanel extends Activity {
     }
 
     public void openPRG (final View v) {
-        Intent intent = new Intent(TRSDigitalPanel.this, TRSSequence.class);
+        Intent intent = new Intent(TRSDigitalPanel.this, TRSSequence_old.class);
         startActivity(intent);
     }
 

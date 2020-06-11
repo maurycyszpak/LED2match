@@ -27,6 +27,7 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import static com.kiand.LED2match.BtCOMMsService.BT_CONNECTED_PREFS;
+import static com.kiand.LED2match.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 
 public class TRSSettings extends Activity implements ServiceConnection {
 
@@ -167,6 +168,9 @@ public class TRSSettings extends Activity implements ServiceConnection {
             //Toast.makeText(this.getBaseContext(),"Service bound (onResume)", Toast.LENGTH_SHORT).show();
             mBoundBT = true;
         }
+
+        get_shutdown_delay();
+        get_TL84_delay();
 
         if (check_for_BT_connection()) {
             aSwitch.setChecked(true);
@@ -501,6 +505,23 @@ public class TRSSettings extends Activity implements ServiceConnection {
             }.start();
     }
 
+    private void get_shutdown_delay() {
+        SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        JSON_analyst json_analyst = new JSON_analyst(spFile);
+
+        String s_shutoff = json_analyst.getJSONValue("eeprom_auto_shutoff");
+        makeToast("SHUTOFF reading: " + s_shutoff);
+
+    }
+
+    private void get_TL84_delay() {
+        SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        JSON_analyst json_analyst = new JSON_analyst(spFile);
+
+        String s_shutoff = json_analyst.getJSONValue("eeprom_tl84_delay");
+        makeToast("TL84_DELAY reading: " + s_shutoff);
+
+    }
     public void updateUIView() {
         Log.d("morris-sender", "Broadcasting message");
         Intent mIntent = new Intent("custom-event-name");

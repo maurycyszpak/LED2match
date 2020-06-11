@@ -37,8 +37,10 @@ public class JSON_analyst {
                 try {
                     if (sKey.equals(sKeyScanned)) {
                         Object objValue = jsonStructure.get(sKey);
-                        //makeToast("key = " + key + ", value = " + value.toString());
+                        //Log.d(TAG, "FOUND key = " + sKey + ", value = " + objValue.toString());
                         sReturn = objValue.toString();
+                    } else {
+                        //Log.d(TAG, "Checking key = " + sKey + " for \"" + sKeyScanned + "\"");
                     }
                 } catch (JSONException e) {
                     // Something went wrong!
