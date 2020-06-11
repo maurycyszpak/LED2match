@@ -30,6 +30,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,6 +62,7 @@ public class TRSDigitalPanel extends Activity {
     public String S_CURRENT_SEQ_ITEM = "";
     public boolean BL_LOW_MODE = false;
     public boolean BL_UV_MODE = false;
+    public boolean BL_COMMAND_SENT = false;
     public static final String NO_PRESET_TEXT = "#n/a";
     public static final String TL84_TAG = "TL84";
     private static final String password = "hokus";
@@ -282,18 +284,6 @@ public class TRSDigitalPanel extends Activity {
         String version_line = "APP version: " + versionName;
         tvInfoBox.setText(version_line);
 
-        /*SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
-        JSON_analyst json_analyst = new JSON_analyst(spFile);
-        String sFWVersion = json_analyst.getJSONValue("firmware_version");
-        TextView tvInfoBox = findViewById(R.id.infobox);
-        String version_line = "FW Version: " + sFWVersion;
-        tvInfoBox.setText(getString(R.string.system_footer) + "\n" + version_line);
-
-        TextView tv_firmware_version = findViewById(R.id.fw_version);
-        tv_firmware_version.setText(sFWVersion);*/
-
-        // add check if ANY key exists!!!
-
         if (shared_prefs_exists(SHAREDPREFS_LAMP_ASSIGNMENTS, "666")) {
             repopulate_button_assignments();
             Log.d(TAG, "Repopulating button captions");
@@ -302,14 +292,11 @@ public class TRSDigitalPanel extends Activity {
             populateButtonNames();
         }
 
-        if (bluetooth_connected()) {
-            toggle_bt_icon_ON();
-        } else {
-            toggle_bt_icon_OFF();
-        }
 
+        populate_bluetooth_indicator();
         populateLampsState();
         setUnitName();
+        makeToast("onresume");
     }
 
     @Override
@@ -352,7 +339,7 @@ public class TRSDigitalPanel extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         //Toast.makeText(this.getBaseContext(),"Main activity destroyed", Toast.LENGTH_SHORT).show();
-        mark_BT_disconnected();
+        //mark_BT_disconnected();
 
 
     }
@@ -487,6 +474,7 @@ public class TRSDigitalPanel extends Activity {
     }
 
     public void mark_BT_disconnected() {
+        makeToast("Entering mark BT disconnected");
         SharedPreferences prefs = getSharedPreferences(BT_CONNECTED_PREFS, Context.MODE_PRIVATE);
         SharedPreferences.Editor spEditor = prefs.edit();
         spEditor.clear();
@@ -510,7 +498,14 @@ public class TRSDigitalPanel extends Activity {
         bt_conn_indicator.getLayoutParams().height= ICON_HEIGHT;
         bt_conn_indicator.requestLayout();
         bt_conn_indicator.setImageLevel(0);
+    }
 
+    public void populate_bluetooth_indicator() {
+        if (bluetooth_connected()) {
+            toggle_bt_icon_ON();
+        } else {
+            toggle_bt_icon_OFF();
+        }
 
     }
 
@@ -1301,15 +1296,167 @@ public class TRSDigitalPanel extends Activity {
                             lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                             blTL84_ON = true;
                         } else {
-                            sCommand = "S11000$" + sNewLine;
+                            //sCommand = "S11000$" + sNewLine; //actually we want to send a S11000^ffffffff(...)
+                            sCommand  = "S11000" + convertRGBwithCommasToHexString(sPresetRGBValues) + "$" + sNewLine;
                             blTL84_ON = false;
                             send_via_bt(sCommand);
-                            sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
-                            sCommand += "$" + sNewLine;
-                            Log.d(TAG, " *** NEW TL84 command (OFF): " + sCommand);
+
+                            BL_COMMAND_SENT = true;
+                            if (!BL_COMMAND_SENT) {
+                                sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
+                                sCommand += "$" + sNewLine;
+                                Log.d(TAG, " *** NEW TL84 command (OFF): " + sCommand);
+                                send_via_bt(sCommand);
+                                lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                            }
+                            sCommand = "B," + button.getTag().toString() + "1$" + sNewLine;
                             send_via_bt(sCommand);
                             lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                        }
+                    } else {
+                        //LOW MODE!
+                        /*SharedPreferences prefsLamps = getSharedPreferences(SHAREDPREFS_CURRENT_LAMPS, 0);
+                        Map<String, ?> keys = prefsLamps.getAll(); */
+                        Log.d (TAG, "LOW mode! Changing " + sPresetRGBValues + " to LOW values.");
 
+
+                        if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
+                            sCommand = "S11050" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + sNewLine;
+                            Log.d(TAG, " *** NEW TL84 command (LOW): " + sCommand);
+                            send_via_bt(sCommand);
+                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                            blTL84_ON = true;
+                        } else {
+                            sCommand = "S11000$" + sNewLine;
+                            blTL84_ON = false;
+                            Log.d(TAG, " *** NEW TL84 command (OFF): " + sCommand);
+                            send_via_bt(sCommand);
+                            String[] sRGB_in = sPresetRGBValues.split(",");
+                            String[] sRGB_out = sRGB_in;
+                            for (int i = 0; i < sRGB_in.length; i++) {
+                                int iRGB = Integer.valueOf(sRGB_in[i]);
+                                iRGB /= (BL_LOW_MODE ? 2 : 1);
+                                sRGB_out[i] = String.valueOf(iRGB);
+                            }
+                            String concatValues = TextUtils.join(",", sRGB_out);
+                            String sHex = convertRGBwithCommasToHexString(concatValues);
+                            sCommand = "S" + sHex + "$" + sNewLine;
+                            send_via_bt(sCommand);
+                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                            Log.d(TAG, "I'm in LOW mode");
+                            Log.d(TAG, "Illuminating lamps with: " + sCommand);
+                        }
+                    }
+
+                    button.setBackgroundResource(R.drawable.buttonselector_active);
+                    button.setTextColor(Color.BLACK);
+                }
+                if (buttonID == R.id.btnL1) {
+                    blLamp1_ON = true;
+                } else if (buttonID == R.id.btnL2) {
+                    blLamp2_ON = true;
+                } else if (buttonID == R.id.btnL3) {
+                    blLamp3_ON = true;
+                } else if (buttonID == R.id.btnL4) {
+                    blLamp4_ON = true;
+                } else if (buttonID == R.id.btnL5) {
+                    blLamp5_ON = true;
+                } else if (buttonID == R.id.btnL6) {
+                    blLamp6_ON = true;
+                }
+                updateLampValue(sPresetRGBValues);
+            }
+        } else {
+            makeToast("No lamp preset assigned to this button!");
+        }
+    }
+
+    public void btnClicked_UV_as_normal(View v) {
+        SharedPreferences spLampDefinitions = getSharedPreferences(Constants.SHAREDPREFS_LAMP_DEFINITIONS, 0);
+        String sPresetRGBValues;
+        String sCommand;
+
+        String buttonCaption = v.getTag().toString();
+        if (!TextUtils.isEmpty(buttonCaption)) {
+            if (!buttonCaption.equalsIgnoreCase("LOW") && !buttonCaption.equalsIgnoreCase("UV")) {
+                Log.d(TAG, "switching off all lamps");
+                mark_all_buttons_off_on_mobile();
+            }
+        }
+
+        int buttonID = v.getId();
+        Button button = findViewById(buttonID);
+
+        /* scenarios:
+        1. "clean" execution - switch on lamp
+        2. "clean" execution - special lamp - UV
+        3. "clean" execution - special lamp - TL84
+        4. "clean" execution - special lamp - LOW
+        5. a lamp is already on - special lamp - UV
+        6. a lamp is already on - special lamp - TL84
+        7. a lamp is already on - special lamp - LOW on
+        8. a lamp is already on - special lamp - LOW off
+         */
+
+
+        if (spLampDefinitions.contains(button.getText().toString())) {
+            sPresetRGBValues = spLampDefinitions.getString(button.getText().toString(), null);
+
+            if (!power_drain_check(sPresetRGBValues)) {
+                return;
+            }
+            Log.d(TAG, "sending " + sPresetRGBValues + " to controller");
+            if (sPresetRGBValues != null) {
+
+                if (button.getText().toString().equalsIgnoreCase("UV")) {
+                    //complementary light - keep current on and add UV definition for non-zeros - when switching ON UV mode. Otherwise switch off additional lamps
+                    sCommand = "P" + convertRGB2complementaryLight(sPresetRGBValues, (!BL_UV_MODE));
+                    sCommand += "$" + sNewLine;
+                    send_via_bt(sCommand);
+                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+
+                    sCommand = "B," + button.getTag().toString() + (BL_UV_MODE ? 0 : 1) + "$" + sNewLine;
+                    Log.d(TAG, "sendviabt ** B command with tag: "+ button.getTag().toString() + " text: " + button.getText());
+                    send_via_bt(sCommand);
+                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+
+                    BL_UV_MODE = !BL_UV_MODE;
+                    String s = (BL_UV_MODE ? "active" : "inactive");
+                    Log.d(TAG, "UV mode - " + s);
+                    if (BL_UV_MODE) {
+                        button.setBackgroundResource(R.drawable.buttonselector_active);
+                        button.setTextColor(Color.BLACK);
+                    } else {
+                        button.setBackgroundResource(R.drawable.buttonselector_main);
+                        button.setTextColor(Color.WHITE);
+                    }
+
+
+                } else {
+                    if (!BL_LOW_MODE) {
+                        Log.d(TAG, "I'm not in LOW mode");
+
+                        if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
+                            get_tl84_delay();
+                            sCommand = "S11100" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + sNewLine;
+                            Log.d(TAG, " *** NEW TL84 command (ON): " + sCommand);
+                            send_via_bt(sCommand);
+                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                            blTL84_ON = true;
+                        } else {
+                            //sCommand = "S11000$" + sNewLine; //actually we want to send a S11000^ffffffff(...)
+                            sCommand  = "S11000" + convertRGBwithCommasToHexString(sPresetRGBValues) + "$" + sNewLine;
+                            blTL84_ON = false;
+                            send_via_bt(sCommand);
+
+                            BL_COMMAND_SENT = true;
+                            if (!BL_COMMAND_SENT) {
+                                sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
+                                sCommand += "$" + sNewLine;
+                                Log.d(TAG, " *** NEW TL84 command (OFF): " + sCommand);
+                                send_via_bt(sCommand);
+                                lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                            }
                             sCommand = "B," + button.getTag().toString() + "1$" + sNewLine;
                             send_via_bt(sCommand);
                             lclUsbServiceInstance.sendBytes(sCommand.getBytes());
@@ -1688,6 +1835,8 @@ public class TRSDigitalPanel extends Activity {
                 getResources().getDrawable(R.drawable.icon_information));
         menu.add(Menu.NONE, 6, 6, "Recertification page").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));
+        menu.add(Menu.NONE, 7, 7, "ListView page").setIcon(
+                getResources().getDrawable(R.drawable.icon_information));
 
 
         getMenuInflater().inflate(R.menu.menu, menu);
@@ -1743,6 +1892,11 @@ public class TRSDigitalPanel extends Activity {
                 //Recertification page
                 goto_recertification(null);
                 //startActivity(intent9);
+                break;
+
+            case 7:
+                Intent intent9 = new Intent(TRSDigitalPanel.this, ListViewDemo.class);
+                startActivity(intent9);
                 break;
 
         }
@@ -1922,14 +2076,14 @@ public class TRSDigitalPanel extends Activity {
 
         //processSequenceFile();
         SharedPreferences spLampTimers = getSharedPreferences(SP_LAMP_TIMERS, 0);
-        Map<String, ?> allEntries = spLampTimers.getAll();
+        TreeMap<String, ?> allEntries = new TreeMap<String, Object>(spLampTimers.getAll());
         int i = 1;
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
             String sVal = entry.getValue().toString();
             String[] sBuffer = sVal.split(",");
             sSequence = sSequence.concat("0" + i);
             sSequence = sSequence.concat(sBuffer[1]);
-            Log.d(TAG, "Currently sSequence: " + sSequence);
+            Log.d(TAG, "Currently sSequence: " + entry.getKey() + ": " + sSequence);
             i++;
         }
         sSequence = sSequence.concat(System.lineSeparator());
