@@ -47,6 +47,7 @@ import java.util.TreeSet;
 
 import static com.kiand.LED2match.BtCOMMsService.SHAREDPREFS_UNITNAME;
 import static com.kiand.LED2match.BtCOMMsService.BT_CONNECTED_PREFS;
+import static com.kiand.LED2match.Constants.CONFIG_SETTINGS;
 import static com.kiand.LED2match.Constants.DEFAULT_PSU_POWER;
 import static com.kiand.LED2match.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 import static com.kiand.LED2match.Constants.sNewLine;
@@ -2056,6 +2057,8 @@ public class TRSDigitalPanel extends Activity {
             Log.d(TAG, "Currently sSequence: " + entry.getKey() + ": " + sSequence);
             i++;
         }
+
+        sSequence = sSequence.concat("^").concat((check_sequence_for_loop()) ? "1" : "0");
         sSequence = sSequence.concat(System.lineSeparator());
         lclBTServiceInstance.sendData(sSequence);
         lclUsbServiceInstance.sendBytes(sSequence.getBytes());
@@ -2067,7 +2070,16 @@ public class TRSDigitalPanel extends Activity {
         String sExecute = "E" + System.lineSeparator();
         lclBTServiceInstance.sendData(sExecute);
         lclUsbServiceInstance.sendBytes(sExecute.getBytes());
+        Log.d(TAG, "Sending Bytes: " + sExecute);
         //switch_all_off();
+    }
+
+    boolean check_sequence_for_loop() {
+        boolean flag = false;
+        SharedPreferences sp = getSharedPreferences(CONFIG_SETTINGS, 0);
+        flag = sp.getBoolean("LOOP_SEQUENCE", false);
+
+        return flag;
     }
 
     public boolean trim_sequence_file(String sCurrentItem) {

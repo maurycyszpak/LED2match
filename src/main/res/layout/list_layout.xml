@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context="com.kiand.LED2match.TRSSequence"
     android:background="#EAEAEA">
@@ -57,15 +57,53 @@
         android:layout_weight="0.3"
 
         >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="10dp"
+            android:baselineAligned="false"
+            android:id="@+id/layout_infinity_modifier"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/button_margin"
+                android:layout_weight="@dimen/settings_pg_label_width"
+                android:gravity="end|center_vertical"
+                android:text="Infinite loop"
+                android:textSize="@dimen/button_text_size" />
+
+            <Switch
+                android:id="@+id/switch_infinite_loop"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text=""
+                android:textSize="@dimen/button_text_size"
+                android:layout_weight="@dimen/settings_pg_value_width"
+                android:layout_gravity="left|center_vertical"
+                android:theme="@style/MySwitch"
+                />
+
+
+        </LinearLayout>
+
+
         <LinearLayout
             android:id="@+id/lLayout3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
+            android:layout_below="@+id/layout_infinity_modifier"
             android:layout_marginTop="5dp"
             android:baselineAligned="false"
             android:orientation="horizontal"
-
             >
 
             <TextView
@@ -99,10 +137,6 @@
                 android:textSize="18dp"
                 android:onClick="resetSequenceCommand"/>
             </LinearLayout>
-
-                />
-
-
         </LinearLayout>
 
         <LinearLayout

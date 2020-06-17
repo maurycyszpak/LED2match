@@ -2,7 +2,9 @@ package com.kiand.LED2match;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -12,8 +14,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -28,6 +32,8 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.TreeMap;
 
+import static com.kiand.LED2match.BtCOMMsService.BT_CONNECTED_PREFS;
+import static com.kiand.LED2match.Constants.CONFIG_SETTINGS;
 import static com.kiand.LED2match.Constants.PRESETS_DEFINITION;
 import static com.kiand.LED2match.Constants.SP_LAMP_TIMERS;
 import static com.kiand.LED2match.Constants.SP_SEQUENCE_COMMAND_GENERATE;
@@ -42,6 +48,7 @@ public class TRSSequence extends ListActivity {
     int clickCounter = 0;
     final Context context = this;
     ListView listView;
+    Switch aSwitch;
     public static final String TAG = "MORRIS-LSTVIEW";
 
     @Override
@@ -75,6 +82,25 @@ public class TRSSequence extends ListActivity {
                 return true;
             }
         });
+        aSwitch = findViewById(R.id.switch_infinite_loop);
+        aSwitch.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        SharedPreferences sp = getSharedPreferences(CONFIG_SETTINGS, 0);
+                        SharedPreferences.Editor sp_editor = sp.edit();
+                        sp_editor.clear();
+                        sp_editor.apply();
+
+                        if (isChecked) {
+                            sp_editor.putBoolean("LOOP_SEQUENCE", true);
+                            sp_editor.apply();
+
+                        } else {
+                            sp_editor.putBoolean("LOOP_SEQUENCE", false);
+                            sp_editor.apply();
+                        }
+                    }
+                });
     }
 
 
