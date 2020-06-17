@@ -18,6 +18,7 @@ class Constants {
 
 
 
+
     public static final int DEFAULT_PSU_POWER = 2200;
     public static final String sNewLine = System.getProperty("line.separator");
 
