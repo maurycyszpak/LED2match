@@ -1667,6 +1667,7 @@ public class TRSDigitalPanel extends Activity {
 
     public void allOFF(View v) {
 
+        String sCommand = "";
         blLamp1_ON = false;
         btnL1.setBackgroundResource(R.drawable.buttonselector_main);
         btnL1.setTextColor(Color.WHITE);
@@ -1686,6 +1687,10 @@ public class TRSDigitalPanel extends Activity {
         btnL6.setBackgroundResource(R.drawable.buttonselector_main);
         btnL6.setTextColor(Color.WHITE);
 
+        sCommand= "B,OFF1$" + sNewLine;
+        send_via_bt(sCommand);
+        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+
         //blLamp9_ON = true;
         if (!BL_LOW_MODE) {
             btnL9.setBackgroundResource(R.drawable.buttonselector_active);
@@ -1693,18 +1698,17 @@ public class TRSDigitalPanel extends Activity {
 
             btnLOW.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_low));
             btnLOW.setTextColor(Color.WHITE);
+
         }
 
         blTL84_ON = false;
         TL84_OFF();
-        String sCommand = "S00000000000000000000$" + sNewLine;
+        sCommand = "S00000000000000000000$" + sNewLine;
         send_via_bt(sCommand);
 
         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
         BL_UV_MODE = false;
-        sCommand= "B,OFF1$" + sNewLine;
-        send_via_bt(sCommand);
-        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+
 
         updateLampValue("000,000,000,000,000,000,000,000,000,000");
     }

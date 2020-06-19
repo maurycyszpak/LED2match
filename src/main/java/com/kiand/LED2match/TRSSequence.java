@@ -54,6 +54,7 @@ public class TRSSequence extends ListActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        listItems.clear();
         read_previous_sequence();
         //clear_lamp_timers_sp_file();
     }
@@ -113,6 +114,19 @@ public class TRSSequence extends ListActivity {
         // makeToast("Click : \n  Position :"+position+"  \n  ListItem : " +itemValue);
     }
 
+    private void recalculate_list() {
+        for (String seq_step_entry: listItems) {
+            int index = listItems.indexOf(seq_step_entry);
+            String sLampName = seq_step_entry.substring(seq_step_entry.indexOf(".") + 2, seq_step_entry.indexOf(":"));
+            String sLampDelay = seq_step_entry.substring(seq_step_entry.indexOf(":") + 2, seq_step_entry.length() - 1);
+
+            String concat_value = (index +1) + ". " + sLampName + ": " + sLampDelay + "s";
+            listItems.set(index, concat_value);
+        }
+
+
+    }
+
     private void edit_or_remove(int seq_item_position, long seq_item_id) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 
@@ -128,6 +142,7 @@ public class TRSSequence extends ListActivity {
                 .setNeutralButton("REMOVE", (dialog, id) -> {
                     //makeToast("I will REMOVE item from position: " + seq_item_position + "(id: " + seq_item_id + ")");
                     listItems.remove(seq_item_position);
+                    recalculate_list();
                     adapter.notifyDataSetChanged();
 
                 })
@@ -136,6 +151,7 @@ public class TRSSequence extends ListActivity {
 
         // create an alert dialog
         AlertDialog alertD = alertDialogBuilder.create();
+        alertD.show();
         alertD.show();
     }
 
@@ -159,7 +175,7 @@ public class TRSSequence extends ListActivity {
         SharedPreferences spLampTimers = getSharedPreferences(SP_LAMP_TIMERS, 0);
         SharedPreferences.Editor editorLampTimer = spLampTimers.edit();
 
-        //editorLampTimer.remove(sKey);
+        editorLampTimer.remove(sKey);
         editorLampTimer.putString(sKey, sSequence);
         Log.d(TAG , "Updating sp file with key: " + sKey + " and sequence: " + sSequence);
         editorLampTimer.commit();
@@ -193,7 +209,7 @@ public class TRSSequence extends ListActivity {
         alertDialogBuilder
                 .setCancelable(false)
                 .setPositiveButton("SAVE", (dialog, id) -> {
-                    String concat_value = spinner_control_preset_list.getSelectedItem().toString();
+                    String concat_value = (step_id + 1) + ". " + spinner_control_preset_list.getSelectedItem().toString();
                     concat_value += ": " + spinner_delay.getSelectedItem().toString() + "s";
                     listItems.set(step_id, concat_value);
                     adapter.notifyDataSetChanged();
@@ -330,6 +346,26 @@ public class TRSSequence extends ListActivity {
         int iCounter = 0;
         String sDelay = "0000";
 
+        SharedPreferences sp = getSharedPreferences(CONFIG_SETTINGS, 0);
+        SharedPreferences.Editor sp_editor = sp.edit();
+
+        if (aSwitch.isChecked()) {
+            sp_editor.putBoolean("LOOP_SEQUENCE", true);
+            sp_editor.apply();
+
+        } else {
+            sp_editor.putBoolean("LOOP_SEQUENCE", false);
+            sp_editor.apply();
+        }
+
+
+        SharedPreferences spLampTimers = getSharedPreferences(SP_LAMP_TIMERS, 0);
+        SharedPreferences.Editor editorLampTimer = spLampTimers.edit();
+
+        editorLampTimer.clear();
+        editorLampTimer.apply();
+
+
         for (String seq_step_entry: listItems) {
             //makeToast("Processing '" + seq_step_entry + "'");
             try {
@@ -348,6 +384,7 @@ public class TRSSequence extends ListActivity {
                     }
                     //Log.d(TAG, "Calling updateLampHEX with preset:" + sPresetName + ", HEX: " + sHEX);
                     updateLampHEXsequence("SEQ"+iCounter, sPresetName+ "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00") + sDelay);
+                    //generateSequenceCommand
                 }
 
 
@@ -422,7 +459,7 @@ public class TRSSequence extends ListActivity {
     }
 
     private void read_previous_sequence() {
-        SharedPreferences spLampTimers = getSharedPreferences(TRSSequence_old.SP_LAMP_TIMERS, 0);
+        SharedPreferences spLampTimers = getSharedPreferences(SP_LAMP_TIMERS, 0);
         TreeMap<String, ?> allEntries = new TreeMap<String, Object>(spLampTimers.getAll());
         int i = 1;
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
