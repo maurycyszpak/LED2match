@@ -1378,7 +1378,7 @@ public class TRSDigitalPanel extends Activity {
 
         String buttonCaption = v.getTag().toString();
         if (!TextUtils.isEmpty(buttonCaption)) {
-            if (!buttonCaption.equalsIgnoreCase("LOW") && !buttonCaption.equalsIgnoreCase("UV")) {
+            if (!buttonCaption.equalsIgnoreCase("LOW")) {
                 Log.d(TAG, "switching off all lamps");
                 mark_all_buttons_off_on_mobile();
             }
