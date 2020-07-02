@@ -1447,7 +1447,8 @@ public class TRSDigitalPanel extends Activity {
                         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                         blTL84_ON = true;
                     } else {
-                        sCommand = "S11000$" + sNewLine;
+                        //sCommand = "S11000$" + sNewLine;
+                        sCommand  = "S11000" + convertRGBwithCommasToHexString(sPresetRGBValues) + "$" + sNewLine;
                         blTL84_ON = false;
                         Log.d(TAG, " *** NEW TL84 command (OFF): " + sCommand);
                         send_via_bt(sCommand);
@@ -1491,7 +1492,9 @@ public class TRSDigitalPanel extends Activity {
     }
 
     private void TL84_OFF() {
-        String sCommand = "S11000$" + sNewLine;
+        //String sCommand = "S11000$" + sNewLine;
+        String sCommand  = "S11000" + "00000000000000000000" + "$" + sNewLine;
+
         blTL84_ON = false;
         send_via_bt(sCommand);
     }
