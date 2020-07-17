@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_header_title">Light2match</string>
+    <string name="app_header_title">LED2match</string>
 
     <string name="white_br">White</string>
     <string name="LED_9">LED 385</string>

@@ -425,11 +425,11 @@ public class TRSDigitalPanel extends Activity {
         btnL9.setBackgroundResource(R.drawable.buttonselector_main);
         btnL9.setTextColor(Color.WHITE);
 
-        btnLOW.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_low));
+        btnLOW.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_main));
         btnLOW.setTextColor(Color.WHITE);
 
         btnL10.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_special));
-        btnL10.setTextColor(Color.WHITE);
+        btnL10.setTextColor(Color.BLACK);
 
         if (shared_prefs_exists(SHAREDPREFS_LAMP_ASSIGNMENTS, "1")) {
             repopulate_button_assignments();
@@ -630,7 +630,7 @@ public class TRSDigitalPanel extends Activity {
 
             case 8:
 
-                btnLOW.setBackgroundResource(R.drawable.buttonselector_low);
+                btnLOW.setBackgroundResource(R.drawable.buttonselector_main);
                 btnLOW.setTextColor(Color.WHITE);
                 makeToast("LOW mode switched off");
 
@@ -1699,7 +1699,7 @@ public class TRSDigitalPanel extends Activity {
             btnL9.setBackgroundResource(R.drawable.buttonselector_active);
             btnL9.setTextColor(Color.BLACK);
 
-            btnLOW.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_low));
+            btnLOW.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_main));
             btnLOW.setTextColor(Color.WHITE);
 
         }
@@ -1811,7 +1811,7 @@ public class TRSDigitalPanel extends Activity {
                 getResources().getDrawable(R.drawable.icon_information));
         menu.add(Menu.NONE, 5, 5, "Manual").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));
-        menu.add(Menu.NONE, 6, 6, "Recertification page").setIcon(
+        menu.add(Menu.NONE, 6, 6, "Maintenance page").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));
         /*menu.add(Menu.NONE, 7, 7, "ListView page").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));*/
@@ -1868,7 +1868,7 @@ public class TRSDigitalPanel extends Activity {
 
             case 6:
                 //Recertification page
-                goto_recertification(null);
+                goto_maintenance(null);
                 //startActivity(intent9);
                 break;
 
@@ -1881,7 +1881,7 @@ public class TRSDigitalPanel extends Activity {
         return true;
     }
 
-    public void goto_recertification(final View view) {
+    public void goto_maintenance(final View view) {
 
         if (BtCore.Connected() || true) {
             LayoutInflater layoutInflater = LayoutInflater.from(context);
@@ -1911,7 +1911,7 @@ public class TRSDigitalPanel extends Activity {
                                 Toast.makeText(context, "I think I've sent " + iResult + " bytes.", Toast.LENGTH_SHORT).show();
                             }*/
 
-                            Intent intent = new Intent(TRSDigitalPanel.this, TRSRecertificationPage.class);
+                            Intent intent = new Intent(TRSDigitalPanel.this, TRSMaintenancePage.class);
                             startActivity(intent);
                             // Intent sequencerIntent = new Intent(this, BtSequencerActivity.class);
                             // startActivity(sequencerIntent);

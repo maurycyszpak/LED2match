@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context="com.kiand.LED2match.TRSSequence"
-    android:background="#EAEAEA">
+    android:background="@color/app_background">
 
     <RelativeLayout
         android:id="@+id/top_layout"
@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="open_dialog_add_item"
-        android:background="@color/hts_blue"
+        android:background="@color/torso_blue_main"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="5dp"
@@ -128,7 +128,8 @@
                 android:text="SAVE"
                 android:textSize="18dp"
                 android:onClick="generateSequenceCommand"
-                style="@style/Widget.AppCompat.Button.Colored"
+                android:background="@color/torso_blue_main"
+                android:textColor="@color/white"
                 />
             <Button
                 android:layout_width="wrap_content"

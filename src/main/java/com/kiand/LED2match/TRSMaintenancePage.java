@@ -29,7 +29,7 @@ import java.io.File;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class TRSRecertificationPage extends Activity {
+public class TRSMaintenancePage extends Activity {
 
     public static final String SHAREDPREFS_ONE_OFF_SEEKBARS = "one-off-seekbar-values.txt"; //Mauricio
     public static final String PREFS_DAC_VALUE = "dac-value";
@@ -143,7 +143,7 @@ public class TRSRecertificationPage extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.trs_recertification_page);
+        setContentView(R.layout.trs_maintenance_page);
 
         lclHandler = new Handler();
 
@@ -409,7 +409,7 @@ public class TRSRecertificationPage extends Activity {
 
 
     public void openLightPage(View v) {
-        Intent intent = new Intent(TRSRecertificationPage.this, LightSettings.class);
+        Intent intent = new Intent(TRSMaintenancePage.this, LightSettings.class);
         startActivity(intent);
 
     }
@@ -656,7 +656,7 @@ public class TRSRecertificationPage extends Activity {
                 getResources().getDrawable(R.drawable.icon_information));
         menu.add(Menu.NONE, 5, 5, "Manual").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));
-        menu.add(Menu.NONE, 6, 6, "Recertification page").setIcon(
+        menu.add(Menu.NONE, 6, 6, "Maintenance page").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));
 
 
@@ -674,37 +674,37 @@ public class TRSRecertificationPage extends Activity {
 
         switch (item.getItemId()) {
             case 0:
-                Intent intent0 = new Intent(TRSRecertificationPage.this, LightSettings.class);
+                Intent intent0 = new Intent(TRSMaintenancePage.this, LightSettings.class);
                 startActivity(intent0);
                 break;
 
             case 1:
-                Intent intent4 = new Intent(TRSRecertificationPage.this, TRSRecertificationPage.class);
+                Intent intent4 = new Intent(TRSMaintenancePage.this, TRSMaintenancePage.class);
                 startActivity(intent4);
                 break;
 
             case 2:
-                Intent intent5 = new Intent(TRSRecertificationPage.this, TRSLightOperatingHours.class);
+                Intent intent5 = new Intent(TRSMaintenancePage.this, TRSLightOperatingHours.class);
                 startActivity(intent5);
                 break;
 
             case 3:
-                Intent intent6 = new Intent(TRSRecertificationPage.this, TRSSequence_old.class);
+                Intent intent6 = new Intent(TRSMaintenancePage.this, TRSSequence_old.class);
                 startActivity(intent6);
                 break;
 
             case 4:
-                Intent intent7 = new Intent(TRSRecertificationPage.this, TRSSettings.class);
+                Intent intent7 = new Intent(TRSMaintenancePage.this, TRSSettings.class);
                 startActivity(intent7);
                 break;
 
             case 5:
-                Intent intent8 = new Intent(TRSRecertificationPage.this, TRSManualPage.class);
+                Intent intent8 = new Intent(TRSMaintenancePage.this, TRSManualPage.class);
                 startActivity(intent8);
                 break;
 
             case 6:
-                Intent intent9 = new Intent(TRSRecertificationPage.this, TRSRecertificationPage.class);
+                Intent intent9 = new Intent(TRSMaintenancePage.this, TRSMaintenancePage.class);
                 startActivity(intent9);
                 break;
 
