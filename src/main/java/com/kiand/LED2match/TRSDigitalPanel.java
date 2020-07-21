@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -73,6 +74,7 @@ public class TRSDigitalPanel extends Activity {
     Button btnL1, btnL2, btnL3, btnL4, btnL5, btnL6, btnL7, btnLOW, btnL9, btnL10;
     ImageView usb_conn_indicator;
     ImageView bt_conn_indicator;
+    ImageView img_logo;
     public Integer iGlobalIndex = 1;
 
     private Handler lclHandler;
@@ -211,6 +213,17 @@ public class TRSDigitalPanel extends Activity {
 
         bt_conn_indicator.getLayoutParams().height= ICON_HEIGHT;
         bt_conn_indicator.requestLayout();
+
+        ImageView img = findViewById(R.id.unitycolor_logo);
+        img.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setData(Uri.parse("http://www.unitycolor.com"));
+                startActivity(intent);
+            }
+        });
 
         IntentFilter filter = new IntentFilter();
         filter.addAction("temperature_reading_event");

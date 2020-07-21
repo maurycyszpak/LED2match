@@ -643,11 +643,8 @@ public class TRSMaintenancePage extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
 
-        menu.add(Menu.NONE, 0, 0, "Light adjustment").setIcon(
+        menu.add(Menu.NONE, 0, 0, "Light Settings").setIcon(
                 getResources().getDrawable(R.drawable.icon_scan));
-
-        /*menu.add(Menu.NONE, 1, 1, "Home / Light sources").setIcon(
-                getResources().getDrawable(R.drawable.icon_information));*/
         menu.add(Menu.NONE, 2, 2, "Operating Hours").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));
         menu.add(Menu.NONE, 3, 3, "Sequence Settings (PRG)").setIcon(
@@ -656,7 +653,7 @@ public class TRSMaintenancePage extends Activity {
                 getResources().getDrawable(R.drawable.icon_information));
         menu.add(Menu.NONE, 5, 5, "Manual").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));
-        menu.add(Menu.NONE, 6, 6, "Maintenance page").setIcon(
+        menu.add(Menu.NONE, 6, 6, "Digital Panel").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));
 
 
@@ -678,18 +675,13 @@ public class TRSMaintenancePage extends Activity {
                 startActivity(intent0);
                 break;
 
-            case 1:
-                Intent intent4 = new Intent(TRSMaintenancePage.this, TRSMaintenancePage.class);
-                startActivity(intent4);
-                break;
-
             case 2:
                 Intent intent5 = new Intent(TRSMaintenancePage.this, TRSLightOperatingHours.class);
                 startActivity(intent5);
                 break;
 
             case 3:
-                Intent intent6 = new Intent(TRSMaintenancePage.this, TRSSequence_old.class);
+                Intent intent6 = new Intent(TRSMaintenancePage.this, TRSSequence.class);
                 startActivity(intent6);
                 break;
 
@@ -704,7 +696,7 @@ public class TRSMaintenancePage extends Activity {
                 break;
 
             case 6:
-                Intent intent9 = new Intent(TRSMaintenancePage.this, TRSMaintenancePage.class);
+                Intent intent9 = new Intent(TRSMaintenancePage.this, TRSDigitalPanel.class);
                 startActivity(intent9);
                 break;
 

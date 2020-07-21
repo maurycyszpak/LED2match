@@ -239,7 +239,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="10sp"
-                    android:text="Torso-Verlag e.K. Obere Grussen 8\nDE-97877 Wertheim Tel. +49(0)93242 933970"
+                    android:text="@string/torso_footer_address"
 
                     />
 

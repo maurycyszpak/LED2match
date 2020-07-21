@@ -1,319 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".TRSSequence_old">
+    android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context="com.kiand.LED2match.TRSSequence"
+    android:background="@color/app_background">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/top_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:orientation="vertical"
+        android:layout_weight="0.7"
         >
 
-        <TextView
+
+
+    <Button
+        android:id="@+id/addBtn"
+        android:text="Add Sequence Step"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="open_dialog_add_item"
+        android:background="@color/torso_blue_main"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/white"
+        />
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:drawSelectorOnTop = "false"
+        android:dividerHeight="1.5sp"
+        android:divider="#EAEAEA"
+        android:layout_below="@+id/addBtn"
+        />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/lLayoutbottomspace"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="@dimen/main_screen_sidemargin"
+        android:layout_marginRight="@dimen/main_screen_sidemargin"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:baselineAligned="true"
+        android:layout_alignParentBottom="true"
+        android:layout_weight="0.3"
+
+        >
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Sequence settings (PRG)"
-            android:layout_marginLeft="@dimen/main_screen_sidemargin"
-            android:layout_marginRight="@dimen/main_screen_sidemargin"
-            android:layout_marginTop="20dp"
-            android:textSize="15sp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="10dp"
+            android:baselineAligned="false"
+            android:id="@+id/layout_infinity_modifier"
+            >
 
-            />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
-                android:id="@+id/lLayout1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_marginTop="20dp"
-                android:baselineAligned="false"
-
-                >
-
-
-                <Button
-                    android:id="@+id/btnL1"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/digital_panel_button_height"
-                    android:gravity="center"
-                    android:text="D65"
-                    android:layout_marginEnd="@dimen/button_margin"
-                    android:onClick="btnClicked"
-                    android:layout_weight="4"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitCenter"
-                    android:textSize="@dimen/button_text_size"
-                    android:tag="D65"
-                    />
-
-                <Button
-                    android:id="@+id/btnL2"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/digital_panel_button_height"
-                    android:gravity="center"
-                    android:text="D50"
-                    android:layout_marginEnd="@dimen/button_margin"
-                    android:onClick="btnClicked"
-                    android:layout_weight="4"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitCenter"
-                    android:textSize="@dimen/button_text_size"
-                    android:tag="D50"
-                    />
-
-                <Button
-                    android:id="@+id/btnL3"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/digital_panel_button_height"
-                    android:gravity="center"
-                    android:text="A"
-                    android:onClick="btnClicked"
-                    android:layout_weight="4"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitCenter"
-                    android:textSize="@dimen/button_text_size"
-                    android:tag="A"
-                    />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/lLayout2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_below="@+id/lLayout1"
-                android:layout_marginTop="15dp"
-                android:baselineAligned="false"
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_marginEnd="@dimen/button_margin"
-                >
+                android:layout_weight="@dimen/settings_pg_label_width"
+                android:gravity="end|center_vertical"
+                android:text="Infinite loop"
+                android:textSize="@dimen/button_text_size" />
 
-                <Button
-                    android:id="@+id/btnL4"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/digital_panel_button_height"
-                    android:gravity="center"
-                    android:text="LED"
-                    android:onClick="btnClicked"
-                    android:layout_weight="4"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitCenter"
-                    android:textSize="@dimen/button_text_size"
-                    android:layout_marginEnd="@dimen/button_margin"
-                    android:tag="LED"
-                    />
-
-
-                <Button
-                    android:id="@+id/btnL5"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/digital_panel_button_height"
-                    android:gravity="center"
-                    android:text="TL84"
-                    android:layout_marginEnd="@dimen/button_margin"
-                    android:onClick="btnClicked"
-                    android:layout_weight="4"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitCenter"
-                    android:textSize="@dimen/button_text_size"
-                    android:tag="TL84"
-
-                    />
-
-                <Button
-                    android:id="@+id/btnL6"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/digital_panel_button_height"
-                    android:gravity="center"
-                    android:text="Button6"
-                    android:onClick="btnClicked"
-                    android:layout_weight="4"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitCenter"
-                    android:textSize="@dimen/button_text_size"
-                    />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/lLayout3"
-                android:layout_width="match_parent"
+            <Switch
+                android:id="@+id/switch_infinite_loop"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_below="@+id/lLayout2"
-                android:layout_marginTop="15dp"
-                android:baselineAligned="false"
-                android:orientation="horizontal"
-
-                >
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:id="@+id/infobox"
-                    android:text="Press 1x for 5 seconds\n2x for 10 seconds etc."
-                    android:layout_weight="3"
-
-                    />
-                <Button
-                    android:layout_width="@dimen/button_text_size"
-                    android:layout_height="wrap_content"
-                    android:text="SAVE"
-                    android:layout_weight="1"
-                    android:textSize="18dp"
-                    android:onClick="generateSequenceCommand"
-                    />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text=""
+                android:textSize="@dimen/button_text_size"
+                android:layout_weight="@dimen/settings_pg_value_width"
+                android:layout_gravity="left|center_vertical"
+                android:theme="@style/MySwitch"
+                />
 
 
-            </LinearLayout>
+        </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/lLayout3a"
-                android:layout_width="match_parent"
+
+        <LinearLayout
+            android:id="@+id/lLayout3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_infinity_modifier"
+            android:layout_marginTop="5dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:id="@+id/infobox"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_below="@+id/lLayout3"
-                android:layout_marginTop="30dp"
-                android:baselineAligned="false"
-                android:orientation="horizontal"
+                android:layout_weight="3"
+                android:textSize="14dp"
+                android:text="@string/prg_sequence_hint_text"
 
-                >
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:id="@+id/infoboxx"
-                    android:text="Press 1x for 5 seconds\n2x for 10 seconds etc."
-                    android:layout_weight="3"
-                    android:visibility="invisible"
-
-                    />
-                <Button
-                    android:layout_width="@dimen/button_text_size"
-                    android:layout_height="wrap_content"
-                    android:text="reset"
-                    android:layout_weight="1"
-                    android:textSize="18dp"
-                    android:onClick="resetSequenceCommand"
-                    style="@style/Widget.AppCompat.Button.Colored"
-                    />
-
-
-            </LinearLayout>
-
+                />
             <LinearLayout
-                android:id="@+id/lLayout4"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/lLayout3"
-                android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_marginTop="15dp"
                 android:orientation="vertical"
-                android:visibility="gone"
+
+                android:layout_gravity="end"
                 >
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:text="Data Saving"
-                    />
-
-                <CheckedTextView
-                    android:id="@+id/checkedTextRead"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Read config from LED panel"
-                    android:checked="true"
-                    android:drawableLeft="?android:attr/listChoiceIndicatorMultiple"
-                    android:drawableRight="@null"
-                    android:checkMark="@null"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="10dp"
-
-                    />
-
-                <CheckedTextView
-                    android:id="@+id/checkedTextSend"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Send config to LED panel"
-                    android:checked="false"
-                    android:drawableLeft="?android:attr/listChoiceIndicatorMultiple"
-                    android:drawableRight="@null"
-                    android:checkMark="@null"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="10dp"
-                    />
-
-
-            </LinearLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/lLayoutbottomspace"
-                android:layout_gravity="right|end"
-                android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_marginBottom="60dp"
-                android:baselineAligned="false"
-
-                >
-
 
                 <Button
-                    android:id="@+id/btnSave"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginEnd="@dimen/button_margin"
-                    android:baselineAligned="false"
-                    android:gravity="center"
-                    android:visibility="invisible"
+                    android:background="@color/torso_blue_main"
+                    android:onClick="generateSequenceCommand"
                     android:text="SAVE"
-                    android:textSize="@dimen/button_text_size" />
+                    android:textColor="@color/white"
+                    android:textSize="18dp" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="reset"
+                android:textSize="18dp"
+                android:onClick="resetSequenceCommand"/>
+            </LinearLayout>
+        </LinearLayout>
 
-            </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:gravity="bottom">
 
-            <RelativeLayout
-                android:id="@+id/lLayoutbottomspace"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="5dp"
-                android:baselineAligned="true"
-                android:layout_alignParentBottom="true"
-                >
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="10sp"
-                    android:text="Torso-Verlag e.K. Obere Grussen 8\nDE-97877 Wertheim Tel. +49(0)93242 933970"
-
-                    />
+                android:gravity="bottom"
+                android:text="@string/torso_footer_address"
+                android:textSize="10sp" />
+        </LinearLayout>
 
 
-            </RelativeLayout>
+    </RelativeLayout>
 
-        </RelativeLayout>
 
-    </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>
