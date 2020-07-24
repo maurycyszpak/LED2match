@@ -10,6 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:background="@color/app_background"
+
         >
 
         <TextView
@@ -21,6 +23,7 @@
             android:layout_marginTop="20dp"
             android:textSize="22sp"
             android:visibility="visible"
+            android:textColor="@color/black"
             />
 
         <RelativeLayout
@@ -46,6 +49,7 @@
                     android:text="@string/ledbar_manual"
                     android:textSize="@dimen/manual_text_size"
                     android:scrollbars="vertical"
+                    android:textColor="@color/black"
                     />
 
             </LinearLayout>
@@ -95,7 +99,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="10sp"
                     android:text="@string/torso_footer_address"
-
+                    android:textColor="@color/black"
                     />
 
 

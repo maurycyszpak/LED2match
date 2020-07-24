@@ -80,6 +80,7 @@
         <activity
             android:name=".TRSSettings"
             android:label="Settings"
+            android:theme="@style/BlackTextTheme"
             android:screenOrientation="portrait" />
         <activity
             android:name=".TRSManualPage"
@@ -87,7 +88,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".TRSMaintenancePage"
-            android:label="Maintenance Page"
+            android:label="Maintenance"
             android:screenOrientation="portrait" />
         <activity
             android:name=".TRSBluetoothDevicesScan"

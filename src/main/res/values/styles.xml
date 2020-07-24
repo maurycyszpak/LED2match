@@ -9,6 +9,12 @@
     </style>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light" />
+    <style name="CustomSpinnerTheme" parent="android:Widget.Spinner">
+        <item name="android:background">@drawable/sequence_bg_spinner</item>
+    </style>
+    <style name="BlackTextTheme" parent="@style/Theme.AppCompat.Light">
+        <item name="android:textColor">@color/black</item>
+    </style>
 
 
 </resources>

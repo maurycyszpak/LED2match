@@ -657,8 +657,11 @@ public class LightSettings extends Activity implements ServiceConnection {
         filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
         registerReceiver(broadcastReceiver, filter);*/
-		
-		spnPresetsAdapter = new ArrayAdapter<>(this, R.layout.spinner_row, spnPresetsArrayList); // Mauricio
+
+
+
+		spnPresetsAdapter = new ArrayAdapter<>(this, R.layout.sequence_add_item_spinner_text, spnPresetsArrayList); // Mauricio
+		spnPresetsAdapter.setDropDownViewResource(R.layout.sequence_add_item_spinner_dropdown);
 		spinner_control_preset_list.setAdapter(spnPresetsAdapter); // Mauricio
 		spinner_control_preset_list.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() { // Mauricio
 			@Override

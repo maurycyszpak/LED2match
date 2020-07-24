@@ -4,7 +4,7 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:padding="10dp"
-    android:background="#EAEAEA"
+    android:background="@color/app_background_gray"
     >
 
     <TextView
@@ -25,26 +25,25 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/prg_sequence_new_item"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/black"
         android:textSize="@dimen/larger_text_size"
         android:textAlignment="center"
         android:gravity="center"
         android:layout_weight="0.6"
+        style = "@style/CustomSpinnerTheme"
+        android:layout_marginEnd="15dp"
         />
 
-        <Spinner
-            android:id="@+id/spinner_lamp_delay"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/prg_sequence_new_item"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/black"
-            android:textSize="@dimen/larger_text_size"
-            android:textAlignment="center"
-            android:gravity="center"
-            android:layout_weight="0.4"
-            />
+    <Spinner
+        android:id="@+id/spinner_lamp_delay"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/prg_sequence_new_item"
+        android:textSize="@dimen/larger_text_size"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:layout_weight="0.4"
+        style = "@style/CustomSpinnerTheme"
+        />
 
 
     </LinearLayout>

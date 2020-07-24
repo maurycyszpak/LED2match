@@ -1811,11 +1811,11 @@ public class TRSDigitalPanel extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
 
-        menu.add(Menu.NONE, 0, 0, "Light Settings").setIcon(
+        /*menu.add(Menu.NONE, 0, 0, "Light Settings").setIcon(
                 getResources().getDrawable(R.drawable.icon_scan));
-
-        /*menu.add(Menu.NONE, 1, 1, "Home / Light sources").setIcon(
+        menu.add(Menu.NONE, 1, 1, "Home / Light sources").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));*/
+
         menu.add(Menu.NONE, 2, 2, "Operating Hours").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));
         menu.add(Menu.NONE, 3, 3, "Sequence Settings (PRG)").setIcon(
@@ -1824,7 +1824,7 @@ public class TRSDigitalPanel extends Activity {
                 getResources().getDrawable(R.drawable.icon_information));
         menu.add(Menu.NONE, 5, 5, "Manual").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));
-        menu.add(Menu.NONE, 6, 6, "Maintenance page").setIcon(
+        menu.add(Menu.NONE, 6, 6, "Maintenance").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));
         /*menu.add(Menu.NONE, 7, 7, "ListView page").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));*/
@@ -1929,10 +1929,11 @@ public class TRSDigitalPanel extends Activity {
                             // Intent sequencerIntent = new Intent(this, BtSequencerActivity.class);
                             // startActivity(sequencerIntent);
                         } else {
-                            Message msg = new Message();
+                            /*Message msg = new Message();
                             msg.what = MSG_SHOW_TOAST;
                             msg.obj = "Password incorrect";
-                            messageHandler.sendMessage(msg);
+                            messageHandler.sendMessage(msg);*/
+                            makeToast(edtInput.getText().toString());
                             makeToast("Password incorrect");
                         }
                     })

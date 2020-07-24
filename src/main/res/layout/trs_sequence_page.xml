@@ -119,7 +119,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-
                 android:layout_gravity="end"
                 >
 
@@ -153,10 +152,5 @@
                 android:text="@string/torso_footer_address"
                 android:textSize="10sp" />
         </LinearLayout>
-
-
     </RelativeLayout>
-
-
-
 </LinearLayout>

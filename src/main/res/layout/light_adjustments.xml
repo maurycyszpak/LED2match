@@ -78,7 +78,7 @@
                     android:prompt="@string/readings_prompt"
                     android:layout_marginRight="5dp"
                     android:layout_weight="5"
-
+                    style = "@style/CustomSpinnerTheme"
                     />
                 <Button
                     android:id="@+id/btnRemove"
