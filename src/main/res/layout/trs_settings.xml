@@ -10,6 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:background="@color/app_background"
+        android:textColor="@color/black"
         >
 
         <TextView
@@ -45,7 +47,8 @@
                     android:layout_weight="@dimen/settings_pg_label_width"
                     android:gravity="right|center_vertical"
                     android:text="Blower on"
-                    android:textSize="@dimen/button_text_size" />
+                    android:textSize="@dimen/button_text_size"
+                    android:textColor="@color/black"/>
 
                 <EditText
                     android:layout_width="0dp"
@@ -57,6 +60,7 @@
                     android:layout_weight="@dimen/settings_pg_value_width"
                     android:maxLines="1"
                     android:singleLine="true"
+                    android:textColor="@color/black"
                     />
 
                 <TextView
@@ -325,7 +329,7 @@
                 android:layout_gravity="right|end"
                 android:layout_marginLeft="40dp"
                 android:layout_marginRight="40dp"
-                android:layout_marginBottom="40dp"
+                android:layout_marginBottom="20dp"
                 android:baselineAligned="false"
 
                 >
@@ -362,7 +366,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="10sp"
-                    android:text="Torso-Verlag e.K. Obere Grussen 8\nDE-97877 Wertheim Tel. +49(0)93242 933970"
+                    android:text="@string/torso_footer_address"
 
                     />
 

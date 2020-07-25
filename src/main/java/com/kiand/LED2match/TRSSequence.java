@@ -2,9 +2,7 @@ package com.kiand.LED2match;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -32,7 +30,6 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.TreeMap;
 
-import static com.kiand.LED2match.BtCOMMsService.BT_CONNECTED_PREFS;
 import static com.kiand.LED2match.Constants.CONFIG_SETTINGS;
 import static com.kiand.LED2match.Constants.PRESETS_DEFINITION;
 import static com.kiand.LED2match.Constants.SP_LAMP_TIMERS;
@@ -62,7 +59,7 @@ public class TRSSequence extends ListActivity {
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.list_layout);
+        setContentView(R.layout.trs_sequence_page);
 
         ArrayList<HashMap<String,String>> list = new ArrayList<>();
         adapter = new ArrayAdapter<String>(
@@ -223,15 +220,18 @@ public class TRSSequence extends ListActivity {
 
             String[] delays = {"5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60"};
 
-            ArrayAdapter spnPresetsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, spnPresetsArrayList); // Mauricio
+            ArrayAdapter spnPresetsAdapter = new ArrayAdapter<String>(this, R.layout.sequence_add_item_spinner_text, spnPresetsArrayList); // Mauricio
+            spnPresetsAdapter.setDropDownViewResource(R.layout.sequence_add_item_spinner_dropdown);
             spinner_control_preset_list.setAdapter(spnPresetsAdapter); // Mauricio
 
-            ArrayAdapter spnDelaysAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, delays); // Mauricio
+            ArrayAdapter spnDelaysAdapter = new ArrayAdapter<String>(this, R.layout.sequence_add_item_spinner_text, delays); // Mauricio
+            spnDelaysAdapter.setDropDownViewResource(R.layout.sequence_add_item_spinner_dropdown);
             spinner_delay.setAdapter(spnDelaysAdapter); // Mauricio
 
-            String sLampName = listItems.get(step_id).substring(0, listItems.get(step_id).indexOf(":"));
+            String sLampName = listItems.get(step_id).substring(listItems.get(step_id).indexOf(".") + 2, listItems.get(step_id).indexOf(":"));
             String sLampDelay = listItems.get(step_id).substring(listItems.get(step_id).indexOf(":") + 2, listItems.get(step_id).length() - 1);
             //makeToast("Will look for delay: '" + sLampDelay + "'");
+            //makeToast("Will look for lamp name: '" + sLampName + "'");
 
             spinner_control_preset_list.setSelection(getSpinnerIndex(spinner_control_preset_list, sLampName), true);
             spinner_delay.setSelection(getSpinnerIndex(spinner_delay, sLampDelay), true);
@@ -289,10 +289,13 @@ public class TRSSequence extends ListActivity {
 
             String[] delays = {"5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60"};
 
-            ArrayAdapter spnPresetsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, spnPresetsArrayList); // Mauricio
+            ArrayAdapter spnPresetsAdapter = new ArrayAdapter<String>(this, R.layout.sequence_add_item_spinner_text, spnPresetsArrayList); // Mauricio
+            spnPresetsAdapter.setDropDownViewResource(R.layout.sequence_add_item_spinner_dropdown);
             spinner_control_preset_list.setAdapter(spnPresetsAdapter); // Mauricio
 
-            ArrayAdapter spnDelaysAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, delays); // Mauricio
+
+            ArrayAdapter spnDelaysAdapter = new ArrayAdapter<String>(this, R.layout.sequence_add_item_spinner_text, delays); // Mauricio
+            spnDelaysAdapter.setDropDownViewResource(R.layout.sequence_add_item_spinner_dropdown);
             spinner_delay.setAdapter(spnDelaysAdapter); // Mauricio
 
             spnPresetsAdapter.notifyDataSetChanged();

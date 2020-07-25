@@ -23,7 +23,7 @@
     <application
         android:name=".MyApplication"
         android:icon="@drawable/ic_launcher"
-        android:label="Light2match"
+        android:label="LED2match"
         android:largeHeap="true"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
@@ -54,7 +54,7 @@
             android:screenOrientation="landscape" />
         <activity
             android:name=".TRSDigitalPanel"
-            android:label="Light2match"
+            android:label="LED2match"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -80,14 +80,15 @@
         <activity
             android:name=".TRSSettings"
             android:label="Settings"
+            android:theme="@style/BlackTextTheme"
             android:screenOrientation="portrait" />
         <activity
             android:name=".TRSManualPage"
             android:label="Manual"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".TRSRecertificationPage"
-            android:label="Recertification Page"
+            android:name=".TRSMaintenancePage"
+            android:label="Maintenance"
             android:screenOrientation="portrait" />
         <activity
             android:name=".TRSBluetoothDevicesScan"

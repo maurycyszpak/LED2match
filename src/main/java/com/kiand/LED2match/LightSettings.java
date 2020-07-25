@@ -562,8 +562,10 @@ public class LightSettings extends Activity implements ServiceConnection {
 		Toast.makeText(this, "Bluetooth connected!", Toast.LENGTH_LONG).show();
 	}
 
-	public String sAppVersionDate = "2020/01/16";
-	public String apkVersion = "v3.01";//rc" + sAppVersionDate.replace("/", "");
+	public String sAppVersionDate = "2020/07/16";
+	Float versionName = BuildConfig.VERSION_CODE / 1000.0f;
+	public String apkVersion = "v" + versionName;
+
 
 
 	Handler h = new Handler();
@@ -655,8 +657,11 @@ public class LightSettings extends Activity implements ServiceConnection {
         filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
         registerReceiver(broadcastReceiver, filter);*/
-		
-		spnPresetsAdapter = new ArrayAdapter<>(this, R.layout.spinner_row, spnPresetsArrayList); // Mauricio
+
+
+
+		spnPresetsAdapter = new ArrayAdapter<>(this, R.layout.sequence_add_item_spinner_text, spnPresetsArrayList); // Mauricio
+		spnPresetsAdapter.setDropDownViewResource(R.layout.sequence_add_item_spinner_dropdown);
 		spinner_control_preset_list.setAdapter(spnPresetsAdapter); // Mauricio
 		spinner_control_preset_list.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() { // Mauricio
 			@Override
@@ -2303,6 +2308,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 
 		case 4:
 			Intent intent4 = new Intent(LightSettings.this, TRSDigitalPanel.class);
+			intent4.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(intent4);
 			break;
 

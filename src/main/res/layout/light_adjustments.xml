@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/app_background_gray">
 
    <!-- <TextView
         android:id="@+id/textViewHeaderVersion"
@@ -78,7 +78,7 @@
                     android:prompt="@string/readings_prompt"
                     android:layout_marginRight="5dp"
                     android:layout_weight="5"
-
+                    style = "@style/CustomSpinnerTheme"
                     />
                 <Button
                     android:id="@+id/btnRemove"
@@ -152,7 +152,7 @@
         android:id="@+id/rgbControls"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/holo_orange_light"
+
         android:columnCount="3"
         android:orientation="vertical"
         android:paddingLeft="0dp"
@@ -165,7 +165,8 @@
             android:layout_height="@dimen/color_slider_height"
             android:orientation="horizontal"
             android:layout_below="@+id/rowLED27"
-            android:id="@+id/rowRed">
+            android:id="@+id/rowRed"
+            android:layout_marginBottom="@dimen/light_setting_pg_slider_bttm_margin">
 
             <ProgressBar
                 style="?android:attr/progressBarStyleLarge"
@@ -177,7 +178,7 @@
             <TextView
                 android:layout_width="80dp"
                 android:layout_height="@dimen/color_slider_height"
-                android:background="@android:color/holo_red_light"
+                android:background="@color/white"
                 android:gravity="center"
                 android:text="Red"
                 android:textColor="@android:color/black"
@@ -187,7 +188,7 @@
                 android:id="@+id/edRed"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/color_slider_height"
-                android:background="@android:color/holo_red_light"
+                android:background="@color/white"
                 android:ems="3"
                 android:gravity="center"
                 android:inputType="number"
@@ -204,10 +205,11 @@
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/color_slider_height"
                 android:layout_gravity="fill_horizontal"
-                android:thumbTint="@color/red_slider"
-                android:progressTint="@color/red_slider"
+                android:background="@color/white"
+                android:thumbTint="@color/torso_blue_main"
+                android:progressTint="@color/light_adjustments_pg_progress_slider_bg_tint_active"
                 android:progressTintMode="src_in"
-                android:background="@android:color/holo_red_light"
+                android:progressBackgroundTint="@color/light_adjustments_pg_progress_slider_bg_tint_idle"
                 android:max="255"
                 android:maxHeight="1000dp" />
         </LinearLayout>
@@ -217,12 +219,13 @@
             android:layout_height="@dimen/color_slider_height"
             android:orientation="horizontal"
             android:layout_below="@+id/rowRed"
-            android:id="@+id/rowGreen">
+            android:id="@+id/rowGreen"
+            android:layout_marginBottom="@dimen/light_setting_pg_slider_bttm_margin">
 
             <TextView
                 android:layout_width="80dp"
                 android:layout_height="fill_parent"
-                android:background="@color/green"
+                android:background="@color/white"
                 android:gravity="center"
                 android:text="Green"
                 android:textColor="@android:color/black"
@@ -232,7 +235,7 @@
                 android:id="@+id/edGreen"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:background="@color/green"
+                android:background="@color/white"
                 android:ems="3"
                 android:gravity="center"
                 android:inputType="number"
@@ -248,10 +251,11 @@
                 android:id="@+id/barGreen"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:progressTint="@color/green_slider"
-                android:thumbTint="@color/green_slider"
-                android:progressBackgroundTint="@android:color/darker_gray"
-                android:background="@color/green"
+                android:background="@color/white"
+                android:thumbTint="@color/torso_blue_main"
+                android:progressTint="@color/light_adjustments_pg_progress_slider_bg_tint_active"
+                android:progressTintMode="src_in"
+                android:progressBackgroundTint="@color/light_adjustments_pg_progress_slider_bg_tint_idle"
                 android:max="255"
                 android:maxHeight="1000dp" />
 
@@ -262,12 +266,13 @@
             android:layout_height="@dimen/color_slider_height"
             android:orientation="horizontal"
             android:layout_below="@+id/rowGreen"
-            android:id="@+id/rowBlue">
+            android:id="@+id/rowBlue"
+            android:layout_marginBottom="@dimen/light_setting_pg_slider_bttm_margin">
 
             <TextView
                 android:layout_width="80dp"
                 android:layout_height="fill_parent"
-                android:background="@color/bluee"
+                android:background="@color/white"
                 android:gravity="center"
                 android:text="Blue"
                 android:textColor="@android:color/black"
@@ -277,7 +282,7 @@
                 android:id="@+id/edBlue"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:background="@color/bluee"
+                android:background="@color/white"
                 android:ems="3"
                 android:gravity="center"
                 android:inputType="number"
@@ -293,10 +298,11 @@
                 android:id="@+id/barBlue"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background="@color/bluee"
-                android:progressTint="@color/blue_slider"
-                android:progressBackgroundTint="@android:color/darker_gray"
-                android:thumbTint="@color/blue_slider"
+                android:background="@color/white"
+                android:thumbTint="@color/torso_blue_main"
+                android:progressTint="@color/light_adjustments_pg_progress_slider_bg_tint_active"
+                android:progressTintMode="src_in"
+                android:progressBackgroundTint="@color/light_adjustments_pg_progress_slider_bg_tint_idle"
                 android:max="255"
                 android:maxHeight="1000dp" />
 
@@ -307,12 +313,13 @@
             android:layout_height="@dimen/color_slider_height"
             android:orientation="horizontal"
             android:layout_below="@+id/rowBlue"
-            android:id="@+id/rowWhite">
+            android:id="@+id/rowWhite"
+            android:layout_marginBottom="@dimen/light_setting_pg_slider_bttm_margin">
 
             <TextView
                 android:layout_width="80dp"
-                android:layout_height="fill_parent"
-                android:background="@android:color/white"
+                android:layout_height="match_parent"
+                android:background="@color/white"
                 android:gravity="center"
                 android:text="@string/white_br"
                 android:textColor="@android:color/black"
@@ -322,7 +329,7 @@
                 android:id="@+id/edWhite"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:background="@android:color/white"
+                android:background="@color/white"
                 android:ems="3"
                 android:gravity="center"
                 android:inputType="number"
@@ -337,9 +344,11 @@
                 android:id="@+id/barWhite"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background="#ffffff"
-                android:progressTint="#222222"
-                android:thumbTint="#222222"
+                android:background="@color/white"
+                android:thumbTint="@color/torso_blue_main"
+                android:progressTint="@color/light_adjustments_pg_progress_slider_bg_tint_active"
+                android:progressTintMode="src_in"
+                android:progressBackgroundTint="@color/light_adjustments_pg_progress_slider_bg_tint_idle"
                 android:max="255"
                 android:maxHeight="1000dp" />
         </LinearLayout>
@@ -348,12 +357,13 @@
             android:id="@+id/rowLED65"
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/light_setting_pg_slider_bttm_margin">
 
             <TextView
                 android:layout_width="80dp"
                 android:layout_height="fill_parent"
-                android:background="@color/red"
+                android:background="@color/white"
                 android:gravity="center"
                 android:text="LED 65"
                 android:textColor="@android:color/black"
@@ -363,7 +373,7 @@
                 android:id="@+id/edLED65"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:background="@color/red"
+                android:background="@color/white"
                 android:ems="3"
                 android:gravity="center"
                 android:inputType="number"
@@ -380,11 +390,11 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_gravity="fill_horizontal"
-                android:background="@color/red"
-                android:thumbTint="@color/red_slider"
-                android:progressTint="@color/red_slider"
+                android:background="@color/white"
+                android:thumbTint="@color/torso_blue_main"
+                android:progressTint="@color/light_adjustments_pg_progress_slider_bg_tint_active"
                 android:progressTintMode="src_in"
-                android:progressBackgroundTint="@android:color/darker_gray"
+                android:progressBackgroundTint="@color/light_adjustments_pg_progress_slider_bg_tint_idle"
                 android:max="255"
                 android:maxHeight="1000dp" />
         </LinearLayout>
@@ -394,12 +404,13 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/color_slider_height"
             android:layout_below="@+id/rowLED65"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/light_setting_pg_slider_bttm_margin">
 
         <TextView
             android:layout_width="80dp"
             android:layout_height="fill_parent"
-            android:background="@color/green"
+            android:background="@color/white"
             android:gravity="center"
             android:text="LED UVA"
             android:textColor="@android:color/black"
@@ -409,7 +420,7 @@
             android:id="@+id/edLEDUVA"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:background="@color/green"
+            android:background="@color/white"
             android:ems="3"
             android:gravity="center"
             android:inputType="number"
@@ -425,10 +436,11 @@
             android:id="@+id/barLEDUVA"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="@color/green"
-            android:progressTint="@color/green_slider"
-            android:thumbTint="@color/green_slider"
-            android:progressBackgroundTint="@android:color/darker_gray"
+            android:background="@color/white"
+            android:thumbTint="@color/torso_blue_main"
+            android:progressTint="@color/light_adjustments_pg_progress_slider_bg_tint_active"
+            android:progressTintMode="src_in"
+            android:progressBackgroundTint="@color/light_adjustments_pg_progress_slider_bg_tint_idle"
             android:max="255"
             android:maxHeight="1000dp" />
         </LinearLayout>
@@ -438,12 +450,13 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/color_slider_height"
             android:layout_below="@+id/rowLEDUVA"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/light_setting_pg_slider_bttm_margin">
 
             <TextView
                 android:layout_width="80dp"
                 android:layout_height="fill_parent"
-                android:background="@color/bluee"
+                android:background="@color/white"
                 android:gravity="center"
                 android:text="LED 50"
                 android:textColor="@android:color/black"
@@ -453,7 +466,7 @@
                 android:id="@+id/edLED50"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:background="@color/bluee"
+                android:background="@color/white"
                 android:ems="3"
                 android:gravity="center"
                 android:inputType="number"
@@ -469,10 +482,11 @@
                 android:id="@+id/barLED50"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background="@color/bluee"
-                android:progressTint="@color/blue_slider"
-                android:progressBackgroundTint="@android:color/darker_gray"
-                android:thumbTint="@color/blue_slider"
+                android:background="@color/white"
+                android:thumbTint="@color/torso_blue_main"
+                android:progressTint="@color/light_adjustments_pg_progress_slider_bg_tint_active"
+                android:progressTintMode="src_in"
+                android:progressBackgroundTint="@color/light_adjustments_pg_progress_slider_bg_tint_idle"
                 android:max="255"
                 android:maxHeight="1000dp" />
 
@@ -483,7 +497,8 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/color_slider_height"
             android:layout_below="@+id/rowLED50"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/light_setting_pg_slider_bttm_margin" >
 
             <TextView
                 android:layout_width="80dp"
@@ -498,7 +513,7 @@
                 android:id="@+id/edLED27"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:background="@android:color/white"
+                android:background="@color/white"
                 android:ems="3"
                 android:gravity="center"
                 android:inputType="number"
@@ -513,9 +528,11 @@
                 android:id="@+id/barLED27"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background="#ffffff"
-                android:progressTint="#222222"
-                android:thumbTint="#222222"
+                android:background="@color/white"
+                android:thumbTint="@color/torso_blue_main"
+                android:progressTint="@color/light_adjustments_pg_progress_slider_bg_tint_active"
+                android:progressTintMode="src_in"
+                android:progressBackgroundTint="@color/light_adjustments_pg_progress_slider_bg_tint_idle"
                 android:max="255"
                 android:maxHeight="1000dp" />
         </LinearLayout>
@@ -525,12 +542,13 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/color_slider_height"
             android:layout_below="@+id/rowWhite"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/light_setting_pg_slider_bttm_margin">
 
             <TextView
                 android:layout_width="80dp"
                 android:layout_height="fill_parent"
-                android:background="@color/bluee"
+                android:background="@color/white"
                 android:gravity="center"
                 android:text="@string/LED_9"
                 android:textColor="@android:color/black"
@@ -540,7 +558,7 @@
                 android:id="@+id/edLED395"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:background="@color/bluee"
+                android:background="@color/white"
                 android:ems="3"
                 android:gravity="center"
                 android:inputType="number"
@@ -556,10 +574,11 @@
                 android:id="@+id/barLED395"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background="@color/bluee"
-                android:progressTint="@color/blue_slider"
-                android:progressBackgroundTint="@android:color/darker_gray"
-                android:thumbTint="@color/blue_slider"
+                android:background="@color/white"
+                android:thumbTint="@color/torso_blue_main"
+                android:progressTint="@color/light_adjustments_pg_progress_slider_bg_tint_active"
+                android:progressTintMode="src_in"
+                android:progressBackgroundTint="@color/light_adjustments_pg_progress_slider_bg_tint_idle"
                 android:max="255"
                 android:maxHeight="1000dp" />
         </LinearLayout>
@@ -568,12 +587,13 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/color_slider_height"
             android:layout_below="@+id/rowLED395"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/light_setting_pg_slider_bttm_margin">
 
             <TextView
                 android:layout_width="80dp"
                 android:layout_height="fill_parent"
-                android:background="@android:color/white"
+                android:background="@color/white"
                 android:gravity="center"
                 android:text="LED 420"
                 android:textColor="@android:color/black"
@@ -583,7 +603,7 @@
                 android:id="@+id/edLED420"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:background="@android:color/white"
+                android:background="@color/white"
                 android:ems="3"
                 android:gravity="center"
                 android:inputType="number"
@@ -599,9 +619,11 @@
                 android:id="@+id/barLED420"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background="#ffffff"
-                android:progressTint="#222222"
-                android:thumbTint="#222222"
+                android:background="@color/white"
+                android:thumbTint="@color/torso_blue_main"
+                android:progressTint="@color/light_adjustments_pg_progress_slider_bg_tint_active"
+                android:progressTintMode="src_in"
+                android:progressBackgroundTint="@color/light_adjustments_pg_progress_slider_bg_tint_idle"
                 android:max="255"
                 android:maxHeight="1000dp" />
 

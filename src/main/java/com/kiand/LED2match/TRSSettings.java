@@ -2,11 +2,13 @@ package com.kiand.LED2match;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -16,10 +18,16 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -38,6 +46,10 @@ public class TRSSettings extends Activity implements ServiceConnection {
 
     public static final String TL84_DELAY_KEY = "TL84_delay";
     public static final int TL84_DELAY_DEFAULT = 600;
+
+    private static final String password = "hokus";
+    private static final int MSG_SHOW_TOAST = 1;
+    private static final int TOAST_MESSAGE = 1;
 
     Button btnSave;
     Switch aSwitch;
@@ -324,6 +336,159 @@ public class TRSSettings extends Activity implements ServiceConnection {
         setFiltersBT();
         setFiltersBTdevice();
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        menu.add(Menu.NONE, 0, 0, "Light Settings").setIcon(
+                getResources().getDrawable(R.drawable.icon_scan));
+
+        menu.add(Menu.NONE, 2, 2, "Operating Hours").setIcon(
+                getResources().getDrawable(R.drawable.icon_information));
+        menu.add(Menu.NONE, 3, 3, "Sequence Settings (PRG)").setIcon(
+                getResources().getDrawable(R.drawable.icon_information));
+        /*menu.add(Menu.NONE, 4, 4, "Settings").setIcon(
+                getResources().getDrawable(R.drawable.icon_information));*/
+        menu.add(Menu.NONE, 5, 5, "Manual").setIcon(
+                getResources().getDrawable(R.drawable.icon_information));
+        menu.add(Menu.NONE, 6, 6, "Maintenance page").setIcon(
+                getResources().getDrawable(R.drawable.icon_information));
+        menu.add(Menu.NONE, 7, 7, "Digital Panel").setIcon(
+                getResources().getDrawable(R.drawable.icon_information));
+
+        getMenuInflater().inflate(R.menu.menu, menu);
+        MenuItem item = menu.findItem(R.id.menu_color_picker);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+
+        switch (item.getItemId()) {
+            case 0:
+                Intent intent0 = new Intent(TRSSettings.this, LightSettings.class);
+                startActivity(intent0);
+                break;
+
+            case 2:
+                Intent intent5 = new Intent(TRSSettings.this, TRSLightOperatingHours.class);
+                startActivity(intent5);
+                break;
+
+            case 3:
+                Intent intent6 = new Intent(TRSSettings.this, TRSSequence.class);
+                startActivity(intent6);
+                break;
+
+            case 4:
+                Intent intent7 = new Intent(TRSSettings.this, TRSSettings.class);
+                startActivity(intent7);
+                break;
+
+            case 5:
+                Intent intent8 = new Intent(TRSSettings.this, TRSManualPage.class);
+                startActivity(intent8);
+                break;
+
+            case 6:
+                //Recertification page
+                goto_maintenance(null);
+                //startActivity(intent9);
+                break;
+
+            case 7:
+                Intent intent9 = new Intent(TRSSettings.this, TRSDigitalPanel.class);
+                intent9.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent9);
+                break;
+
+        }
+        return true;
+    }
+
+    public void goto_maintenance(final View view) {
+
+        if (BtCore.Connected() || true) {
+            LayoutInflater layoutInflater = LayoutInflater.from(context);
+            View promptView = layoutInflater.inflate(R.layout.prompts, null);
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+
+            // set prompts.xml to be the layout file of the alertdialog builder
+            alertDialogBuilder.setView(promptView);
+            final EditText edtInput = promptView.findViewById(R.id.passInput);
+
+
+            // setup a dialog window
+            alertDialogBuilder
+                    .setCancelable(false)
+                    .setPositiveButton("OK", (dialog, id) -> {
+                        //get user input and set it to result
+
+                        if (edtInput.getText().toString().equals(password)) {
+
+                            //getJSONFile();
+                            //String sCommand = "J" + sNewLine;
+
+                            /*int iResult = usbService.sendBytes(sCommand.getBytes());
+                            if (iResult < 0) {
+                                Toast.makeText(context, "Stream was null, no request sent", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(context, "I think I've sent " + iResult + " bytes.", Toast.LENGTH_SHORT).show();
+                            }*/
+
+                            Intent intent = new Intent(TRSSettings.this, TRSMaintenancePage.class);
+                            startActivity(intent);
+                            // Intent sequencerIntent = new Intent(this, BtSequencerActivity.class);
+                            // startActivity(sequencerIntent);
+                        } else {
+                            Message msg = new Message();
+                            msg.what = MSG_SHOW_TOAST;
+                            msg.obj = "Password incorrect";
+                            messageHandler.sendMessage(msg);
+                            makeToast("Password incorrect");
+                        }
+                    })
+                    .setNegativeButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+
+            // create an alert dialog
+            AlertDialog alertD = alertDialogBuilder.create();
+            alertD.show();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(edtInput, InputMethodManager.SHOW_IMPLICIT);
+        } else {
+            Toast.makeText(this, "goto_recertification: Please connect to the RGB LED first.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private Handler messageHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == MSG_SHOW_TOAST) {
+                String message = (String)msg.obj;
+
+                switch (msg.what) {
+                    case TOAST_MESSAGE:
+                        Toast.makeText(MyApplication.getAppContext(), message.getBytes().toString() , Toast.LENGTH_SHORT).show();
+                        break;
+
+                    //handle the result here
+
+                    default:
+                        //super.handleMessage(msg);
+                        break;
+                }
+
+            }
+        }
+    };
 
     private boolean check_for_BT_connection() {
         SharedPreferences prefs = getSharedPreferences(BT_CONNECTED_PREFS, Context.MODE_PRIVATE);

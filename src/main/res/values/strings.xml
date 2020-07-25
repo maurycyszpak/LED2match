@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_header_title">Light2match</string>
+    <string name="app_header_title">LED2match</string>
 
     <string name="white_br">White</string>
     <string name="LED_9">LED 385</string>
@@ -53,6 +53,7 @@ Donec semper sagittis tellus, id molestie quam suscipit sit amet. Aenean posuere
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="prg_sequence_hint_text">Press "ADD..." to add a step in sequence.\nPress short to add 5s.\nLong press to edit or remove step.</string>
+    <string name="torso_footer_address">Torso-Verlag e.K. Obere Grueben 8\nDE-97877 Wertheim Tel. +49(0)93242 933970</string>
 
 
 </resources>

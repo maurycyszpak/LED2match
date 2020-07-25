@@ -15,4 +15,14 @@
     <color name="bluee">#47c5ff</color>
     <color name="blue_slider">#1111aa</color>
     <color name="colorStatusText">#FFDB58</color>
+
+    <color name="torso_blue_main">#0033CC</color>
+    <color name="torso_green_main">#009933</color>
+    <color name="torso_gray_button">#C9C9C9</color>
+    <color name="torso_red_button">#871C22</color>
+    <color name="app_background">#FFFFFF</color>
+    <color name="app_background_gray">#EAEAEA</color>
+    <color name="light_adjustments_pg_progress_slider_bg_tint_idle">#E3E3E3</color>
+    <color name="light_adjustments_pg_progress_slider_bg_tint_active">#195B98</color>
+
 </resources>

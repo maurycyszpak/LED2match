@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -73,6 +74,7 @@ public class TRSDigitalPanel extends Activity {
     Button btnL1, btnL2, btnL3, btnL4, btnL5, btnL6, btnL7, btnLOW, btnL9, btnL10;
     ImageView usb_conn_indicator;
     ImageView bt_conn_indicator;
+    ImageView img_logo;
     public Integer iGlobalIndex = 1;
 
     private Handler lclHandler;
@@ -211,6 +213,17 @@ public class TRSDigitalPanel extends Activity {
 
         bt_conn_indicator.getLayoutParams().height= ICON_HEIGHT;
         bt_conn_indicator.requestLayout();
+
+        ImageView img = findViewById(R.id.unitycolor_logo);
+        img.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setData(Uri.parse("http://www.unitycolor.com"));
+                startActivity(intent);
+            }
+        });
 
         IntentFilter filter = new IntentFilter();
         filter.addAction("temperature_reading_event");
@@ -425,11 +438,11 @@ public class TRSDigitalPanel extends Activity {
         btnL9.setBackgroundResource(R.drawable.buttonselector_main);
         btnL9.setTextColor(Color.WHITE);
 
-        btnLOW.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_low));
+        btnLOW.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_main));
         btnLOW.setTextColor(Color.WHITE);
 
         btnL10.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_special));
-        btnL10.setTextColor(Color.WHITE);
+        btnL10.setTextColor(Color.BLACK);
 
         if (shared_prefs_exists(SHAREDPREFS_LAMP_ASSIGNMENTS, "1")) {
             repopulate_button_assignments();
@@ -630,7 +643,7 @@ public class TRSDigitalPanel extends Activity {
 
             case 8:
 
-                btnLOW.setBackgroundResource(R.drawable.buttonselector_low);
+                btnLOW.setBackgroundResource(R.drawable.buttonselector_main);
                 btnLOW.setTextColor(Color.WHITE);
                 makeToast("LOW mode switched off");
 
@@ -1699,7 +1712,7 @@ public class TRSDigitalPanel extends Activity {
             btnL9.setBackgroundResource(R.drawable.buttonselector_active);
             btnL9.setTextColor(Color.BLACK);
 
-            btnLOW.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_low));
+            btnLOW.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_main));
             btnLOW.setTextColor(Color.WHITE);
 
         }
@@ -1798,11 +1811,11 @@ public class TRSDigitalPanel extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
 
-        menu.add(Menu.NONE, 0, 0, "Light Settings").setIcon(
+        /*menu.add(Menu.NONE, 0, 0, "Light Settings").setIcon(
                 getResources().getDrawable(R.drawable.icon_scan));
-
-        /*menu.add(Menu.NONE, 1, 1, "Home / Light sources").setIcon(
+        menu.add(Menu.NONE, 1, 1, "Home / Light sources").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));*/
+
         menu.add(Menu.NONE, 2, 2, "Operating Hours").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));
         menu.add(Menu.NONE, 3, 3, "Sequence Settings (PRG)").setIcon(
@@ -1811,7 +1824,7 @@ public class TRSDigitalPanel extends Activity {
                 getResources().getDrawable(R.drawable.icon_information));
         menu.add(Menu.NONE, 5, 5, "Manual").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));
-        menu.add(Menu.NONE, 6, 6, "Recertification page").setIcon(
+        menu.add(Menu.NONE, 6, 6, "Maintenance").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));
         /*menu.add(Menu.NONE, 7, 7, "ListView page").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));*/
@@ -1868,7 +1881,7 @@ public class TRSDigitalPanel extends Activity {
 
             case 6:
                 //Recertification page
-                goto_recertification(null);
+                goto_maintenance(null);
                 //startActivity(intent9);
                 break;
 
@@ -1881,7 +1894,7 @@ public class TRSDigitalPanel extends Activity {
         return true;
     }
 
-    public void goto_recertification(final View view) {
+    public void goto_maintenance(final View view) {
 
         if (BtCore.Connected() || true) {
             LayoutInflater layoutInflater = LayoutInflater.from(context);
@@ -1911,15 +1924,16 @@ public class TRSDigitalPanel extends Activity {
                                 Toast.makeText(context, "I think I've sent " + iResult + " bytes.", Toast.LENGTH_SHORT).show();
                             }*/
 
-                            Intent intent = new Intent(TRSDigitalPanel.this, TRSRecertificationPage.class);
+                            Intent intent = new Intent(TRSDigitalPanel.this, TRSMaintenancePage.class);
                             startActivity(intent);
                             // Intent sequencerIntent = new Intent(this, BtSequencerActivity.class);
                             // startActivity(sequencerIntent);
                         } else {
-                            Message msg = new Message();
+                            /*Message msg = new Message();
                             msg.what = MSG_SHOW_TOAST;
                             msg.obj = "Password incorrect";
-                            messageHandler.sendMessage(msg);
+                            messageHandler.sendMessage(msg);*/
+                            makeToast(edtInput.getText().toString());
                             makeToast("Password incorrect");
                         }
                     })

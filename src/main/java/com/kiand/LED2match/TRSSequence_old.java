@@ -108,7 +108,7 @@ public class TRSSequence_old extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.trs_sequence_page);
+        //setContentView(R.layout.trs_sequence_page_old);
         setContentView(R.layout.trs_sequence_page_ordered);
 
         //Handler lclHandler = new Handler();
