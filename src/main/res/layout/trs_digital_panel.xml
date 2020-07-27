@@ -59,6 +59,7 @@
                 android:layout_gravity="center"
                 android:foregroundGravity="center"
                 android:src="@drawable/usb_connection_levels"
+                android:visibility="gone"
                 />
 
             <ImageView

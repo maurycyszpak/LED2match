@@ -2,6 +2,8 @@ package com.kiand.LED2match;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -69,6 +71,9 @@ public class TRSDigitalPanel extends Activity {
     private static final String password = "hokus";
     private static final int MSG_SHOW_TOAST = 1;
     private static final int ICON_HEIGHT = 80;
+    private boolean bl_bluetooth_forced_on;
+    private LightSettings.MyHandler mHandler;
+    public final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
 
     boolean blLamp1_ON, blLamp2_ON, blLamp3_ON, blLamp4_ON, blLamp5_ON, blLamp6_ON, blLamp7_ON, blTL84_ON;
     Button btnL1, btnL2, btnL3, btnL4, btnL5, btnL6, btnL7, btnLOW, btnL9, btnL10;
@@ -89,6 +94,30 @@ public class TRSDigitalPanel extends Activity {
     public boolean blSeqGreenLight = true;
 
 
+    private BroadcastReceiver btReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+
+            String action = intent.getAction();
+            if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+                final int bluetoothState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
+                        BluetoothAdapter.ERROR);
+                switch (bluetoothState) {
+                    case BluetoothAdapter.STATE_ON:
+                        if (bl_bluetooth_forced_on) {
+                            Log.d(TAG, " *** Calling start BT Service");
+                            startBluetoothService();
+                        }
+                        break;
+                }
+            }
+
+        }
+    };
+
+
     private ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
@@ -105,18 +134,17 @@ public class TRSDigitalPanel extends Activity {
             mBound = false;
         }
     };
-    private ServiceConnection btConnection = new ServiceConnection() {
-
+    public final ServiceConnection btConnection = new ServiceConnection() {
         @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            BtCOMMsService.MyBinder binder = (BtCOMMsService.MyBinder) service;
-            lclBTServiceInstance = binder.getService();
+        public void onServiceConnected(ComponentName arg0, IBinder arg1) {
+            lclBTServiceInstance = ((BtCOMMsService.MyBinder) arg1).getService();
+            lclBTServiceInstance.setHandler(mHandler);
             mBoundBT = true;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
+            lclBTServiceInstance = null;
             mBoundBT = false;
         }
     };
@@ -378,6 +406,32 @@ public class TRSDigitalPanel extends Activity {
         bt_conn_indicator = findViewById(R.id.bt_connection_image);
 
         populateButtonNames();
+        setFiltersBT();
+        setFiltersBTdevice();
+
+        bt_conn_indicator.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                //your stuff
+
+                makeToast("Long click detected");
+                if (btAdapter.isEnabled()) {
+                    if (!bl_bluetooth_forced_on) {
+                        Log.d(TAG, " **** starting Bluetooth connection service");
+                        startBluetoothService();
+                    }
+                    if (!check_for_BT_connection()) {
+                        Intent intent = new Intent(TRSDigitalPanel.this, TRSBluetoothDevicesScan.class);
+                        startActivity(intent); //or start activity for result? this should be "modal"
+                    }
+                } else {
+                    startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), 1);
+                    bl_bluetooth_forced_on = true;
+                }
+
+                return true;
+            }
+        });
 
         btnL1.setOnLongClickListener(arg0 -> {
             if (btnL1.getText().toString().equalsIgnoreCase(TL84_TAG)) {
@@ -452,6 +506,16 @@ public class TRSDigitalPanel extends Activity {
 
     }
 
+    private void startBluetoothService() {
+        Intent intent = new Intent(this, BtCOMMsService.class);
+        this.startService(intent);
+    }
+
+    private boolean check_for_BT_connection() {
+        SharedPreferences prefs = getSharedPreferences(BT_CONNECTED_PREFS, Context.MODE_PRIVATE);
+        return prefs.getBoolean("CONNECTED", false);
+    }
+
     public void reassign_lamps(View v) {
 
         String sTags = "";
@@ -520,6 +584,42 @@ public class TRSDigitalPanel extends Activity {
             toggle_bt_icon_OFF();
         }
 
+    }
+
+    private BroadcastReceiver btReceiverBTdevice = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            switch (action){
+                case BluetoothDevice.ACTION_ACL_CONNECTED:
+                    Log.d(TAG, "Broadcast receiver: ACL_CONNECTED");
+                    break;
+                case BluetoothDevice.ACTION_ACL_DISCONNECTED:
+                    Log.d(TAG, "Broadcast receiver: ACL_DISCONNECTED");
+                    break;
+            }
+            Bundle bundle = intent.getExtras();
+
+        }
+    };
+
+    private void setFiltersBT() {
+        IntentFilter filterBT = new IntentFilter();
+        filterBT.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        filterBT.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        filterBT.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+        filterBT.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
+        filterBT.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        registerReceiver(btReceiver, filterBT);
+    }
+
+    private void setFiltersBTdevice() {
+        IntentFilter filterBTdevice = new IntentFilter();
+        filterBTdevice.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        filterBTdevice.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        registerReceiver(btReceiverBTdevice, filterBTdevice);
     }
 
     public boolean shared_prefs_exists(String sFileName, String sKey) {

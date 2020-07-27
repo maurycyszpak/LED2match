@@ -285,6 +285,7 @@
                 android:layout_below="@+id/lLayout4"
                 android:layout_marginTop="40dp"
                 android:baselineAligned="false"
+                android:visibility="gone"
                 >
 
                 <TextView
