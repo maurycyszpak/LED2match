@@ -2484,17 +2484,9 @@ public class LightSettings extends Activity implements ServiceConnection {
 		//String sFWver = "N/A";
 		//getFWver();
 		String sFWverLcl = getFWver_JSON();
-		String sFreeRam = "N/A";
-
-		if (BtCore.Connected()) {
-			Log.d(TAG, "bluetoothAskReply(V09)");
-			sFWver = bluetoothAskReply("V09");
-			sFreeRam = bluetoothAskReply("I");
-		}
 
 		String sFormattedDate = "";
 		try {
-
 			SimpleDateFormat sdfSource = new SimpleDateFormat("yyyy/MM/dd");
 			Date date = sdfSource.parse(sAppVersionDate);
 			SimpleDateFormat sdfDest = new SimpleDateFormat("dd MMMM yy");
@@ -2503,11 +2495,17 @@ public class LightSettings extends Activity implements ServiceConnection {
 		} catch (ParseException pe) {
 			System.out.println("Parse exception:" + pe);
 		}
-		AlertDialog dlg = new AlertDialog.Builder(this).create();
-		dlg.setTitle("LED2Match app " + apkVersion);
-		dlg.setMessage("Hi-Tec-Support GmbH\nCopyright (R) 2018\nVersion " + sFormattedDate + "\nFirmware version: " + sFWverLcl);
-		dlg.setIcon(R.drawable.icon_main);
-		dlg.show();
+		AlertDialog.Builder dlgBuilder = new AlertDialog.Builder(this);
+		LayoutInflater inflater = this.getLayoutInflater();
+		View dialogView = inflater.inflate(R.layout.about_popup_view, null);
+		dlgBuilder.setView(dialogView);
+		dlgBuilder.setTitle(getString(R.string.app_header_title) + " app " + apkVersion);
+		TextView tv_fwversion = dialogView.findViewById(R.id.FWversion_value);
+		tv_fwversion.setText(sFWverLcl);
+		//dlg.setMessage("Hi-Tec-Support GmbH\nCopyright (R) 2018\nVersion " + sFormattedDate + "\nFirmware version: " + sFWverLcl);
+		dlgBuilder.setIcon(R.drawable.icon_main);
+		AlertDialog alertDialog = dlgBuilder.create();
+		dlgBuilder.show();
 	}
 
 	public void fncRefreshRGB() {

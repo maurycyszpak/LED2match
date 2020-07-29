@@ -271,6 +271,41 @@
                 <TextView
                     android:layout_width="@dimen/recertification_label_width"
                     android:layout_height="wrap_content"
+                    android:id="@+id/TL84_fullbright_label"
+                    android:text="TL84 Full Brightness: "
+                    android:layout_marginEnd="10dp"
+                    />
+
+
+                <EditText
+                    android:id="@+id/edit_TL84_fullbright_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:singleLine="true"
+                    android:hint="Full TL84 brightness (500-900)"
+                    android:nextFocusForward="@+id/edit_PSU_current"
+                    android:imeOptions="actionNext"
+
+                    />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/lLayout6"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:orientation="horizontal"
+                android:id="@+id/lLayout7"
+                >
+
+
+                <TextView
+                    android:layout_width="@dimen/recertification_label_width"
+                    android:layout_height="wrap_content"
                     android:id="@+id/DAC_label"
                     android:text="TL84 Dim Value: "
                     android:layout_marginEnd="10dp"
@@ -295,12 +330,12 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/lLayout6"
+                android:layout_below="@+id/lLayout7"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:layout_marginTop="5dp"
                 android:orientation="horizontal"
-                android:id="@+id/lLayout7"
+                android:id="@+id/lLayout8"
                 >
 
 
@@ -402,7 +437,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="10sp"
                     android:text="@string/torso_footer_address"
-
+                    android:visibility="gone"
                     />
 
 

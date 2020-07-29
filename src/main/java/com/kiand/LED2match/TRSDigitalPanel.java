@@ -109,7 +109,16 @@ public class TRSDigitalPanel extends Activity {
                         if (bl_bluetooth_forced_on) {
                             Log.d(TAG, " *** Calling start BT Service");
                             startBluetoothService();
+                            Intent new_intent = new Intent(TRSDigitalPanel.this, TRSBluetoothDevicesScan.class);
+                            startActivity(new_intent); //or start activity for result? this should be "modal"
                         }
+                        break;
+
+                    case BluetoothAdapter.STATE_OFF:
+                        bl_bluetooth_forced_on = false;
+                        mark_BT_disconnected();
+                        toggle_bt_icon_OFF();
+
                         break;
                 }
             }
@@ -415,7 +424,13 @@ public class TRSDigitalPanel extends Activity {
                 //your stuff
 
                 makeToast("Long click detected");
+
+                if (btAdapter == null) {
+                    Log.d(TAG, "BT adapter is null");
+                }
+
                 if (btAdapter.isEnabled()) {
+                    Log.d(TAG, "BT enabled on the mobile");
                     if (!bl_bluetooth_forced_on) {
                         Log.d(TAG, " **** starting Bluetooth connection service");
                         startBluetoothService();
@@ -425,6 +440,7 @@ public class TRSDigitalPanel extends Activity {
                         startActivity(intent); //or start activity for result? this should be "modal"
                     }
                 } else {
+                    Log.d(TAG, "Requesting to enable BT on mobile");
                     startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), 1);
                     bl_bluetooth_forced_on = true;
                 }

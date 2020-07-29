@@ -25,13 +25,14 @@
     <dimen name="button_margin_3dp">3dp</dimen>
 
     <dimen name="main_screen_sidemargin">20dp</dimen>
-    <dimen name="recertification_label_width">180dp</dimen>
+    <dimen name="recertification_label_width">150dp</dimen>
     <dimen name="settings_pg_label_width">0.46</dimen>
     <dimen name="settings_pg_value_width">0.38</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="button_width_narrow">100dp</dimen>
 
-    <dimen name="light_setting_pg_slider_bttm_margin">8dp</dimen>
+    <dimen name="light_setting_pg_slider_bttm_margin">5dp</dimen>
+    <dimen name="textview_default_top_margin">10dp</dimen>
 
 
 </resources>

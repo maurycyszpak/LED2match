@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/textview_default_top_margin"
             android:baselineAligned="false"
             >
 
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/textview_default_top_margin"
             android:baselineAligned="false"
             >
 
@@ -90,7 +90,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/textview_default_top_margin"
             android:baselineAligned="false"
             >
 
@@ -126,7 +126,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/textview_default_top_margin"
             android:baselineAligned="false"
             >
 
@@ -161,7 +161,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/textview_default_top_margin"
             android:baselineAligned="false"
             >
 
@@ -196,7 +196,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/textview_default_top_margin"
             android:baselineAligned="false"
             >
 
@@ -257,6 +257,8 @@
                 android:visibility="visible"
                 android:onClick="store_assignment"
                 android:layout_weight="2"
+                android:background="@color/torso_blue_main"
+                android:textColor="@color/white"
                 />
 
         </LinearLayout>
