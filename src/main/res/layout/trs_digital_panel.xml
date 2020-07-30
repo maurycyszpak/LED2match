@@ -48,7 +48,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="4"
+                android:layout_weight="2"
                 >
 
             <ImageView
@@ -128,7 +128,6 @@
                     android:layout_height="@dimen/digital_panel_button_height"
                     android:gravity="center"
                     android:text="A"
-                    android:layout_marginEnd="@dimen/button_margin"
                     android:onClick="btnClicked_UV_normal"
                     android:layout_weight="4"
                     android:background="@android:color/transparent"
@@ -184,7 +183,6 @@
                     android:layout_height="@dimen/digital_panel_button_height"
                     android:gravity="center"
                     android:text="UVA"
-                    android:layout_marginEnd="@dimen/button_margin"
                     android:onClick="btnClicked_UV_normal"
                     android:layout_weight="4"
                     android:background="@android:color/transparent"
@@ -241,7 +239,6 @@
                     android:layout_height="@dimen/digital_panel_button_height"
                     android:gravity="center"
                     android:text="OFF"
-                    android:layout_marginEnd="@dimen/button_margin"
                     android:onClick="buttonOFF"
                     android:layout_weight="4"
                     android:background="@android:color/transparent"
@@ -258,7 +255,40 @@
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:layout_below="@+id/lLayout3"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="10dp"
+                android:baselineAligned="false"
+
+                >
+
+                <Button
+                    android:id="@+id/btnReassign"
+                    android:layout_width="fill_parent"
+                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:text="Reassign"
+                    android:onClick="reassign_lamps"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:textSize="@dimen/button_text_size"
+                    android:visibility="visible"
+                    android:textColor="@color/black"
+                    android:padding="@dimen/button_margin_10dp"
+                    />
+
+
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lLayout5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_below="@+id/lLayout4"
+                android:layout_marginTop="30dp"
                 android:baselineAligned="false"
                 >
 
@@ -267,43 +297,43 @@
                     android:layout_width="0dp"
                     android:layout_height="@dimen/digital_panel_button_height"
                     android:gravity="center"
-                    android:text="reassign"
-                    android:onClick="reassign_lamps"
-                    android:layout_weight="6"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitCenter"
-                    android:textSize="@dimen/button_text_size"
-                    android:visibility="visible"
-                    android:textColor="@color/black"
-                    />
-
-
-                <Button
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/digital_panel_button_height"
-                    android:gravity="center"
-                    android:text="TL84"
-                    android:layout_marginEnd="@dimen/button_margin"
-                    android:onClick="btnClicked"
+                    android:text=""
+                    android:onClick="btnClicked_UV_normal"
                     android:layout_weight="4"
                     android:background="@android:color/transparent"
                     android:scaleType="fitCenter"
                     android:textSize="@dimen/button_text_size"
-                    android:visibility="invisible"
+                    android:layout_marginEnd="@dimen/button_margin"
+
                     />
 
+
                 <Button
+                    android:id="@+id/btnL11"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/digital_panel_button_height"
                     android:gravity="center"
-                    android:text="C40"
+                    android:text=""
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:onClick="btnClicked"
+                    android:onClick="btnClicked_UV_normal"
                     android:layout_weight="4"
                     android:background="@android:color/transparent"
                     android:scaleType="fitCenter"
                     android:textSize="@dimen/button_text_size"
-                    android:visibility="invisible"
+
+                    />
+
+                <Button
+                    android:id="@+id/btnL12"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:gravity="center"
+                    android:text=""
+                    android:onClick="btnClicked_UV_normal"
+                    android:layout_weight="4"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:textSize="@dimen/button_text_size"
                     />
 
             </LinearLayout>
@@ -313,7 +343,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_below="@+id/lLayout4"
+                android:layout_below="@+id/lLayout5"
                 android:layout_marginTop="15dp"
                 android:baselineAligned="false"
                 android:orientation="vertical">
@@ -347,7 +377,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/lLayout4"
                 android:orientation="horizontal"
-                android:id="@+id/lLayout5">
+                android:id="@+id/lLayoutSysTemp">
 
 
                 <TextView
@@ -365,60 +395,10 @@
                     />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/lLayout4"
-                android:orientation="horizontal">
-
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Firmware version: "
-                    android:textColor="@color/black"
-                    />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/fw_version"
-                    android:text=""
-                    android:textColor="@color/black"
-                    />
-            </LinearLayout>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/infobox"
-                    android:text="www.UnityColor.com"
-                    />
-
 
             </LinearLayout>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="5dp"
-                android:baselineAligned="true"
-                android:layout_alignParentBottom="true"
-                android:visibility="gone"
-                >
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="10sp"
-                    android:text="@string/torso_footer_address"
-
-                    />
-
-
-            </RelativeLayout>
 
         </RelativeLayout>
 

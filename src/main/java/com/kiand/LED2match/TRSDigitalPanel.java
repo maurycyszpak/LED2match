@@ -75,8 +75,8 @@ public class TRSDigitalPanel extends Activity {
     private LightSettings.MyHandler mHandler;
     public final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
 
-    boolean blLamp1_ON, blLamp2_ON, blLamp3_ON, blLamp4_ON, blLamp5_ON, blLamp6_ON, blLamp7_ON, blTL84_ON;
-    Button btnL1, btnL2, btnL3, btnL4, btnL5, btnL6, btnL7, btnLOW, btnL9, btnL10;
+    boolean blLamp1_ON, blLamp2_ON, blLamp3_ON, blLamp4_ON, blLamp5_ON, blLamp6_ON, blLamp7_ON, blTL84_ON, blLamp10_ON, blLamp11_ON, blLamp12_ON;
+    Button btnL1, btnL2, btnL3, btnL4, btnL5, btnL6, btnL7, btnLOW, btnL9, btnReassign, btnL10, btnL11, btnL12;
     ImageView usb_conn_indicator;
     ImageView bt_conn_indicator;
     ImageView img_logo;
@@ -203,11 +203,7 @@ public class TRSDigitalPanel extends Activity {
                 switchButtonON(Integer.valueOf(index));
                 //Log.d(TAG, "Button: " + index + " highlighted");
             } else if (intent.getAction().equals("controller_data_refreshed_event")) {
-                SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
-                JSON_analyst json_analyst = new JSON_analyst(spFile);
-                String sFWVersion = json_analyst.getJSONValue("firmware_version");
-                TextView tv_firmware_version = findViewById(R.id.fw_version);
-                tv_firmware_version.setText(sFWVersion);
+
                 //makeToast("fw_version intent received");
             } else if (intent.getAction().equals("button_highlight_extra")) {
                 String name = intent.getStringExtra("button_name");
@@ -330,9 +326,6 @@ public class TRSDigitalPanel extends Activity {
 
 
         Float versionName = BuildConfig.VERSION_CODE / 1000.0f;
-        TextView tvInfoBox = findViewById(R.id.infobox);
-        String version_line = "APP version: " + versionName;
-        tvInfoBox.setText(version_line);
 
         if (shared_prefs_exists(SHAREDPREFS_LAMP_ASSIGNMENTS, "666")) {
             repopulate_button_assignments();
@@ -342,11 +335,11 @@ public class TRSDigitalPanel extends Activity {
             populateButtonNames();
         }
 
-
+        check_extended_mode();
         populate_bluetooth_indicator();
         populateLampsState();
         setUnitName();
-        makeToast("onresume");
+        //makeToast("onresume");
     }
 
     @Override
@@ -410,7 +403,11 @@ public class TRSDigitalPanel extends Activity {
         btnL7 = findViewById(R.id.btnL7);
         btnLOW = findViewById(R.id.btnLOW);
         btnL9 = findViewById(R.id.btnL9);
-        btnL10 = findViewById(R.id.btnL10); //reassign
+
+        btnL10 = findViewById(R.id.btnL10);
+        btnL11 = findViewById(R.id.btnL11);
+        btnL12 = findViewById(R.id.btnL12);
+        btnReassign = findViewById(R.id.btnReassign); //reassign
         usb_conn_indicator = findViewById(R.id.usb_connection_image);
         bt_conn_indicator = findViewById(R.id.bt_connection_image);
 
@@ -482,6 +479,21 @@ public class TRSDigitalPanel extends Activity {
             allOFF(null);
             return true;
         });
+        btnL10.setOnLongClickListener(arg0 -> {
+            switchButtonOFF(7);
+            allOFF(null);
+            return true;
+        });
+        btnL11.setOnLongClickListener(arg0 -> {
+            switchButtonOFF(8);
+            allOFF(null);
+            return true;
+        });
+        btnL12.setOnLongClickListener(arg0 -> {
+            switchButtonOFF(9);
+            allOFF(null);
+            return true;
+        });
 
 
         btnL1.setBackgroundResource(R.drawable.buttonselector_main);
@@ -511,8 +523,17 @@ public class TRSDigitalPanel extends Activity {
         btnLOW.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_main));
         btnLOW.setTextColor(Color.WHITE);
 
-        btnL10.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_special));
-        btnL10.setTextColor(Color.BLACK);
+        btnReassign.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_special));
+        btnReassign.setTextColor(Color.BLACK);
+
+        btnL10.setBackgroundResource(R.drawable.buttonselector_main);
+        btnL10.setTextColor(Color.WHITE);
+
+        btnL11.setBackgroundResource(R.drawable.buttonselector_main);
+        btnL11.setTextColor(Color.WHITE);
+
+        btnL12.setBackgroundResource(R.drawable.buttonselector_main);
+        btnL12.setTextColor(Color.WHITE);
 
         if (shared_prefs_exists(SHAREDPREFS_LAMP_ASSIGNMENTS, "1")) {
             repopulate_button_assignments();
@@ -520,6 +541,18 @@ public class TRSDigitalPanel extends Activity {
             populateButtonNames();
         }
 
+    }
+
+    private void check_extended_mode() {
+        SharedPreferences prefs = getSharedPreferences(Constants.CONFIG_SETTINGS, Context.MODE_PRIVATE);
+
+        Boolean bl_extended_mode = prefs.getBoolean(Constants.EXTENDED_LAMPS_MODE_TAG, false);
+        View layout_extended = findViewById(R.id.lLayout5);
+        if (bl_extended_mode) {
+            layout_extended.setVisibility(View.VISIBLE);
+        } else {
+            layout_extended.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void startBluetoothService() {
@@ -541,6 +574,9 @@ public class TRSDigitalPanel extends Activity {
         if (!btnL4.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL4.getText().toString() + ","; } else { sTags = sTags + ","; }
         if (!btnL5.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL5.getText().toString() + ","; } else { sTags = sTags + ","; }
         if (!btnL6.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL6.getText().toString() + ","; } else { sTags = sTags + ","; }
+        if (!btnL10.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL10.getText().toString() + ","; } else { sTags = sTags + ","; }
+        if (!btnL11.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL11.getText().toString() + ","; } else { sTags = sTags + ","; }
+        if (!btnL12.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL12.getText().toString() + ","; } else { sTags = sTags + ","; }
 
 
         SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
@@ -661,6 +697,13 @@ public class TRSDigitalPanel extends Activity {
         btnL6.setText(NO_PRESET_TEXT);
         btnL6.setTag(NO_PRESET_TEXT);
 
+        btnL10.setText(NO_PRESET_TEXT);
+        btnL10.setTag(NO_PRESET_TEXT);
+        btnL11.setText(NO_PRESET_TEXT);
+        btnL11.setTag(NO_PRESET_TEXT);
+        btnL12.setText(NO_PRESET_TEXT);
+        btnL12.setTag(NO_PRESET_TEXT);
+
 
         for (Map.Entry<String, ?> entry : keys.entrySet()) {
 
@@ -693,6 +736,21 @@ public class TRSDigitalPanel extends Activity {
                 case "6":
                     btnL6.setText(entry.getValue().toString());
                     btnL6.setTag(entry.getValue().toString());
+                    break;
+
+                case "21":
+                    btnL10.setText(entry.getValue().toString());
+                    btnL10.setTag(entry.getValue().toString());
+                    break;
+
+                case "22":
+                    btnL11.setText(entry.getValue().toString());
+                    btnL11.setTag(entry.getValue().toString());
+                    break;
+
+                case "23":
+                    btnL12.setText(entry.getValue().toString());
+                    btnL12.setTag(entry.getValue().toString());
                     break;
 
                 //Log.d(TAG, entry.getKey() + ":" + entry.getValue());
@@ -769,6 +827,34 @@ public class TRSDigitalPanel extends Activity {
                 if (blTL84_ON) {
                     blTL84_ON = false;
                 }
+                break;
+
+            case 21:
+                if (blLamp10_ON) {
+                    blLamp10_ON = false;
+                    btnL10.setBackgroundResource(R.drawable.buttonselector_main);
+                    btnL10.setTextColor(Color.WHITE);
+                    makeToast("Light switched off");
+                }
+                break;
+
+            case 22:
+                if (blLamp11_ON) {
+                    blLamp11_ON = false;
+                    btnL11.setBackgroundResource(R.drawable.buttonselector_main);
+                    btnL11.setTextColor(Color.WHITE);
+                    makeToast("Light switched off");
+                }
+                break;
+
+            case 23:
+                if (blLamp12_ON) {
+                    blLamp12_ON = false;
+                    btnL12.setBackgroundResource(R.drawable.buttonselector_main);
+                    btnL12.setTextColor(Color.WHITE);
+                    makeToast("Light switched off");
+                }
+                break;
 
         }
 
@@ -861,6 +947,37 @@ public class TRSDigitalPanel extends Activity {
                     mark_all_buttons_off_on_mobile();
                     blTL84_ON = true;
                 }
+                break;
+
+            case 21:
+                if (!blLamp10_ON) {
+                    mark_all_buttons_off_on_mobile();
+                    blLamp10_ON = true;
+                    btnL10.setBackgroundResource(R.drawable.buttonselector_active);
+                    btnL10.setTextColor(Color.BLACK);
+                    makeToast("Light switched on");
+                }
+                break;
+
+            case 22:
+                if (!blLamp11_ON) {
+                    mark_all_buttons_off_on_mobile();
+                    blLamp11_ON = true;
+                    btnL11.setBackgroundResource(R.drawable.buttonselector_active);
+                    btnL11.setTextColor(Color.BLACK);
+                    makeToast("Light switched on");
+                }
+                break;
+
+            case 23:
+                if (!blLamp12_ON) {
+                    mark_all_buttons_off_on_mobile();
+                    blLamp12_ON = true;
+                    btnL12.setBackgroundResource(R.drawable.buttonselector_active);
+                    btnL12.setTextColor(Color.BLACK);
+                    makeToast("Light switched on");
+                }
+                break;
 
         }
 
@@ -947,6 +1064,30 @@ public class TRSDigitalPanel extends Activity {
             } else {
                 btnL6.setText(NO_PRESET_TEXT);
                 btnL6.setTag(NO_PRESET_TEXT);
+            }
+        } else if (i == 21) {
+            if (sName.length() > 0) {
+                btnL10.setText(sName);
+                btnL10.setTag(sName);
+            } else {
+                btnL10.setText(NO_PRESET_TEXT);
+                btnL10.setTag(NO_PRESET_TEXT);
+            }
+        } else if (i == 22) {
+            if (sName.length() > 0) {
+                btnL11.setText(sName);
+                btnL11.setTag(sName);
+            } else {
+                btnL11.setText(NO_PRESET_TEXT);
+                btnL11.setTag(NO_PRESET_TEXT);
+            }
+        } else if (i == 23) {
+            if (sName.length() > 0) {
+                btnL12.setText(sName);
+                btnL12.setTag(sName);
+            } else {
+                btnL12.setText(NO_PRESET_TEXT);
+                btnL12.setTag(NO_PRESET_TEXT);
             }
         }
 
@@ -1612,6 +1753,12 @@ public class TRSDigitalPanel extends Activity {
                 blLamp5_ON = true;
             } else if (buttonID == R.id.btnL6) {
                 blLamp6_ON = true;
+            } else if (buttonID == R.id.btnL10) {
+                blLamp10_ON = true;
+            } else if (buttonID == R.id.btnL11) {
+                blLamp11_ON = true;
+            }  else if (buttonID == R.id.btnL12) {
+                blLamp12_ON = true;
             }
             updateLampValue(sPresetRGBValues);
 
@@ -1790,6 +1937,16 @@ public class TRSDigitalPanel extends Activity {
 
         btnL9.setBackgroundResource(R.drawable.buttonselector_main);
         btnL9.setTextColor(Color.WHITE);
+
+        blLamp10_ON = false;
+        btnL10.setBackgroundResource(R.drawable.buttonselector_main);
+        btnL10.setTextColor(Color.WHITE);
+        blLamp11_ON = false;
+        btnL11.setBackgroundResource(R.drawable.buttonselector_main);
+        btnL11.setTextColor(Color.WHITE);
+        blLamp12_ON = false;
+        btnL12.setBackgroundResource(R.drawable.buttonselector_main);
+        btnL12.setTextColor(Color.WHITE);
     }
 
     public void buttonOFF(View v) {
@@ -1818,6 +1975,16 @@ public class TRSDigitalPanel extends Activity {
         blLamp6_ON = false;
         btnL6.setBackgroundResource(R.drawable.buttonselector_main);
         btnL6.setTextColor(Color.WHITE);
+
+        blLamp10_ON = false;
+        btnL10.setBackgroundResource(R.drawable.buttonselector_main);
+        btnL10.setTextColor(Color.WHITE);
+        blLamp11_ON = false;
+        btnL11.setBackgroundResource(R.drawable.buttonselector_main);
+        btnL11.setTextColor(Color.WHITE);
+        blLamp12_ON = false;
+        btnL12.setBackgroundResource(R.drawable.buttonselector_main);
+        btnL12.setTextColor(Color.WHITE);
 
         sCommand= "B,OFF1$" + sNewLine;
         send_via_bt(sCommand);

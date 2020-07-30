@@ -278,6 +278,7 @@
 
             </LinearLayout>
 
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -333,8 +334,22 @@
                 android:layout_marginRight="40dp"
                 android:layout_marginBottom="20dp"
                 android:baselineAligned="false"
+                android:id="@+id/bottom_buttons_layout"
 
                 >
+
+                <Button
+                    android:id="@+id/btnBack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:baselineAligned="false"
+                    android:gravity="center"
+                    android:onClick="onClickBack"
+                    android:text="BACK"
+                    android:textSize="@dimen/button_text_size" />
 
 
                 <Button
@@ -348,7 +363,10 @@
                     android:gravity="center"
                     android:text="SAVE"
                     android:onClick="saveSettings"
-                    android:textSize="@dimen/button_text_size" />
+                    android:textSize="@dimen/button_text_size"
+                    android:background="@color/torso_blue_main"
+                    android:textColor="@color/white"
+                    />
 
             </RelativeLayout>
 

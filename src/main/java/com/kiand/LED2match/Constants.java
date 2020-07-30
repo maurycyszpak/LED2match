@@ -15,6 +15,7 @@ class Constants {
     public static final String PREFS_PSU_CURRENT = "psu_max_power";
     public static final String SP_LAMP_TIMERS = "sequence_lamp_timers"; //Mauricio
     public static final String SP_SEQUENCE_COMMAND_GENERATE = "sequence_command_generated"; //Mauricio
+    public static final String EXTENDED_LAMPS_MODE_TAG = "XTNDD_MODE"; //Mauricio
 
 
 
