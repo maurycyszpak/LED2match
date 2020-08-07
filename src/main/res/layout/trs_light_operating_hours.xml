@@ -233,6 +233,7 @@
                 android:layout_marginBottom="5dp"
                 android:baselineAligned="true"
                 android:layout_alignParentBottom="true"
+                android:visibility="gone"
                 >
 
                 <TextView

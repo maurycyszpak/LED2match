@@ -92,6 +92,7 @@
                 android:layout_marginBottom="5dp"
                 android:baselineAligned="true"
                 android:layout_alignParentBottom="true"
+
                 >
 
                 <TextView
@@ -100,6 +101,7 @@
                     android:textSize="10sp"
                     android:text="@string/torso_footer_address"
                     android:textColor="@color/black"
+                    android:visibility="gone"
                     />
 
 

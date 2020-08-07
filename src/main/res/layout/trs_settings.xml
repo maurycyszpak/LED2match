@@ -27,7 +27,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            >
 
             <LinearLayout
                 android:id="@+id/lLayout1"
@@ -285,6 +286,7 @@
                 android:layout_below="@+id/lLayout4"
                 android:layout_marginTop="40dp"
                 android:baselineAligned="false"
+                android:visibility="gone"
                 >
 
                 <TextView
@@ -360,6 +362,7 @@
                 android:layout_marginBottom="5dp"
                 android:baselineAligned="true"
                 android:layout_alignParentBottom="true"
+
                 >
 
                 <TextView
@@ -367,7 +370,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="10sp"
                     android:text="@string/torso_footer_address"
-
+                    android:visibility="gone"
                     />
 
 

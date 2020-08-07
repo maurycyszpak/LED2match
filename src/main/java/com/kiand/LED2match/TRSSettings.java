@@ -40,7 +40,7 @@ import static com.kiand.LED2match.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 public class TRSSettings extends Activity implements ServiceConnection {
 
     public static final String SHAREDPREFS_ONE_OFF_SEEKBARS = "one-off-seekbar-values.txt"; //Mauricio
-    public static final String TIME_OFF_STORAGE = "shutdown__timer"; //Mauricio
+    public static final String TIME_OFF_STORAGE = "shutdown_timer"; //Mauricio
     public static final String CONFIG_SETTINGS = "config_settings";
     public static final String newLine = System.getProperty("line.separator");
 
@@ -55,7 +55,7 @@ public class TRSSettings extends Activity implements ServiceConnection {
     Switch aSwitch;
 
     private BtCOMMsService lclBTServiceInstance;
-    public String TAG = "MORRIS-BLOW";
+    public String TAG = "MORRIS-SETTINGS";
     private Handler lclHandler;
     private UsbCOMMsService lclUsbServiceInstance;
     private BtCOMMsService btService;
@@ -66,6 +66,8 @@ public class TRSSettings extends Activity implements ServiceConnection {
     public final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     private boolean bl_bluetooth_forced_on;
     private CountDownTimer shutdownTimer;
+    private int iHours_idle_shutoff = 0;
+    private int iMinutes_idle_shutoff = 0;
 
     EditText editOff_h;
     EditText editOff_m;
@@ -561,16 +563,16 @@ public class TRSSettings extends Activity implements ServiceConnection {
         EditText edit_bltl84delay = findViewById(R.id.edit_TL84_delay);
         boolean bl_edit_tl84delay = false;
         Log.d(TAG, "Entering function saveSettings.");
-        int iHours = 0, iMinutes = 0;
-        if (editOff_h.getText().toString().isEmpty()) { iHours = 0; } else { iHours = Integer.valueOf(editOff_h.getText().toString()); }
-        if (editOff_m.getText().toString().isEmpty()) { iMinutes = 0; } else { iMinutes = Integer.valueOf(editOff_m.getText().toString()); }
+
+        if (editOff_h.getText().toString().isEmpty()) { iHours_idle_shutoff = 0; } else { iHours_idle_shutoff = Integer.valueOf(editOff_h.getText().toString()); }
+        if (editOff_m.getText().toString().isEmpty()) { iMinutes_idle_shutoff = 0; } else { iMinutes_idle_shutoff = Integer.valueOf(editOff_m.getText().toString()); }
 
         SharedPreferences prefs_config = getSharedPreferences(CONFIG_SETTINGS, 0);
         SharedPreferences prefs = getSharedPreferences(TIME_OFF_STORAGE, 0);
         SharedPreferences.Editor editor = prefs.edit();
         editor.clear();
-        editor.putInt("hours", iHours);
-        editor.putInt("minutes", iMinutes);
+        editor.putInt("hours", iHours_idle_shutoff);
+        editor.putInt("minutes", iMinutes_idle_shutoff);
         editor.apply();
 
         if (!TextUtils.isEmpty(edit_bltl84delay.getText().toString())) {
@@ -593,10 +595,10 @@ public class TRSSettings extends Activity implements ServiceConnection {
             makeToast("TL84 delay of " + edit_bltl84delay.getText().toString() + "ms stored in the config file.");
         }
 
-        Long lTimeToOFF = (long) (iHours * 60 * 60 + iMinutes * 60);
+        Long lTimeToOFF = (long) (iHours_idle_shutoff * 60 * 60 + iMinutes_idle_shutoff * 60);
         if (lTimeToOFF > 0) {
-            Log.d(TAG, "Setting timer on - switching OFF all lamps in " + iHours + " hours and " + iMinutes + " minutes (=" + lTimeToOFF + " seconds).");
-            Toast.makeText(TRSSettings.this, "Timer ON\nAll lamps off in " + iHours + " hours and " + iMinutes + " minutes.", Toast.LENGTH_LONG).show();
+            Log.d(TAG, "Setting timer on - switching OFF all lamps in " + iHours_idle_shutoff + " hours and " + iMinutes_idle_shutoff + " minutes (=" + lTimeToOFF + " seconds).");
+            Toast.makeText(TRSSettings.this, "Timer ON\nAll lamps off in " + iHours_idle_shutoff + " hours and " + iMinutes_idle_shutoff + " minutes.", Toast.LENGTH_LONG).show();
 
             String sCommand = "I" + String.format("%04X", lTimeToOFF) + "$" + newLine;
             Log.d(TAG, "*** strtol 4 HEX " + sCommand);
@@ -612,20 +614,12 @@ public class TRSSettings extends Activity implements ServiceConnection {
             if (shutdownTimer != null) {
                 shutdownTimer.cancel();
             }
-            switchOFFAfterX(iHours, iMinutes);
-            /*new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            Log.d(TAG, "Time is up - switching all lamps off");
-                            Toast.makeText(TRSSettings.this, "Time is up - switching all lamps off", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                    allOFF();
-                }
-            }, lTimeToOFF);*/
+            switchOFFAfterX(iHours_idle_shutoff, iMinutes_idle_shutoff);
         }
+    }
+
+    public void restart_idle_shutoff() {
+
     }
 
     public void allOFF() {
@@ -644,10 +638,10 @@ public class TRSSettings extends Activity implements ServiceConnection {
         startService(serviceIntent);
 
         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-        SharedPreferences prefs = getSharedPreferences(TIME_OFF_STORAGE, 0);
+        /*SharedPreferences prefs = getSharedPreferences(TIME_OFF_STORAGE, 0);
         SharedPreferences.Editor editor = prefs.edit();
         editor.clear();
-        editor.apply();
+        editor.apply();*/
     }
 
     public void switchOFFAfterX(int hours, int minutes) {
