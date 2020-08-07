@@ -54,6 +54,7 @@ public class TRSSettings extends Activity implements ServiceConnection {
     Button btnSave;
     Switch aSwitch;
 
+
     private BtCOMMsService lclBTServiceInstance;
     public String TAG = "MORRIS-SETTINGS";
     private Handler lclHandler;
@@ -286,57 +287,8 @@ public class TRSSettings extends Activity implements ServiceConnection {
         btnSave.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_main));
         btnSave.setTextColor(Color.WHITE);
 
-        aSwitch = findViewById(R.id.switch_one);
-        aSwitch.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (isChecked) {
-                            if (btAdapter.isEnabled()) {
-                                Toast.makeText(TRSSettings.this,
-                                        "Switching On...", Toast.LENGTH_SHORT).show();
 
 
-
-                                Log.d(TAG, " **** starting Bluetooth connection service");
-                                //if (!isMyServiceRunning(BtCOMMsService.class)) {
-                                if (!bl_bluetooth_forced_on) {
-                                    startBluetoothService();
-                                }
-
-                                //check if we're already connected
-                                if (!check_for_BT_connection()) {
-                                    Intent intent = new Intent(TRSSettings.this, TRSBluetoothDevicesScan.class);
-                                    startActivity(intent); //or start activity for result? this should be "modal"
-                                }
-
-                            } else {
-                                aSwitch.setChecked(false);
-                                bl_bluetooth_forced_on = true;
-                                startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), 1);
-                            }
-
-                        } else {
-                            Toast.makeText(TRSSettings.this,
-                                    "Switch Off", Toast.LENGTH_SHORT).show();
-
-                            //Switching off
-                            SharedPreferences prefs = getSharedPreferences(BT_CONNECTED_PREFS, Context.MODE_PRIVATE);
-                            SharedPreferences.Editor spEditor = prefs.edit();
-
-                            spEditor.clear();
-                            spEditor.putBoolean("CONNECTED", false);
-                            spEditor.commit();
-                            Log.d(TAG, "BT connection marked as false in the sp file - calling service disconnect.");
-                            //sendBroadcast(new Intent(BluetoothDevice.ACTION_ACL_DISCONNECTED));
-                            btService.disconnect();
-                            //Log.d(TAG, "Sending broadcast to disconnect");
-
-                        }
-                    }
-                });
-
-        setFiltersBT();
-        setFiltersBTdevice();
     }
 
     @Override
@@ -557,6 +509,9 @@ public class TRSSettings extends Activity implements ServiceConnection {
 
     boolean validate_tl84_delay(Integer value) {
         return value >= 100 && value <= 1200;
+    }
+    public void onClickBack (View v) {
+        finish();
     }
 
     public void saveSettings(View v) {

@@ -362,6 +362,44 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_above="@+id/layout_bottom_buttons"
+                android:layout_marginTop="40dp"
+                android:baselineAligned="false"
+                android:layout_marginBottom="20dp"
+                >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_label_width"
+                    android:gravity="end|center_vertical"
+                    android:text="Extended Lamps mode"
+                    android:textSize="@dimen/button_text_size" />
+
+                <Switch
+                    android:id="@+id/switch_extended_lamps_mode"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text=""
+                    android:textSize="@dimen/button_text_size"
+                    android:layout_weight="@dimen/settings_pg_value_width"
+                    android:layout_gravity="left|center_vertical"
+                    android:theme="@style/MySwitch"
+                    />
+
+
+            </LinearLayout>
+
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -369,8 +407,9 @@
                 android:layout_gravity="right|end"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_marginBottom="0dp"
-                >
+                android:layout_marginBottom="7dp"
+                android:id="@+id/layout_bottom_buttons">
+
 
                 <Button
                     android:id="@+id/lightsettings"
@@ -381,10 +420,9 @@
                     android:layout_marginEnd="@dimen/button_margin"
                     android:baselineAligned="false"
                     android:gravity="center"
-                    android:text="Light settings"
-                    android:textSize="@dimen/button_text_size"
                     android:onClick="openLightPage"
-                    />
+                    android:text="Light settings"
+                    android:textSize="@dimen/button_text_size" />
 
                 <Button
                     android:id="@+id/btnSave"
@@ -393,32 +431,29 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:layout_marginEnd="@dimen/button_margin"
+                    android:background="@color/torso_blue_main"
                     android:baselineAligned="false"
                     android:gravity="center"
-                    android:text="SAVE"
-                    android:textSize="@dimen/button_text_size"
                     android:onClick="saveSettings"
-                    android:background="@color/torso_blue_main"
+                    android:text="SAVE"
                     android:textColor="@color/white"
-                    />
+                    android:textSize="@dimen/button_text_size" />
 
                 <Button
                     android:id="@+id/btnFactoryReset"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/lightsettings"
-                    android:layout_alignParentStart="true"
                     android:layout_alignEnd="@+id/lightsettings"
+                    android:layout_alignParentStart="true"
                     android:layout_marginTop="2dp"
-                    android:text="Factory reset"
-                    android:textSize="@dimen/button_text_size"
-                    android:onClick="factoryReset"
                     android:backgroundTint="@color/torso_red_button"
+                    android:onClick="factoryReset"
+                    android:text="Factory reset"
                     android:textColor="@color/white"
-                    />
+                    android:textSize="@dimen/button_text_size" />
 
             </RelativeLayout>
-
 
             <RelativeLayout
                 android:id="@+id/lLayoutbottomspace"

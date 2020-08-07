@@ -22,7 +22,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import java.io.File;
@@ -46,6 +48,8 @@ public class TRSMaintenancePage extends Activity {
     Integer btn4Timer = 0;
     Integer btn5Timer = 0;
     Integer btn6Timer = 0;
+
+    Switch aSwitch;
 
     private Handler lclHandler;
     private UsbCOMMsService lclUsbServiceInstance;
@@ -116,6 +120,8 @@ public class TRSMaintenancePage extends Activity {
         } else {
             populateButtonNames();
         }
+
+        populate_extended_lamps_switch_value();
     }
 
     @Override
@@ -228,6 +234,35 @@ public class TRSMaintenancePage extends Activity {
                 return true;
             }
         });
+        aSwitch = findViewById(R.id.switch_extended_lamps_mode);
+        aSwitch.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                        SharedPreferences prefs = getSharedPreferences(Constants.CONFIG_SETTINGS, Context.MODE_PRIVATE);
+                        SharedPreferences.Editor spEditor = prefs.edit();
+
+                        if (isChecked) {
+                            Toast.makeText(TRSMaintenancePage.this,"Extended Lamps mode ON", Toast.LENGTH_SHORT).show();
+                            spEditor.putBoolean(Constants.EXTENDED_LAMPS_MODE_TAG, true);
+                        } else {
+                            Toast.makeText(TRSMaintenancePage.this, "Extended Lamps mode OFF", Toast.LENGTH_SHORT).show();
+                            spEditor.putBoolean(Constants.EXTENDED_LAMPS_MODE_TAG, false);
+                        }
+                        spEditor.apply();
+                    }
+                });
+    }
+
+    private void populate_extended_lamps_switch_value() {
+        SharedPreferences prefs = getSharedPreferences(Constants.CONFIG_SETTINGS, Context.MODE_PRIVATE);
+        Boolean bl_extended_mode = prefs.getBoolean(Constants.EXTENDED_LAMPS_MODE_TAG, false);
+
+        if (bl_extended_mode) {
+            aSwitch.setChecked(true);
+        } else {
+            aSwitch.setChecked(false);
+        }
     }
 
     public void factoryReset(View v) {
