@@ -33,6 +33,7 @@
 
     <dimen name="light_setting_pg_slider_bttm_margin">5dp</dimen>
     <dimen name="textview_default_top_margin">10dp</dimen>
+    <dimen name="spinner_items_vert_margin">5dp</dimen>
 
 
 </resources>

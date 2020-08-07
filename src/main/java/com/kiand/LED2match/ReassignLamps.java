@@ -20,7 +20,7 @@ public class ReassignLamps extends Activity {
     final Context context = this;
     public static final String SHAREDPREFS_LAMP_ASSIGNMENTS = "lamp_button_assignments";
 
-    Spinner spinner1, spinner2, spinner3, spinner4, spinner5, spinner6;
+    Spinner spinner1, spinner2, spinner3, spinner4, spinner5, spinner6, spinner7, spinner8, spinner9;
     ArrayAdapter arrayAdapterLampNames;
     public ArrayList<String> arrayListLampNames = new ArrayList<String>();
     public Boolean blDirty = false;
@@ -43,6 +43,9 @@ public class ReassignLamps extends Activity {
         spinner4 = findViewById(R.id.spinner4);
         spinner5 = findViewById(R.id.spinner5);
         spinner6 = findViewById(R.id.spinner6);
+        spinner7 = findViewById(R.id.spinner7);
+        spinner8 = findViewById(R.id.spinner8);
+        spinner9 = findViewById(R.id.spinner9);
 
         SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
         JSON_analyst json_analyst = new JSON_analyst(spFile);
@@ -73,6 +76,9 @@ public class ReassignLamps extends Activity {
         spinner4.setAdapter(arrayAdapterLampNames);
         spinner5.setAdapter(arrayAdapterLampNames);
         spinner6.setAdapter(arrayAdapterLampNames);
+        spinner7.setAdapter(arrayAdapterLampNames);
+        spinner8.setAdapter(arrayAdapterLampNames);
+        spinner9.setAdapter(arrayAdapterLampNames);
 
         String sCurrValue = "";
         int spinnerPosition = 0;
@@ -130,6 +136,33 @@ public class ReassignLamps extends Activity {
             spinnerPosition = arrayAdapterLampNames.getPosition("");
             spinner6.setSelection(spinnerPosition);
         }
+
+        try {
+            sCurrValue = sValues[6];
+            spinnerPosition = arrayAdapterLampNames.getPosition(sCurrValue);
+            spinner7.setSelection(spinnerPosition);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            spinnerPosition = arrayAdapterLampNames.getPosition("");
+            spinner7.setSelection(spinnerPosition);
+        }
+
+        try {
+            sCurrValue = sValues[7];
+            spinnerPosition = arrayAdapterLampNames.getPosition(sCurrValue);
+            spinner8.setSelection(spinnerPosition);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            spinnerPosition = arrayAdapterLampNames.getPosition("");
+            spinner8.setSelection(spinnerPosition);
+        }
+
+        try {
+            sCurrValue = sValues[8];
+            spinnerPosition = arrayAdapterLampNames.getPosition(sCurrValue);
+            spinner9.setSelection(spinnerPosition);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            spinnerPosition = arrayAdapterLampNames.getPosition("");
+            spinner9.setSelection(spinnerPosition);
+        }
         this.setTitle(getString(R.string.app_header_title) + " assign buttons");
 
 
@@ -153,6 +186,9 @@ public class ReassignLamps extends Activity {
             if (spinner4.getSelectedItem().toString().length() > 0) { edit.putString("4", spinner4.getSelectedItem().toString()); }
             if (spinner5.getSelectedItem().toString().length() > 0) { edit.putString("5", spinner5.getSelectedItem().toString()); }
             if (spinner6.getSelectedItem().toString().length() > 0) { edit.putString("6", spinner6.getSelectedItem().toString()); }
+            if (spinner7.getSelectedItem().toString().length() > 0) { edit.putString("21", spinner7.getSelectedItem().toString()); }
+            if (spinner8.getSelectedItem().toString().length() > 0) { edit.putString("22", spinner8.getSelectedItem().toString()); }
+            if (spinner9.getSelectedItem().toString().length() > 0) { edit.putString("23", spinner9.getSelectedItem().toString()); }
             edit.putString("666", String.valueOf(System.currentTimeMillis()));
             edit.commit();
 
@@ -176,6 +212,9 @@ public class ReassignLamps extends Activity {
         if (spinner4.getSelectedItem().toString().length() > 0) { stringSpinnerValues.add(spinner4.getSelectedItem().toString()); }
         if (spinner5.getSelectedItem().toString().length() > 0) { stringSpinnerValues.add(spinner5.getSelectedItem().toString()); }
         if (spinner6.getSelectedItem().toString().length() > 0) { stringSpinnerValues.add(spinner6.getSelectedItem().toString()); }
+        if (spinner7.getSelectedItem().toString().length() > 0) { stringSpinnerValues.add(spinner7.getSelectedItem().toString()); }
+        if (spinner8.getSelectedItem().toString().length() > 0) { stringSpinnerValues.add(spinner8.getSelectedItem().toString()); }
+        if (spinner9.getSelectedItem().toString().length() > 0) { stringSpinnerValues.add(spinner9.getSelectedItem().toString()); }
 
         Set<String> deduped = new HashSet<String>(stringSpinnerValues);
 

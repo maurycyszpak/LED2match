@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ReassignLamps">
-
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -17,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="@dimen/textview_default_top_margin"
+            android:layout_marginTop="@dimen/spinner_items_vert_margin"
             android:baselineAligned="false"
             >
 
@@ -53,8 +52,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="@dimen/textview_default_top_margin"
+            android:layout_marginTop="@dimen/spinner_items_vert_margin"
             android:baselineAligned="false"
+            android:layout_below="@id/lLayout1"
             >
 
             <TextView
@@ -90,8 +90,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="@dimen/textview_default_top_margin"
+            android:layout_marginTop="@dimen/spinner_items_vert_margin"
             android:baselineAligned="false"
+            android:layout_below="@id/lLayout2"
             >
 
             <TextView
@@ -126,8 +127,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="@dimen/textview_default_top_margin"
+            android:layout_marginTop="@dimen/spinner_items_vert_margin"
             android:baselineAligned="false"
+            android:layout_below="@id/lLayout3"
             >
 
             <TextView
@@ -161,8 +163,10 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="@dimen/textview_default_top_margin"
+            android:layout_marginTop="@dimen/spinner_items_vert_margin"
             android:baselineAligned="false"
+            android:layout_below="@id/lLayout4"
+            android:id="@+id/lLayout5"
             >
 
             <TextView
@@ -192,12 +196,14 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/lLayout6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="@dimen/textview_default_top_margin"
+            android:layout_marginTop="@dimen/spinner_items_vert_margin"
             android:baselineAligned="false"
+            android:layout_below="@id/lLayout5"
             >
 
             <TextView
@@ -225,43 +231,153 @@
                 />
 
         </LinearLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="@dimen/spinner_items_vert_margin"
             android:baselineAligned="false"
-            android:gravity="center"
+            android:id="@id/lLayout7"
+            android:layout_below="@id/lLayout6"
+            >
+
+            <TextView
+                android:layout_marginRight="@dimen/button_margin"
+                android:layout_height="@dimen/digital_panel_button_height"
+                android:layout_width="0dp"
+                android:gravity="center"
+                android:text="Button 7 lamp:"
+                android:tag="Button6"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="2"
+                android:scaleType="fitCenter"
+                android:textSize="@dimen/button_text_size"
+                />
+
+            <Spinner
+                android:id="@+id/spinner7"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/digital_panel_button_height"
+                android:layout_weight="3"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="@dimen/button_margin"
+                android:visibility="visible"
+
+                />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/lLayout8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="@dimen/spinner_items_vert_margin"
+            android:baselineAligned="false"
+            android:layout_below="@+id/lLayout7"
+            >
+
+            <TextView
+                android:layout_marginRight="@dimen/button_margin"
+                android:layout_height="@dimen/digital_panel_button_height"
+                android:layout_width="0dp"
+                android:gravity="center"
+                android:text="Button 8 lamp:"
+                android:tag="Button6"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="2"
+                android:scaleType="fitCenter"
+                android:textSize="@dimen/button_text_size"
+                />
+
+            <Spinner
+                android:id="@+id/spinner8"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/digital_panel_button_height"
+                android:layout_weight="3"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="@dimen/button_margin"
+                android:visibility="visible"
+
+                />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/Llayout9"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="@dimen/spinner_items_vert_margin"
+            android:baselineAligned="false"
+            android:layout_below="@+id/lLayout8"
+            >
+
+            <TextView
+                android:layout_marginRight="@dimen/button_margin"
+                android:layout_height="@dimen/digital_panel_button_height"
+                android:layout_width="0dp"
+                android:gravity="center"
+                android:text="Button 9 lamp:"
+                android:tag="Button6"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="2"
+                android:scaleType="fitCenter"
+                android:textSize="@dimen/button_text_size"
+                />
+
+            <Spinner
+                android:id="@+id/spinner9"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/digital_panel_button_height"
+                android:layout_weight="3"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="@dimen/button_margin"
+                android:visibility="visible"
+
+                />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="10dp"
+            android:baselineAligned="true"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
             >
 
 
             <Button
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="@dimen/digital_panel_button_height"
                 android:layout_marginLeft="0dp"
                 android:layout_marginRight="@dimen/button_margin"
                 android:text="Cancel"
                 android:visibility="visible"
                 android:onClick="cancel_assignment"
-                android:layout_weight="1"
+                android:background="@color/torso_gray_button"
+                android:textColor="@color/black"
+
                 />
 
             <Button
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="@dimen/digital_panel_button_height"
                 android:layout_marginLeft="0dp"
                 android:layout_marginRight="@dimen/button_margin"
                 android:text="Store"
                 android:visibility="visible"
                 android:onClick="store_assignment"
-                android:layout_weight="2"
                 android:background="@color/torso_blue_main"
                 android:textColor="@color/white"
+                android:layout_alignParentEnd="true"
                 />
-
-        </LinearLayout>
-    </LinearLayout>
-
+        </RelativeLayout>
+    </RelativeLayout>
 </android.support.constraint.ConstraintLayout>
