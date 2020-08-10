@@ -31,6 +31,9 @@ import java.io.File;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static com.kiand.LED2match.Constants.CONFIG_SETTINGS;
+import static com.kiand.LED2match.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
+
 public class TRSMaintenancePage extends Activity {
 
     public static final String SHAREDPREFS_ONE_OFF_SEEKBARS = "one-off-seekbar-values.txt"; //Mauricio
@@ -42,6 +45,9 @@ public class TRSMaintenancePage extends Activity {
 
     boolean blLamp1_ON, blLamp2_ON, blLamp3_ON, blLamp4_ON, blLamp5_ON, blLamp6_ON;
     Button btnL1, btnL2, btnL3, btnL4, btnL5, btnL6;
+    EditText edit_psu;
+    EditText edit_tl84_dim;
+    EditText edit_tl84_master_dim;
     Integer btn1Timer = 0;
     Integer btn2Timer = 0;
     Integer btn3Timer = 0;
@@ -113,8 +119,9 @@ public class TRSMaintenancePage extends Activity {
         }
 
         //populateLampsState();
-        readDACvalue();
-        readPSUpower();
+        populate_unit_config();
+        //readDACvalue();
+        //readPSUpower();
         if (shared_prefs_exists(Constants.SHAREDPREFS_LAMP_ASSIGNMENTS, "1")) {
             repopulate_button_assignments();
         } else {
@@ -150,7 +157,9 @@ public class TRSMaintenancePage extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.trs_maintenance_page);
-
+        edit_psu = findViewById(R.id.edit_PSU_current);
+        edit_tl84_dim = findViewById(R.id.edit_DACvalue);
+        edit_tl84_master_dim = findViewById(R.id.edit_TL84_fullbright_value);
         lclHandler = new Handler();
 
         btnL1 = findViewById(R.id.btnL1);
@@ -335,6 +344,48 @@ public class TRSMaintenancePage extends Activity {
         }
     }
 
+    private void populate_unit_config() {
+        Log.d(TAG, "Populating page with unit config values");
+        String ee_autoshutoff_tag = "eeprom_auto_shutoff";
+        String ee_tl84delay_tag = "eeprom_tl84_delay";
+        String ee_psucurrent_tag = "eeprom_PSU_current";
+        String ee_tl84dim_tag = "eeprom_tl84_dim_value";
+        String ee_tl84masterdim_tag = "eeprom_tl84_master_dim_value";
+
+        SharedPreferences spConfig = getSharedPreferences(CONFIG_SETTINGS, 0);
+        SharedPreferences.Editor spConfigEditor = spConfig.edit();
+        String s_eeprom_auto_shutoff  = spConfig.getString(ee_autoshutoff_tag, "");
+        String s_eeprom_tl84_delay = spConfig.getString(ee_tl84delay_tag, "");
+        String s_eeprom_PSU_current = spConfig.getString(ee_psucurrent_tag, "");
+        String s_eeprom_tl84_dim_value = spConfig.getString(ee_tl84dim_tag, "");
+        String s_eeprom_tl84_master_dim_value = spConfig.getString(ee_tl84masterdim_tag,"");
+
+        try {
+            if (s_eeprom_PSU_current.length() > 0) {
+                edit_psu.setText(s_eeprom_PSU_current);
+            }
+        } catch (NullPointerException e) {
+            makeToast("PSU current not yet defined for this unit");
+        }
+
+        try {
+            if (s_eeprom_tl84_dim_value.length() > 0) {
+                edit_tl84_dim.setText(s_eeprom_tl84_dim_value);
+            }
+        } catch (NullPointerException e) {
+            makeToast("TL84 dim value not yet defined for this unit");
+        }
+
+        try {
+            if (s_eeprom_tl84_master_dim_value.length() > 0) {
+                edit_tl84_master_dim.setText(s_eeprom_tl84_master_dim_value);
+            }
+        } catch (NullPointerException e) {
+            makeToast("Full brightness TL84 dim value not yet defined for this unit");
+        }
+
+    }
+
     public boolean shared_prefs_exists(String sFileName, String sKey) {
         SharedPreferences spFile = getSharedPreferences(sFileName, 0);
         return spFile.contains(sKey);
@@ -476,39 +527,48 @@ public class TRSMaintenancePage extends Activity {
         //We need to store the DAC Value if present
         boolean bl_valid_DAC_value;
         boolean bl_valid_psu_power = false;
-        EditText ed_DAC = findViewById(R.id.edit_DACvalue);
 
-        Integer value = 0;
-        if (!TextUtils.isEmpty(ed_DAC.getText().toString())) {
-            value = Integer.valueOf(ed_DAC.getText().toString());
+
+        String settings_value = "";
+        if (!TextUtils.isEmpty(edit_tl84_master_dim.getText().toString())) {
+            settings_value += string_int_to_hex_4(edit_tl84_master_dim.getText().toString());
+        } else {
+            settings_value += "0000";
         }
 
-        if (value < 600 || value > 800) {
+        if (!TextUtils.isEmpty(edit_tl84_dim.getText().toString())) {
+            settings_value += string_int_to_hex_4(edit_tl84_dim.getText().toString());
+        } else {
+            settings_value += "0000";
+        }
+
+        if (!TextUtils.isEmpty(edit_psu.getText().toString())) {
+            settings_value += string_int_to_hex_4(edit_psu.getText().toString());
+        } else {
+            settings_value += "0000";
+        }
+
+        Log.d(TAG, "Sending unit config string: " + settings_value);
+        /*if (value < 600 || value > 800) {
             makeToast("DAC value should be between 600 and 800.");
             bl_valid_DAC_value = false;
             //return;
         } else {
             bl_valid_DAC_value = true;
-        }
+        }*/
 
-        if (bl_valid_DAC_value) {
 
-            SharedPreferences spFile = getSharedPreferences(PREFS_DAC_VALUE, 0);
-            SharedPreferences.Editor editor = spFile.edit();
-            editor.clear();
-            editor.putInt("dac_value", value);
-            editor.apply();
-            Log.d(TAG, "DAC value of '" + value + "' stored in prefs file");
-            makeToast( "DAC value of '" + value + "' successfully stored.");
-            String sCommand = "M" + value + "$" + newLine;
-            if (mBoundBT) {
-                Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                lclBTServiceInstance.sendData(sCommand);
-            } else {
-                Log.d(TAG, "Service btService not connected when sending message: '" + sCommand + "'");
-            }
-            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+        /*Log.d(TAG, "DAC value of '" + value + "' stored in prefs file");
+        makeToast( "DAC value of '" + value + "' successfully stored.");*/
+        String sCommand = "M" + settings_value + "$" + newLine;
+        if (mBoundBT) {
+            Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
+            lclBTServiceInstance.sendData(sCommand);
+        } else {
+            Log.d(TAG, "Service btService not connected when sending message: '" + sCommand + "'");
         }
+        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+
 
         Float ampValue = 0.0f;
         int milliAmpValue = 0;
@@ -543,6 +603,16 @@ public class TRSMaintenancePage extends Activity {
         }
 
 
+    }
+
+    public String string_int_to_hex_4(String s) {
+        String sValue = "";
+
+        int iValue = Integer.parseInt(s);
+        sValue += String.format("%04X", iValue);
+
+        sValue = sValue.toUpperCase();
+        return sValue;
     }
 
     private void readDACvalue() {

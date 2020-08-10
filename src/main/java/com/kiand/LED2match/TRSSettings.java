@@ -35,6 +35,7 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import static com.kiand.LED2match.BtCOMMsService.BT_CONNECTED_PREFS;
+import static com.kiand.LED2match.Constants.CONFIG_SETTINGS;
 import static com.kiand.LED2match.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 
 public class TRSSettings extends Activity implements ServiceConnection {
@@ -166,10 +167,6 @@ public class TRSSettings extends Activity implements ServiceConnection {
         super.onResume();
         //Toast.makeText(this.getBaseContext(),"mBound = " + mBound, Toast.LENGTH_SHORT).show();
 
-        editOff_h = findViewById(R.id.editAutoShutOFF_h);
-        editOff_m = findViewById(R.id.editAutoShutOFF_m);
-        edit_TL84_delay = findViewById(R.id.edit_TL84_delay);
-
         if (!mBound) {
             Intent intent = new Intent(this, UsbCOMMsService.class);
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -184,14 +181,11 @@ public class TRSSettings extends Activity implements ServiceConnection {
             mBoundBT = true;
         }
 
-        get_shutdown_delay();
-        get_TL84_delay();
+        populate_unit_config();
+        /*get_shutdown_delay();
+        get_TL84_delay();*/
 
-        if (check_for_BT_connection()) {
-            aSwitch.setChecked(true);
-        }
-
-        if (check_for_shutdown_timer_h() > 0) {
+        /*if (check_for_shutdown_timer_h() > 0) {
             editOff_h.setText(String.valueOf(check_for_shutdown_timer_h()));
         }
         if (check_for_shutdown_timer_m() > 0) {
@@ -203,6 +197,43 @@ public class TRSSettings extends Activity implements ServiceConnection {
             edit_TL84_delay.setText(String.valueOf(check_for_TL84_delay()));
         } else {
             edit_TL84_delay.setText(String.valueOf(TL84_DELAY_DEFAULT));
+        }*/
+    }
+
+    private void populate_unit_config() {
+        Log.d(TAG, "Populating page with unit config values");
+        String ee_autoshutoff_tag = "eeprom_auto_shutoff";
+        String ee_tl84delay_tag = "eeprom_tl84_delay";
+        String ee_psucurrent_tag = "eeprom_PSU_current";
+        String ee_tl84dim_tag = "eeprom_tl84_dim_value";
+        String ee_tl84masterdim_tag = "eeprom_tl84_master_dim_value";
+
+        SharedPreferences spConfig = getSharedPreferences(CONFIG_SETTINGS, 0);
+        SharedPreferences.Editor spConfigEditor = spConfig.edit();
+        String s_eeprom_auto_shutoff  = spConfig.getString(ee_autoshutoff_tag, "");
+        String s_eeprom_tl84_delay = spConfig.getString(ee_tl84delay_tag, "");
+        String s_eeprom_PSU_current = spConfig.getString(ee_psucurrent_tag, "");
+        String s_eeprom_tl84_dim_value = spConfig.getString(ee_tl84dim_tag, "");
+        String s_eeprom_tl84_master_dim_value = spConfig.getString(ee_tl84masterdim_tag,"");
+
+        try {
+            if (s_eeprom_tl84_delay.length() > 0) {
+                edit_TL84_delay.setText(s_eeprom_tl84_delay);
+            }
+        } catch (NullPointerException e) {
+            makeToast("TL84 delay not yet defined for this unit");
+        }
+
+        try {
+            if (s_eeprom_auto_shutoff.length() > 0) {
+                //Long lTimeToOFF = (long) (iHours_idle_shutoff * 60 * 60 + iMinutes_idle_shutoff * 60);
+                int iHours = Integer.parseInt(s_eeprom_auto_shutoff) / 3600;
+                int iMinutes = (Integer.parseInt(s_eeprom_auto_shutoff) % 3600) / 60;
+                editOff_h.setText(String.valueOf(iHours));
+                editOff_m.setText(String.valueOf(iMinutes));
+            }
+        } catch (NullPointerException e) {
+            makeToast("TL84 dim value not yet defined for this unit");
         }
     }
 
@@ -278,17 +309,14 @@ public class TRSSettings extends Activity implements ServiceConnection {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.trs_settings);
 
-        //editOff_h = findViewById(R.id.editAutoShutOFF_h);
-        //editOff_m = findViewById(R.id.editAutoShutOFF_m);
+        editOff_h = findViewById(R.id.editAutoShutOFF_h);
+        editOff_m = findViewById(R.id.editAutoShutOFF_m);
+        edit_TL84_delay = findViewById(R.id.edit_TL84_delay);
 
         lclHandler = new Handler();
-
         btnSave = findViewById(R.id.btnSave);
         btnSave.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_main));
         btnSave.setTextColor(Color.WHITE);
-
-
-
     }
 
     @Override
@@ -515,22 +543,19 @@ public class TRSSettings extends Activity implements ServiceConnection {
     }
 
     public void saveSettings(View v) {
-        EditText edit_bltl84delay = findViewById(R.id.edit_TL84_delay);
         boolean bl_edit_tl84delay = false;
         Log.d(TAG, "Entering function saveSettings.");
+
+        String settings_value = "";
 
         if (editOff_h.getText().toString().isEmpty()) { iHours_idle_shutoff = 0; } else { iHours_idle_shutoff = Integer.valueOf(editOff_h.getText().toString()); }
         if (editOff_m.getText().toString().isEmpty()) { iMinutes_idle_shutoff = 0; } else { iMinutes_idle_shutoff = Integer.valueOf(editOff_m.getText().toString()); }
 
-        SharedPreferences prefs_config = getSharedPreferences(CONFIG_SETTINGS, 0);
-        SharedPreferences prefs = getSharedPreferences(TIME_OFF_STORAGE, 0);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.clear();
-        editor.putInt("hours", iHours_idle_shutoff);
-        editor.putInt("minutes", iMinutes_idle_shutoff);
-        editor.apply();
+        Integer iTimeToOFF = (iHours_idle_shutoff * 60 * 60 + iMinutes_idle_shutoff * 60);
+        settings_value += string_int_to_hex_4(String.valueOf(iTimeToOFF));
 
-        if (!TextUtils.isEmpty(edit_bltl84delay.getText().toString())) {
+
+        if (!TextUtils.isEmpty(edit_TL84_delay.getText().toString())) {
             if (!validate_tl84_delay(Integer.valueOf(edit_TL84_delay.getText().toString()))) {
                 makeToast("NO BUENO");
                 bl_edit_tl84delay = false;
@@ -539,38 +564,32 @@ public class TRSSettings extends Activity implements ServiceConnection {
             }
         }
 
-
-
-
         if (bl_edit_tl84delay) {
-            SharedPreferences.Editor edit_config = prefs_config.edit();
-            edit_config.remove(TL84_DELAY_KEY);
-            edit_config.putInt(TL84_DELAY_KEY, Integer.valueOf(edit_bltl84delay.getText().toString()));
-            edit_config.apply();
-            makeToast("TL84 delay of " + edit_bltl84delay.getText().toString() + "ms stored in the config file.");
+            settings_value += string_int_to_hex_4(edit_TL84_delay.getText().toString());
+            makeToast("TL84 delay of " + edit_TL84_delay.getText().toString() + "ms stored in the config file.");
+        } else {
+            settings_value += string_int_to_hex_4("0000");
         }
+
+        String sCommand = "I" + settings_value + "$" + newLine;
 
         Long lTimeToOFF = (long) (iHours_idle_shutoff * 60 * 60 + iMinutes_idle_shutoff * 60);
-        if (lTimeToOFF > 0) {
-            Log.d(TAG, "Setting timer on - switching OFF all lamps in " + iHours_idle_shutoff + " hours and " + iMinutes_idle_shutoff + " minutes (=" + lTimeToOFF + " seconds).");
-            Toast.makeText(TRSSettings.this, "Timer ON\nAll lamps off in " + iHours_idle_shutoff + " hours and " + iMinutes_idle_shutoff + " minutes.", Toast.LENGTH_LONG).show();
+        //if (lTimeToOFF > 0) {
+        Log.d(TAG, "Setting timer on - switching OFF all lamps in " + iHours_idle_shutoff + " hours and " + iMinutes_idle_shutoff + " minutes (=" + lTimeToOFF + " seconds).");
+        Toast.makeText(TRSSettings.this, "Timer ON\nAll lamps off in " + iHours_idle_shutoff + " hours and " + iMinutes_idle_shutoff + " minutes.", Toast.LENGTH_LONG).show();
 
-            String sCommand = "I" + String.format("%04X", lTimeToOFF) + "$" + newLine;
-            Log.d(TAG, "*** strtol 4 HEX " + sCommand);
-            sCommand = "I" + String.format("%02X", lTimeToOFF) + "$" + newLine;
-            Log.d(TAG, "*** strtol 2 HEX " + sCommand);
-            if (mBoundBT) {
-                btService.sendData(sCommand);
-            } else {
-                Log.d(TAG, "Service btService not connected!");
-            }
-            Log.d(TAG, "*** ALLOFF *** Sending 'shutdown' intent to BtComms");
-
-            if (shutdownTimer != null) {
-                shutdownTimer.cancel();
-            }
-            switchOFFAfterX(iHours_idle_shutoff, iMinutes_idle_shutoff);
+        if (mBoundBT) {
+            btService.sendData(sCommand);
+        } else {
+            Log.d(TAG, "Service btService not connected!");
         }
+        Log.d(TAG, "*** ALLOFF *** Sending 'shutdown' intent to BtComms");
+
+        if (shutdownTimer != null) {
+            shutdownTimer.cancel();
+        }
+        //switchOFFAfterX(iHours_idle_shutoff, iMinutes_idle_shutoff);
+        //}
     }
 
     public void restart_idle_shutoff() {
@@ -597,6 +616,16 @@ public class TRSSettings extends Activity implements ServiceConnection {
         SharedPreferences.Editor editor = prefs.edit();
         editor.clear();
         editor.apply();*/
+    }
+
+    public String string_int_to_hex_4(String s) {
+        String sValue = "";
+
+        int iValue = Integer.parseInt(s);
+        sValue += String.format("%04X", iValue);
+
+        sValue = sValue.toUpperCase();
+        return sValue;
     }
 
     public void switchOFFAfterX(int hours, int minutes) {

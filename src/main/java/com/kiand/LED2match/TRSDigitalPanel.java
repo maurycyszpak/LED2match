@@ -203,8 +203,8 @@ public class TRSDigitalPanel extends Activity {
                 switchButtonON(Integer.valueOf(index));
                 //Log.d(TAG, "Button: " + index + " highlighted");
             } else if (intent.getAction().equals("controller_data_refreshed_event")) {
-
-                //makeToast("fw_version intent received");
+                Log.d(TAG, "controller data refreshed - intent received");
+                refresh_unit_config();
             } else if (intent.getAction().equals("button_highlight_extra")) {
                 String name = intent.getStringExtra("button_name");
                 //Log.d(TAG, "Got additional button to highlight: " + name);
@@ -420,7 +420,7 @@ public class TRSDigitalPanel extends Activity {
             public boolean onLongClick(View v) {
                 //your stuff
 
-                makeToast("Long click detected");
+                //makeToast("Long click detected");
 
                 if (btAdapter == null) {
                     Log.d(TAG, "BT adapter is null");
@@ -589,6 +589,34 @@ public class TRSDigitalPanel extends Activity {
         intentLampAssignment.putExtra("tags", sTags);
         intentLampAssignment.putExtra("counter", iCtr);
         startActivity(intentLampAssignment);
+
+    }
+
+    private void refresh_unit_config() {
+        SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        JSON_analyst json_analyst = new JSON_analyst(spFile);
+
+        String ee_autoshutoff_tag = "eeprom_auto_shutoff";
+        String ee_tl84delay_tag = "eeprom_tl84_delay";
+        String ee_psucurrent_tag = "eeprom_PSU_current";
+        String ee_tl84dim_tag = "eeprom_tl84_dim_value";
+        String ee_tl84masterdim_tag = "eeprom_tl84_master_dim_value";
+
+        //Log.d(TAG, "bluetoothAskReply(V1)");
+        String s_eeprom_auto_shutoff = json_analyst.getJSONValue(ee_autoshutoff_tag);
+        String s_eeprom_tl84_delay = json_analyst.getJSONValue(ee_tl84delay_tag);
+        String s_eeprom_PSU_current = json_analyst.getJSONValue(ee_psucurrent_tag);
+        String s_eeprom_tl84_dim_value = json_analyst.getJSONValue(ee_tl84dim_tag);
+        String s_eeprom_tl84_master_dim_value = json_analyst.getJSONValue(ee_tl84masterdim_tag);
+
+        SharedPreferences spConfig = getSharedPreferences(CONFIG_SETTINGS, 0);
+        SharedPreferences.Editor spConfigEditor = spConfig.edit();
+        spConfigEditor.putString(ee_autoshutoff_tag, s_eeprom_auto_shutoff);
+        spConfigEditor.putString(ee_tl84delay_tag, s_eeprom_tl84_delay);
+        spConfigEditor.putString(ee_psucurrent_tag, s_eeprom_PSU_current);
+        spConfigEditor.putString(ee_tl84dim_tag, s_eeprom_tl84_dim_value);
+        spConfigEditor.putString(ee_tl84masterdim_tag, s_eeprom_tl84_master_dim_value);
+        spConfigEditor.apply();
 
     }
 
@@ -1105,7 +1133,7 @@ public class TRSDigitalPanel extends Activity {
         SharedPreferences spLampDefinitions = getSharedPreferences(Constants.SHAREDPREFS_LAMP_DEFINITIONS, 0);
         String sPresetRGBValues = "000,000,000,000,000,000,000,000,000,000";
         String sCommand = "";
-        JSON_analyst json_analyst = new JSON_analyst(spFile);
+        //JSON_analyst json_analyst = new JSON_analyst(spFile);
 
         String buttonCaption = v.getTag().toString();
         if (!TextUtils.isEmpty(buttonCaption)) {
