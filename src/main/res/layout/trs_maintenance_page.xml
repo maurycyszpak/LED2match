@@ -284,7 +284,7 @@
                     android:textSize="13sp"
                     android:singleLine="true"
                     android:hint="Full TL84 brightness (500-900)"
-                    android:nextFocusForward="@+id/edit_PSU_current"
+                    android:nextFocusForward="@+id/edit_DACvalue"
                     android:imeOptions="actionNext"
 
                     />
