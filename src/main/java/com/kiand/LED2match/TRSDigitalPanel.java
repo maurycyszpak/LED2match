@@ -892,118 +892,118 @@ public class TRSDigitalPanel extends Activity {
         switch(index) {
             case 1:
                 if (!blLamp1_ON) {
-                    mark_all_buttons_off_on_mobile();
+                    mark_all_buttons_off_on_mobile(false);
                     blLamp1_ON = true;
                     btnL1.setBackgroundResource(R.drawable.buttonselector_active);
                     btnL1.setTextColor(Color.BLACK);
-                    makeToast("Light switched on");
+                    //makeToast("Light switched on");
                 }
                 break;
 
             case 2:
                 if (!blLamp2_ON) {
-                    mark_all_buttons_off_on_mobile();
+                    mark_all_buttons_off_on_mobile(false);
                     blLamp2_ON = true;
                     btnL2.setBackgroundResource(R.drawable.buttonselector_active);
                     btnL2.setTextColor(Color.BLACK);
-                    makeToast("Light switched on");
+                    //makeToast("Light switched on");
                 }
                 break;
 
             case 3:
                 if (!blLamp3_ON) {
-                    mark_all_buttons_off_on_mobile();
+                    mark_all_buttons_off_on_mobile(false);
                     blLamp3_ON = true;
                     btnL3.setBackgroundResource(R.drawable.buttonselector_active);
                     btnL3.setTextColor(Color.BLACK);
-                    makeToast("Light switched on");
+                    //makeToast("Light switched on");
                 }
                 break;
 
             case 4:
                 if (!blLamp4_ON) {
-                    mark_all_buttons_off_on_mobile();
+                    mark_all_buttons_off_on_mobile(false);
                     blLamp4_ON = true;
                     btnL4.setBackgroundResource(R.drawable.buttonselector_active);
                     btnL4.setTextColor(Color.BLACK);
-                    makeToast("Light switched on");
+                    //makeToast("Light switched on");
                 }
                 break;
 
             case 5:
                 if (!blLamp5_ON) {
-                    mark_all_buttons_off_on_mobile();
+                    mark_all_buttons_off_on_mobile(false);
                     blLamp5_ON = true;
                     btnL5.setBackgroundResource(R.drawable.buttonselector_active);
                     btnL5.setTextColor(Color.BLACK);
-                    makeToast("Light switched on");
+                    //makeToast("Light switched on");
                 }
                 break;
 
             case 6:
                 if (!blLamp6_ON) {
-                    mark_all_buttons_off_on_mobile();
+                    mark_all_buttons_off_on_mobile(false);
                     blLamp6_ON = true;
                     btnL6.setBackgroundResource(R.drawable.buttonselector_active);
                     btnL6.setTextColor(Color.BLACK);
-                    makeToast("Light switched on");
+                    //makeToast("Light switched on");
                 }
                 break;
 
             case 7: //PRG
-                mark_all_buttons_off_on_mobile();
+                mark_all_buttons_off_on_mobile(true);
                 btnL7.setBackgroundResource(R.drawable.buttonselector_active);
                 btnL7.setTextColor(Color.BLACK);
-                makeToast("SEQUENCE switched on");
+                //makeToast("SEQUENCE switched on");
                 break;
 
             case 8: //LOW
                 btnLOW.setBackgroundResource(R.drawable.buttonselector_active);
                 btnLOW.setTextColor(Color.BLACK);
-                makeToast("LOW mode switched on");
+                //makeToast("LOW mode switched on");
                 break;
 
             case 9: //OFF
-                mark_all_buttons_off_on_mobile();
+                mark_all_buttons_off_on_mobile(true);
                 btnL9.setBackgroundResource(R.drawable.buttonselector_active);
                 btnL9.setTextColor(Color.BLACK);
-                makeToast("All lights switched off");
+                //makeToast("All lights switched off");
                 break;
 
             case 11:
                 if (!blTL84_ON) {
-                    mark_all_buttons_off_on_mobile();
+                    mark_all_buttons_off_on_mobile(false);
                     blTL84_ON = true;
                 }
                 break;
 
             case 21:
                 if (!blLamp10_ON) {
-                    mark_all_buttons_off_on_mobile();
+                    mark_all_buttons_off_on_mobile(false);
                     blLamp10_ON = true;
                     btnL10.setBackgroundResource(R.drawable.buttonselector_active);
                     btnL10.setTextColor(Color.BLACK);
-                    makeToast("Light switched on");
+                    //makeToast("Light switched on");
                 }
                 break;
 
             case 22:
                 if (!blLamp11_ON) {
-                    mark_all_buttons_off_on_mobile();
+                    mark_all_buttons_off_on_mobile(false);
                     blLamp11_ON = true;
                     btnL11.setBackgroundResource(R.drawable.buttonselector_active);
                     btnL11.setTextColor(Color.BLACK);
-                    makeToast("Light switched on");
+                    //makeToast("Light switched on");
                 }
                 break;
 
             case 23:
                 if (!blLamp12_ON) {
-                    mark_all_buttons_off_on_mobile();
+                    mark_all_buttons_off_on_mobile(false);
                     blLamp12_ON = true;
                     btnL12.setBackgroundResource(R.drawable.buttonselector_active);
                     btnL12.setTextColor(Color.BLACK);
-                    makeToast("Light switched on");
+                    //makeToast("Light switched on");
                 }
                 break;
 
@@ -1138,7 +1138,7 @@ public class TRSDigitalPanel extends Activity {
         String buttonCaption = v.getTag().toString();
         if (!TextUtils.isEmpty(buttonCaption)) {
             if (!buttonCaption.equalsIgnoreCase("LOW") && !buttonCaption.equalsIgnoreCase("UV")) {
-                mark_all_buttons_off_on_mobile();
+                mark_all_buttons_off_on_mobile(false);
             }
         }
 
@@ -1530,7 +1530,7 @@ public class TRSDigitalPanel extends Activity {
         if (!TextUtils.isEmpty(buttonCaption)) {
             if (!buttonCaption.equalsIgnoreCase("LOW") && !buttonCaption.equalsIgnoreCase("UV")) {
                 Log.d(TAG, "switching off all lamps");
-                mark_all_buttons_off_on_mobile();
+                mark_all_buttons_off_on_mobile(false);
             }
         }
 
@@ -1678,7 +1678,7 @@ public class TRSDigitalPanel extends Activity {
         if (!TextUtils.isEmpty(buttonCaption)) {
             if (!buttonCaption.equalsIgnoreCase("LOW")) {
                 Log.d(TAG, "switching off all lamps");
-                mark_all_buttons_off_on_mobile();
+                mark_all_buttons_off_on_mobile(false);
             }
         }
 
@@ -1746,10 +1746,10 @@ public class TRSDigitalPanel extends Activity {
                         blTL84_ON = true;
                     } else {
                         //sCommand = "S11000$" + sNewLine;
-                        sCommand  = "S11000" + convertRGBwithCommasToHexString(sPresetRGBValues) + "$" + sNewLine;
+                        //sCommand  = "S11000" + convertRGBwithCommasToHexString(sPresetRGBValues) + "$" + sNewLine;
                         blTL84_ON = false;
-                        Log.d(TAG, " *** NEW TL84 command (OFF): " + sCommand);
-                        send_via_bt(sCommand);
+                        Log.d(TAG, " *** Not a TL84 light.");
+                        //send_via_bt(sCommand);
                         String[] sRGB_in = sPresetRGBValues.split(",");
                         String[] sRGB_out = sRGB_in;
                         for (int i = 0; i < sRGB_in.length; i++) {
@@ -1760,6 +1760,7 @@ public class TRSDigitalPanel extends Activity {
                         String concatValues = TextUtils.join(",", sRGB_out);
                         String sHex = convertRGBwithCommasToHexString(concatValues);
                         sCommand = "S" + sHex + "$" + sNewLine;
+                        sCommand  = "S11000" + sHex + "$" + sNewLine;
                         send_via_bt(sCommand);
                         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                         Log.d(TAG, "I'm in LOW mode");
@@ -1937,7 +1938,7 @@ public class TRSDigitalPanel extends Activity {
         dlg.show();
     }
 
-    public void mark_all_buttons_off_on_mobile() {
+    public void mark_all_buttons_off_on_mobile(boolean bl_force_LOW_off) {
         blLamp1_ON = false;
         btnL1.setBackgroundResource(R.drawable.buttonselector_main);
         btnL1.setTextColor(Color.WHITE);
@@ -1960,8 +1961,11 @@ public class TRSDigitalPanel extends Activity {
         btnL7.setBackgroundResource(R.drawable.buttonselector_main);
         btnL7.setTextColor(Color.WHITE);
 
-        /*btnLOW.setBackgroundResource(R.drawable.buttonselector_low);
-        btnLOW.setTextColor(Color.WHITE);*/
+        if (bl_force_LOW_off) {
+            btnLOW.setBackgroundResource(R.drawable.buttonselector_low);
+            btnLOW.setTextColor(Color.WHITE);
+        }
+
 
         btnL9.setBackgroundResource(R.drawable.buttonselector_main);
         btnL9.setTextColor(Color.WHITE);
@@ -2407,7 +2411,7 @@ public class TRSDigitalPanel extends Activity {
     }
 
     boolean check_sequence_for_loop() {
-        boolean flag = false;
+        boolean flag;
         SharedPreferences sp = getSharedPreferences(CONFIG_SETTINGS, 0);
         flag = sp.getBoolean("LOOP_SEQUENCE", false);
 

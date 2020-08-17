@@ -322,15 +322,22 @@ public class BtCOMMsService extends Service {
                     int iButtonIndex;
                     SharedPreferences myPrefs = this.getSharedPreferences(SHAREDPREFS_LAMP_ASSIGNMENTS, 0);
                     TreeMap<String, ?> keys = new TreeMap<String, Object>(myPrefs.getAll());
-                    for (Map.Entry<String, ?> entry : keys.entrySet()) {
+                    if (sDataArray[1].equalsIgnoreCase("PRG")) {
+                        Intent intent = new Intent("button_highlight_event");
+                        intent.putExtra("button_index", 7);
+                        Log.d(TAG, "Found preset '" + sDataArray[1] + "' under index: 7");
+                        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                    } else {
+                        for (Map.Entry<String, ?> entry : keys.entrySet()) {
 
-                        if (entry.getValue().toString().equalsIgnoreCase(sDataArray[1])) {
-                            iButtonIndex = Integer.valueOf(entry.getKey());
-                            Intent intent = new Intent("button_highlight_event");
-                            intent.putExtra("button_index", String.valueOf(iButtonIndex));
-                            Log.d (TAG, "Found preset '" + sDataArray[1] + "' under index: " + iButtonIndex);
-                            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                            if (entry.getValue().toString().equalsIgnoreCase(sDataArray[1])) {
+                                iButtonIndex = Integer.valueOf(entry.getKey());
+                                Intent intent = new Intent("button_highlight_event");
+                                intent.putExtra("button_index", String.valueOf(iButtonIndex));
+                                Log.d(TAG, "Found preset '" + sDataArray[1] + "' under index: " + iButtonIndex);
+                                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
+                            }
                         }
                     }
                 } catch (ArrayIndexOutOfBoundsException i) {

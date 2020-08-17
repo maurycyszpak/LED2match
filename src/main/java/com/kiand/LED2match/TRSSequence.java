@@ -2,10 +2,15 @@ package com.kiand.LED2match;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import android.os.IBinder;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,19 +39,53 @@ import static com.kiand.LED2match.Constants.CONFIG_SETTINGS;
 import static com.kiand.LED2match.Constants.PRESETS_DEFINITION;
 import static com.kiand.LED2match.Constants.SP_LAMP_TIMERS;
 import static com.kiand.LED2match.Constants.SP_SEQUENCE_COMMAND_GENERATE;
+import static com.kiand.LED2match.TRSDigitalPanel.SP_SEQUENCE_COMMAND_EXECUTED;
+import static com.kiand.LED2match.TRSDigitalPanel.SP_SEQUENCE_COMMAND_GENERATED;
 import static com.kiand.LED2match.TRSDigitalPanel.TL84_TAG;
 import static com.kiand.LED2match.TRSSettings.TL84_DELAY_KEY;
 
 
 public class TRSSequence extends ListActivity {
     ArrayList<String> listItems = new ArrayList<String>();
-    ArrayList<HashMap<String,String>> list;
     private BaseAdapter adapter;
-    int clickCounter = 0;
     final Context context = this;
-    ListView listView;
     Switch aSwitch;
+    private UsbCOMMsService lclUsbServiceInstance;
+    private BtCOMMsService lclBTServiceInstance;
+    boolean mBound = false;
+    boolean mBoundBT = false;
     public static final String TAG = "MORRIS-LSTVIEW";
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            UsbCOMMsService.UsbBinder binder = (UsbCOMMsService.UsbBinder) service;
+            lclUsbServiceInstance = binder.getService();
+            mBound = true;
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBound = false;
+        }
+    };
+    public final ServiceConnection btConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName arg0, IBinder arg1) {
+            lclBTServiceInstance = ((BtCOMMsService.MyBinder) arg1).getService();
+            //lclBTServiceInstance.setHandler(mHandler);
+            mBoundBT = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            lclBTServiceInstance = null;
+            mBoundBT = false;
+        }
+    };
 
     @Override
     protected void onResume() {
@@ -54,6 +93,16 @@ public class TRSSequence extends ListActivity {
         listItems.clear();
         read_previous_sequence();
         //clear_lamp_timers_sp_file();
+
+        if (!mBoundBT) {
+            Intent intent = new Intent(this, BtCOMMsService.class);
+            //startService(intent);
+            bindService(intent, btConnection, Context.BIND_AUTO_CREATE);
+            //Toast.makeText(this.getBaseContext(),"Service bound (onResume)", Toast.LENGTH_SHORT).show();
+
+            SystemClock.sleep(50);
+            mBoundBT = true;
+        }
     }
 
     @Override
@@ -343,8 +392,6 @@ public class TRSSequence extends ListActivity {
         Date dteNow = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-        String sTimeStamp = sdf.format(dteNow);
-        String sSequence = "D";
         String sPresetName = "";
         int iCounter = 0;
         String sDelay = "0000";
@@ -402,6 +449,75 @@ public class TRSSequence extends ListActivity {
         } else {
             Toast.makeText(this, "Nothing to be saved", Toast.LENGTH_SHORT).show();
         }
+
+
+        //Moved from Digital Panel
+        String sSequence = "D";
+        duplicateSPFile();
+        makeToast("Storing sequence ... ");
+        Log.d(TAG, "Executing sequence, kicking off function processSequenceFile()");
+
+        //processSequenceFile();
+        spLampTimers = getSharedPreferences(TRSSequence_old.SP_LAMP_TIMERS, 0);
+        TreeMap<String, ?> allEntries = new TreeMap<String, Object>(spLampTimers.getAll());
+        int i = 1;
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            String sVal = entry.getValue().toString();
+            String[] sBuffer = sVal.split(",");
+            sSequence = sSequence.concat("0" + i);
+            sSequence = sSequence.concat(sBuffer[1]);
+            Log.d(TAG, "Currently sSequence: " + entry.getKey() + ": " + sSequence);
+            i++;
+        }
+
+        sSequence = sSequence.concat("^").concat((check_sequence_for_loop()) ? "1" : "0");
+        sSequence = sSequence.concat(System.lineSeparator());
+        lclBTServiceInstance.sendData(sSequence);
+        //lclUsbServiceInstance.sendBytes(sSequence.getBytes());
+
+        Log.d(TAG, "Sending Bytes: " + sSequence);
+        //makeToast(sSequence);
+
+        SystemClock.sleep(200);
+    }
+
+    public void duplicateSPFile() {
+        //sp1 is the shared pref to copy to
+
+        SharedPreferences prefsFrom = getSharedPreferences(SP_SEQUENCE_COMMAND_GENERATED, 0);
+        SharedPreferences prefsTo = getSharedPreferences(SP_SEQUENCE_COMMAND_EXECUTED, 0);
+        SharedPreferences.Editor ed = prefsTo.edit();
+        //SharedPreferences sp = prefsTo; //The shared preferences to copy from
+        ed.clear(); // This clears the one we are copying to, but you don't necessarily need to do that.
+
+        for(Map.Entry<String,?> entry : prefsFrom.getAll().entrySet()){
+            Object v = entry.getValue();
+            String key = entry.getKey();
+            //Now we just figure out what type it is, so we can copy it.
+            // Note that i am using Boolean and Integer instead of boolean and int.
+            // That's because the Entry class can only hold objects and int and boolean are primatives.
+            if(v instanceof Boolean)
+                // Also note that i have to cast the object to a Boolean
+                // and then use .booleanValue to get the boolean
+                ed.putBoolean(key, ((Boolean)v).booleanValue());
+            else if(v instanceof Float)
+                ed.putFloat(key, ((Float)v).floatValue());
+            else if(v instanceof Integer)
+                ed.putInt(key, ((Integer)v).intValue());
+            else if(v instanceof Long)
+                ed.putLong(key, ((Long)v).longValue());
+            else if(v instanceof String)
+                ed.putString(key, ((String)v));
+        }
+        ed.commit(); //save it.
+    }
+
+    boolean check_sequence_for_loop() {
+        boolean flag;
+        SharedPreferences sp = getSharedPreferences(CONFIG_SETTINGS, 0);
+        flag = sp.getBoolean("LOOP_SEQUENCE", false);
+
+        return flag;
     }
 
     private int get_prefs_contents_size(String prefs_file_name) {
