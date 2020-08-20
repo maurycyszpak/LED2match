@@ -2209,6 +2209,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 
         super.onPause();
         unregisterReceiver(mUsbReceiver);
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         unbindService(usbConnection);
 
         if (isMyServiceRunning(BtCOMMsService.class)) {

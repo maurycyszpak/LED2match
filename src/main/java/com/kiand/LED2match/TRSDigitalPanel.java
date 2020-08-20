@@ -101,6 +101,7 @@ public class TRSDigitalPanel extends Activity {
             Bundle bundle = intent.getExtras();
 
             String action = intent.getAction();
+            Log.d(TAG, "btReceiver received some intent");
             if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
                 final int bluetoothState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
                         BluetoothAdapter.ERROR);
@@ -344,6 +345,12 @@ public class TRSDigitalPanel extends Activity {
 
         //Toast.makeText(this.getBaseContext(),"Service bound (onStart)", Toast.LENGTH_SHORT).show();
         /*String sCommand = "J" + LightAdjustments.sNewLine; */
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
     }
 
     @Override
