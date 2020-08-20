@@ -59,5 +59,9 @@ Donec semper sagittis tellus, id molestie quam suscipit sit amet. Aenean posuere
     <string name="about_app_info_FWversion_label">Firmware version:</string>
     <string name="about_app_info_hyperlink">www.unitycolor.com</string>
 
+    <string name="maintenance_page_setting_1_label">TL84 Full</string>
+    <string name="maintenance_page_setting_2_label">TL84 Dim</string>
+    <string name="maintenance_page_setting_3_label">Max PSU (mA)</string>
+
 
 </resources>

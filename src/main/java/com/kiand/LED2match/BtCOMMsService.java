@@ -41,6 +41,7 @@ import static com.kiand.LED2match.Constants.sNewLine;
 public class BtCOMMsService extends Service {
 
     final boolean APP_DEBUG_MODE = false;
+    //final boolean APP_DEBUG_MODE = true;
     final int handlerState = 0;                        //used to identify handler message
     Handler bluetoothIn = new Handler();
     private BluetoothAdapter btAdapter = null;
@@ -156,7 +157,7 @@ public class BtCOMMsService extends Service {
 
     public void decodeBTResponse(String sDecodedReply) {
         //makeToast("Entering decodeBTResponse: '" + sReply + "'");
-        Log.d(TAG, sDecodedReply);
+        Log.d(TAG, "decodeBTResponse() - sDecodedReply = " + sDecodedReply);
 
         //String sDecodedReply = sReply;
         //logIncomingData(sDecodedReply);
@@ -166,7 +167,6 @@ public class BtCOMMsService extends Service {
         }
 
         String sPrefix = "";
-
         try {
             sPrefix = sDecodedReply.substring(0, sDecodedReply.indexOf(",")); // expecting "RGBW"
             //makeToast("sPrefix:" + sPrefix);
@@ -176,7 +176,7 @@ public class BtCOMMsService extends Service {
         String sDataPart = sDecodedReply.substring(sDecodedReply.indexOf(",")+1); // expecting eg "J,255,0,234,123,..."
 
         if (sPrefix.equals("RGBW")) {
-            //makeToast("Decoding response, 'RGBW' found");
+            Log.d(TAG, "Decoding response, 'RGBW' found");
             if (APP_DEBUG_MODE) {
                 Log.d(TAG, "Decoding response, RGBW found");
                 Log.d(TAG, "PAYLOAD: " + sDataPart);
@@ -336,22 +336,25 @@ public class BtCOMMsService extends Service {
                                 intent.putExtra("button_index", String.valueOf(iButtonIndex));
                                 Log.d(TAG, "Found preset '" + sDataArray[1] + "' under index: " + iButtonIndex);
                                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-
                             }
                         }
                     }
                 } catch (ArrayIndexOutOfBoundsException i) {
-                    Log.d(TAG, "Array Index Ouu Of Bounds: " + sDecodedReply);
+                    Log.d(TAG, "Array Index Out Of Bounds: " + sDecodedReply);
                 }
 
                 //also check for modifiers / special buttons (LOW, UV, OFF, PRG)
                 List<String> extra = Arrays.asList("LOW", "OFF", "PRG");
                 for (String entry: extra) {
-                    if (sDataArray[1].equalsIgnoreCase(entry)) {
-                        Intent intent = new Intent("button_highlight_extra");
-                        intent.putExtra("button_name", entry);
-                        //Log.d (TAG, "Additional button to highlight: " + sDataArray[1]);
-                        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                    try {
+                        if (sDataArray[1].equalsIgnoreCase(entry)) {
+                            Intent intent = new Intent("button_highlight_extra");
+                            intent.putExtra("button_name", entry);
+                            //Log.d (TAG, "Additional button to highlight: " + sDataArray[1]);
+                            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                        }
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        e.printStackTrace();
                     }
                 }
             }

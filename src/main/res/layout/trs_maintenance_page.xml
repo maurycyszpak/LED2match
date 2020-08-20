@@ -33,53 +33,49 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:layout_marginTop="10dp"
-                android:baselineAligned="false"
-                >
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:baselineAligned="false">
 
 
                 <Button
                     android:id="@+id/btnL1"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/digital_panel_button_height"
-                    android:gravity="center"
-                    android:text="D65\n1540"
                     android:layout_marginEnd="@dimen/button_margin"
                     android:layout_weight="4"
                     android:background="@android:color/transparent"
+                    android:gravity="center"
                     android:scaleType="fitCenter"
-                    android:textSize="@dimen/button_text_size"
                     android:tag="D65"
-                    />
+                    android:text="D65\n1540"
+                    android:textSize="@dimen/button_text_size" />
 
                 <Button
                     android:id="@+id/btnL2"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/digital_panel_button_height"
-                    android:gravity="center"
-                    android:text="D50\n1540"
                     android:layout_marginEnd="@dimen/button_margin"
                     android:layout_weight="4"
                     android:background="@android:color/transparent"
+                    android:gravity="center"
                     android:scaleType="fitCenter"
-                    android:textSize="@dimen/button_text_size"
                     android:tag="D50"
-                    />
+                    android:text="D50\n1540"
+                    android:textSize="@dimen/button_text_size" />
 
                 <Button
                     android:id="@+id/btnL3"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/digital_panel_button_height"
-                    android:gravity="center"
-                    android:text="A\n1540"
                     android:layout_marginEnd="@dimen/button_margin"
                     android:layout_weight="4"
                     android:background="@android:color/transparent"
+                    android:gravity="center"
                     android:scaleType="fitCenter"
-                    android:textSize="@dimen/button_text_size"
                     android:tag="A"
-                    />
+                    android:text="A\n1540"
+                    android:textSize="@dimen/button_text_size" />
 
             </LinearLayout>
 
@@ -87,41 +83,39 @@
                 android:id="@+id/lLayout2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:layout_below="@+id/lLayout1"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
                 android:layout_marginTop="15dp"
-                android:baselineAligned="false"
                 android:layout_marginEnd="@dimen/button_margin"
-                >
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:baselineAligned="false">
 
                 <Button
                     android:id="@+id/btnL4"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/digital_panel_button_height"
-                    android:gravity="center"
-                    android:text="LED\n1540"
+                    android:layout_marginEnd="@dimen/button_margin"
                     android:layout_weight="4"
                     android:background="@android:color/transparent"
+                    android:gravity="center"
                     android:scaleType="fitCenter"
-                    android:textSize="@dimen/button_text_size"
-                    android:layout_marginEnd="@dimen/button_margin"
                     android:tag="LED"
-                    />
+                    android:text="LED\n1540"
+                    android:textSize="@dimen/button_text_size" />
 
 
                 <Button
                     android:id="@+id/btnL5"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/digital_panel_button_height"
-                    android:gravity="center"
-                    android:text="TL84\n1540"
                     android:layout_marginEnd="@dimen/button_margin"
                     android:layout_weight="4"
                     android:background="@android:color/transparent"
+                    android:gravity="center"
                     android:scaleType="fitCenter"
-                    android:textSize="@dimen/button_text_size"
                     android:tag="TL84"
+                    android:text="TL84\n1540"
+                    android:textSize="@dimen/button_text_size"
 
                     />
 
@@ -129,12 +123,12 @@
                     android:id="@+id/btnL6"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/digital_panel_button_height"
-                    android:gravity="center"
-                    android:text="UVA\n1540"
                     android:layout_marginEnd="@dimen/button_margin"
                     android:layout_weight="4"
                     android:background="@android:color/transparent"
+                    android:gravity="center"
                     android:scaleType="fitCenter"
+                    android:text="UVA\n1540"
                     android:textSize="@dimen/button_text_size"
 
                     />
@@ -145,18 +139,17 @@
                 android:id="@+id/lLayout3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:layout_below="@+id/lLayout2"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
                 android:layout_marginTop="5dp"
-                android:baselineAligned="false"
-                >
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:baselineAligned="false">
 
                 <TextView
+                    android:id="@+id/infobox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:id="@+id/infobox"
                     android:text="Press 3 seconds to reset"
 
                     />
@@ -170,22 +163,21 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/lLayout3"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:layout_marginTop="15dp"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:orientation="vertical"
-                android:visibility="gone"
-                >
+                android:visibility="gone">
 
                 <CheckedTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="EnableBlower"
+                    android:layout_marginBottom="5dp"
+                    android:checkMark="@null"
                     android:checked="true"
                     android:drawableLeft="?android:attr/listChoiceIndicatorMultiple"
                     android:drawableRight="@null"
-                    android:checkMark="@null"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="5dp"
+                    android:text="EnableBlower"
 
                     />
 
@@ -193,62 +185,61 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/lLayout5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/lLayout4"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:layout_marginTop="5dp"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:orientation="vertical"
-                android:id="@+id/lLayout5"
-                android:visibility="gone"
-                >
+                android:visibility="gone">
 
                 <CheckedTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Master"
+                    android:layout_marginBottom="0dp"
+                    android:checkMark="@null"
                     android:checked="true"
                     android:drawableLeft="?android:attr/listChoiceIndicatorMultiple"
                     android:drawableRight="@null"
-                    android:checkMark="@null"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="0dp"
+                    android:text="Master"
 
                     />
 
                 <CheckedTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Slave"
+                    android:layout_marginBottom="0dp"
+                    android:checkMark="@null"
                     android:checked="false"
                     android:drawableLeft="?android:attr/listChoiceIndicatorMultiple"
                     android:drawableRight="@null"
-                    android:checkMark="@null"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="0dp"
-                    />
+                    android:text="Slave" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
+
                     <TextView
+                        android:id="@+id/address_label"
                         android:layout_width="@dimen/recertification_label_width"
                         android:layout_height="wrap_content"
-                        android:id="@+id/address_label"
-                        android:text="Slave address: "
                         android:layout_marginEnd="10dp"
-                        />
+                        android:text="Slave address: " />
 
                     <EditText
                         android:id="@+id/edit_slave_address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Slave address"
-                        android:textSize="13sp"
-                        android:nextFocusForward="@+id/edit_DACvalue"
                         android:imeOptions="actionNext"
+                        android:nextFocusForward="@+id/edit_DACvalue"
                         android:singleLine="true"
+                        android:textSize="13sp"
 
                         />
                 </LinearLayout>
@@ -257,35 +248,33 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/lLayout6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/lLayout5"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:layout_marginTop="15dp"
-                android:orientation="horizontal"
-                android:id="@+id/lLayout6"
-                >
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:orientation="horizontal">
 
 
                 <TextView
+                    android:id="@+id/TL84_fullbright_label"
                     android:layout_width="@dimen/recertification_label_width"
                     android:layout_height="wrap_content"
-                    android:id="@+id/TL84_fullbright_label"
-                    android:text="TL84 Full Brightness: "
                     android:layout_marginEnd="10dp"
-                    />
+                    android:text="@string/maintenance_page_setting_1_label" />
 
 
                 <EditText
                     android:id="@+id/edit_TL84_fullbright_value"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="13sp"
-                    android:singleLine="true"
                     android:hint="Full TL84 brightness (500-900)"
-                    android:nextFocusForward="@+id/edit_DACvalue"
                     android:imeOptions="actionNext"
+                    android:nextFocusForward="@+id/edit_DACvalue"
+                    android:singleLine="true"
+                    android:textSize="13sp"
 
                     />
 
@@ -293,34 +282,32 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/lLayout7"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/lLayout6"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:orientation="horizontal"
-                android:id="@+id/lLayout7"
-                >
+                android:orientation="horizontal">
 
 
                 <TextView
+                    android:id="@+id/DAC_label"
                     android:layout_width="@dimen/recertification_label_width"
                     android:layout_height="wrap_content"
-                    android:id="@+id/DAC_label"
-                    android:text="TL84 Dim Value: "
                     android:layout_marginEnd="10dp"
-                    />
+                    android:text="@string/maintenance_page_setting_2_label" />
 
 
                 <EditText
                     android:id="@+id/edit_DACvalue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="13sp"
-                    android:singleLine="true"
                     android:hint="Dim Value (600-800)"
-                    android:nextFocusForward="@+id/edit_PSU_current"
                     android:imeOptions="actionNext"
+                    android:nextFocusForward="@+id/edit_PSU_current"
+                    android:singleLine="true"
+                    android:textSize="13sp"
 
                     />
 
@@ -328,34 +315,32 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/lLayout8"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/lLayout7"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:layout_marginTop="5dp"
-                android:orientation="horizontal"
-                android:id="@+id/lLayout8"
-                >
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:orientation="horizontal">
 
 
                 <TextView
+                    android:id="@+id/DACmax_power_label"
                     android:layout_width="@dimen/recertification_label_width"
                     android:layout_height="wrap_content"
-                    android:id="@+id/DACmax_power_label"
-                    android:text="Max PSU current (mA): "
                     android:layout_marginEnd="10dp"
-                    />
+                    android:text="@string/maintenance_page_setting_3_label" />
 
 
                 <EditText
                     android:id="@+id/edit_PSU_current"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="13sp"
-                    android:singleLine="true"
                     android:hint="milli Amps"
                     android:nextFocusForward="@+id/btnSave"
+                    android:singleLine="true"
+                    android:textSize="13sp"
 
                     />
 
@@ -363,15 +348,15 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/layout_extended_mode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_above="@+id/layout_bottom_row_2"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_above="@+id/layout_bottom_buttons"
                 android:layout_marginTop="40dp"
-                android:baselineAligned="false"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:layout_marginBottom="20dp"
-                >
+                android:baselineAligned="false">
 
                 <TextView
                     android:layout_width="0dp"
@@ -386,67 +371,70 @@
                     android:id="@+id/switch_extended_lamps_mode"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_gravity="left|center_vertical"
+                    android:layout_weight="@dimen/settings_pg_value_width"
                     android:text=""
                     android:textSize="@dimen/button_text_size"
-                    android:layout_weight="@dimen/settings_pg_value_width"
-                    android:layout_gravity="left|center_vertical"
                     android:theme="@style/MySwitch"
-                    />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
 
             </LinearLayout>
 
-
             <RelativeLayout
+                android:id="@+id/layout_bottom_row_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/lLayoutbottomspace"
-                android:layout_gravity="right|end"
+                android:layout_above="@+id/layout_bottom_row_1"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_marginBottom="7dp"
-                android:id="@+id/layout_bottom_buttons">
-
+                android:layout_marginBottom="5dp"
+                android:baselineAligned="false">
 
                 <Button
-                    android:id="@+id/lightsettings"
+                    android:id="@+id/button_back"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
                     android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginEnd="@dimen/button_margin"
-                    android:baselineAligned="false"
-                    android:gravity="center"
-                    android:onClick="openLightPage"
-                    android:text="Light settings"
+                    android:background="@color/torso_gray_button"
+                    android:onClick="onClickBack"
+                    android:text="back"
+                    android:layout_marginBottom="@dimen/button_margin_10dp"
                     android:textSize="@dimen/button_text_size" />
 
                 <Button
-                    android:id="@+id/btnSave"
+                    android:id="@+id/button_save"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="5dp"
                     android:layout_alignParentRight="true"
-                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_marginBottom="@dimen/button_margin_10dp"
                     android:background="@color/torso_blue_main"
-                    android:baselineAligned="false"
-                    android:gravity="center"
                     android:onClick="saveSettings"
                     android:text="SAVE"
                     android:textColor="@color/white"
                     android:textSize="@dimen/button_text_size" />
 
                 <Button
+                    android:id="@+id/button_light_settings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/button_back"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:onClick="openLightPage"
+                    android:text="Light settings"
+                    android:textSize="@dimen/button_text_size" />
+
+                <Button
                     android:id="@+id/btnFactoryReset"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/lightsettings"
-                    android:layout_alignEnd="@+id/lightsettings"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginTop="2dp"
+                    android:layout_below="@id/button_save"
+                    android:layout_alignParentEnd="true"
                     android:backgroundTint="@color/torso_red_button"
                     android:onClick="factoryReset"
                     android:text="Factory reset"
@@ -455,25 +443,24 @@
 
             </RelativeLayout>
 
+
             <RelativeLayout
-                android:id="@+id/lLayoutbottomspace"
+                android:id="@+id/layout_bottom_row_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="3dp"
-                android:baselineAligned="true"
                 android:layout_alignParentBottom="true"
-                >
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_marginBottom="3dp"
+                android:baselineAligned="true">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="10sp"
                     android:text="@string/torso_footer_address"
-                    android:visibility="gone"
-                    />
+                    android:textSize="10sp"
+                    android:visibility="gone" />
 
 
             </RelativeLayout>

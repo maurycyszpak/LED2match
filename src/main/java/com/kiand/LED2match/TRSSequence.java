@@ -454,10 +454,6 @@ public class TRSSequence extends ListActivity {
         //Moved from Digital Panel
         String sSequence = "D";
         duplicateSPFile();
-        makeToast("Storing sequence ... ");
-        Log.d(TAG, "Executing sequence, kicking off function processSequenceFile()");
-
-        //processSequenceFile();
         spLampTimers = getSharedPreferences(TRSSequence_old.SP_LAMP_TIMERS, 0);
         TreeMap<String, ?> allEntries = new TreeMap<String, Object>(spLampTimers.getAll());
         int i = 1;
@@ -479,6 +475,10 @@ public class TRSSequence extends ListActivity {
         //makeToast(sSequence);
 
         SystemClock.sleep(200);
+    }
+
+    public void onClickBack (View v) {
+        finish();
     }
 
     public void duplicateSPFile() {

@@ -349,7 +349,7 @@
                 android:orientation="vertical">
 
                 >
-                <LinearLayout
+                <!--<LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/lLayout4"
@@ -371,8 +371,8 @@
                         android:background="@color/app_background"
                         />
 
-            </LinearLayout>
-            <LinearLayout
+            </LinearLayout>-->
+            <!--<LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/lLayout4"
@@ -393,7 +393,7 @@
                     android:text=""
                     android:textColor="@color/black"
                     />
-            </LinearLayout>
+            </LinearLayout>-->
 
 
             </LinearLayout>

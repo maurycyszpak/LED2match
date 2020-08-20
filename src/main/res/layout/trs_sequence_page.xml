@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:layout_weight="0.7"
+        android:layout_weight="0.6"
         >
 
 
@@ -48,26 +48,26 @@
         android:id="@+id/lLayoutbottomspace"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginLeft="@dimen/main_screen_sidemargin"
-        android:layout_marginRight="@dimen/main_screen_sidemargin"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:baselineAligned="true"
         android:layout_alignParentBottom="true"
-        android:layout_weight="0.3"
+        android:layout_marginLeft="@dimen/main_screen_sidemargin"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="@dimen/main_screen_sidemargin"
+        android:layout_marginBottom="5dp"
+        android:layout_weight="0.4"
+        android:baselineAligned="true"
 
         >
 
         <LinearLayout
+            android:id="@+id/layout_infinity_modifier"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_above="@+id/lLayout3"
             android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp"
             android:layout_marginTop="0dp"
-            android:layout_marginBottom="10dp"
-            android:baselineAligned="false"
-            android:id="@+id/layout_infinity_modifier"
-            >
+            android:layout_marginRight="0dp"
+            android:layout_marginBottom="5dp"
+            android:baselineAligned="false">
 
             <TextView
                 android:layout_width="0dp"
@@ -76,77 +76,108 @@
                 android:layout_weight="@dimen/settings_pg_label_width"
                 android:gravity="end|center_vertical"
                 android:text="Infinite loop"
-                android:textSize="@dimen/button_text_size"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black"
+                android:textSize="@dimen/button_text_size" />
 
             <Switch
                 android:id="@+id/switch_infinite_loop"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
+                android:layout_weight="@dimen/settings_pg_value_width"
+                android:text=""
+                android:textSize="@dimen/button_text_size"
+                android:theme="@style/MySwitch"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:text=""
-                android:textSize="@dimen/button_text_size"
-                android:layout_weight="@dimen/settings_pg_value_width"
-                android:layout_gravity="left|center_vertical"
-                android:theme="@style/MySwitch"
 
                 />
 
 
         </LinearLayout>
-
 
         <LinearLayout
             android:id="@+id/lLayout3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/layout_infinity_modifier"
+            android:layout_above="@+id/layout_save_button"
             android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:baselineAligned="false"
-            android:orientation="horizontal"
-            >
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/infobox"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:textSize="12dp"
-                android:text="@string/prg_sequence_hint_text"
+                android:layout_marginEnd="3dp"
                 android:background="@drawable/rounded_light_border"
                 android:padding="3dp"
-                android:layout_marginEnd="3dp"
+                android:text="@string/prg_sequence_hint_text"
                 android:textColor="@color/black"
+                android:textSize="12dp" />
 
-                />
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_gravity="end"
-                >
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@color/torso_blue_main"
-                    android:onClick="generateSequenceCommand"
-                    android:text="SAVE"
-                    android:textColor="@color/white"
-                    android:textSize="18dp"
-                    android:layout_margin="@dimen/button_margin_3dp" />
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="reset"
-                    android:textSize="18dp"
-                    android:onClick="resetSequenceCommand"
-                    android:background="@color/torso_gray_button"
-                    android:layout_margin="@dimen/button_margin_3dp" />
-            </LinearLayout>
         </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/layout_save_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/layout_reset_button"
+            android:layout_gravity="right|end"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginBottom="5dp"
+            android:baselineAligned="false">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/seq_page_button_height"
+                android:background="@color/torso_gray_button"
+                android:onClick="resetSequenceCommand"
+                android:text="reset"
+                android:textSize="@dimen/button_text_size" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/seq_page_button_height"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+
+                android:background="@color/torso_blue_main"
+                android:onClick="generateSequenceCommand"
+                android:text="SAVE"
+                android:textColor="@color/white"
+                android:textSize="@dimen/button_text_size" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layout_reset_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="right|end"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginBottom="10dp"
+            android:baselineAligned="false">
+
+            <Button
+                android:id="@+id/btnBack"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/seq_page_button_height"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginEnd="@dimen/button_margin"
+                android:background="@color/torso_gray_button"
+                android:onClick="onClickBack"
+                android:text="BACK"
+                android:textSize="@dimen/button_text_size" />
+
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -160,8 +191,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="bottom"
                 android:text="@string/torso_footer_address"
-                android:textSize="10sp"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black"
+                android:textSize="10sp" />
         </LinearLayout>
     </RelativeLayout>
 </LinearLayout>

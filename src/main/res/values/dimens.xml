@@ -15,7 +15,7 @@
     <dimen name="service_page_col1_width">140dp</dimen>
     <dimen name="service_page_col3_width">100dp</dimen>
 
-    <dimen name="button_text_size">16dp</dimen>
+    <dimen name="button_text_size">16sp</dimen>
     <dimen name="manual_text_size">12sp</dimen>
     <dimen name="regular_text_size">14sp</dimen>
     <dimen name="larger_text_size">16sp</dimen>
@@ -30,6 +30,7 @@
     <dimen name="settings_pg_value_width">0.38</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="button_width_narrow">100dp</dimen>
+    <dimen name="button_wide_text_padding">8dp</dimen>
 
     <dimen name="light_setting_pg_slider_bttm_margin">5dp</dimen>
     <dimen name="textview_default_top_margin">10dp</dimen>

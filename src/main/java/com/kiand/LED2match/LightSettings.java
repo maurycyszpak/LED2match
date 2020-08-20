@@ -91,7 +91,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 	private static final int MSG_SHOW_TOAST = 1;
 	private static final String password = "hokus";
 	final Context context = this;
-	public static String TAG = "MORRIS-BTCLIENT";
+	public static String TAG = "MORRIS-LIGHT SET";
 	public boolean blUSBConnected = false;
 	public String sFWver = "N/A";
 	public static String sUnitName = "";
@@ -579,7 +579,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 
 		ArrayList<String> RESERVED_PRESET_NAMES_LIST = new ArrayList <> (Arrays.asList("LOW", "PRG", "OFF"));
 		mHandler = new MyHandler(this);
-		setContentView(R.layout.light_adjustments);// main
+		setContentView(R.layout.light_settings);// main
 
 		display = findViewById(R.id.textTestControl);
         display.setMovementMethod(new ScrollingMovementMethod());
@@ -1244,18 +1244,17 @@ public class LightSettings extends Activity implements ServiceConnection {
 
 					sendPresetsOverBT();
 					sendPresetsOverSerial();
-					//SystemClock.sleep(1000);
 					getJSONFile();
-					SystemClock.sleep(1000);
+					/*SystemClock.sleep(1000);
 					extractPresetsFromJson();
-					spnPresetsAdapter.notifyDataSetChanged();
+					spnPresetsAdapter.notifyDataSetChanged();*/
 
-					blSilent = true;
+					/*blSilent = true;
 					if (spnPresetsArrayList.size() > 0) {
 						spinner_control_preset_list.setSelection(0);
 						colorizeLayout214(spinner_control_preset_list.getSelectedItem().toString(), PRESETS_DEFINITION);
 					}
-					blSilent = false;
+					blSilent = false;*/
 
 				} else {
 					Toast.makeText(getBaseContext(), "Only " + NUM_PRESETS_MAX + " presets allowed. Please remove a preset to store a new one.\nCurrent size: " + spnPresetsArrayList.size(), Toast.LENGTH_SHORT).show();
@@ -1304,26 +1303,22 @@ public class LightSettings extends Activity implements ServiceConnection {
 			spsEditor_write.commit();
 
 			if (spnPresetsArrayList.size() > 0) {
-
-
 				sendPresetsOverSerial();
 				sendPresetsOverBT();
 				SystemClock.sleep(100);
 
 				getJSONFile();
-				SystemClock.sleep(2000);
+				/*SystemClock.sleep(2000);
 				extractPresetsFromJson();
+				spnPresetsAdapter.notifyDataSetChanged();*/
 
-				//spnPresetsAdapter.addAll(spnPresetsArrayList);
-				spnPresetsAdapter.notifyDataSetChanged();
-
-				blSilent = true;
+				/*blSilent = true;
 				if (spnPresetsArrayList.size()>0) {
 					spinner_control_preset_list.setSelection(0);
 					colorizeLayout214(spinner_control_preset_list.getSelectedItem().toString(), APP_SHAREDPREFS_READ);
 					//spnPresetsAdapter.notifyDataSetChanged(); // Mauricio - this might not be needed.
 				}
-				blSilent = false;
+				blSilent = false;*/
 			}
 			//hideSplash();
 		});
@@ -1383,6 +1378,12 @@ public class LightSettings extends Activity implements ServiceConnection {
 				writeData(findViewById(R.id.wrap_content), factorFileName, SystemClock.elapsedRealtime() + "-" + edWhite.getText().toString());
 			}
 		});
+	}
+
+	private void refresh_spinner_list() {
+		extractPresetsFromJson();
+		spnPresetsAdapter.notifyDataSetChanged();
+		makeToast("Preset list refreshed on dropdopwn");
 	}
 
 	public void extractPresetsFromJson() {
@@ -1855,7 +1856,12 @@ public class LightSettings extends Activity implements ServiceConnection {
 
 	@Override
 	public void onStart() {
-		super.onStart();
+
+    	super.onStart();
+		IntentFilter filter = new IntentFilter();
+		filter.addAction("controller_data_refreshed_event");
+		filter.addAction("request_preset_event");
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, filter);
 	}
 
     private Boolean power_drain_check(String sPresetRGBValues) {
@@ -2040,7 +2046,6 @@ public class LightSettings extends Activity implements ServiceConnection {
         setFilters();  // Start listening notifications from UsbService
 		Log.d(TAG, "starting USB connection service");
         startService(UsbCOMMsService.class, usbConnection, null); // Start UsbService(if it was not started before) and Bind it
-		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("request_preset_event"));
 
         if (!mBoundBT) {
             Intent intent = new Intent(this, BtCOMMsService.class);
@@ -2057,8 +2062,17 @@ public class LightSettings extends Activity implements ServiceConnection {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			// Extract data included in the Intent
-			String message = intent.getStringExtra("counter");
-			Log.d(TAG, "Got message: " + message);
+			if (intent == null) {
+				return;
+			}
+			if (intent.getAction().equals("request_preset_event")) {
+				String message = intent.getStringExtra("counter");
+				Log.d(TAG, "Request_preset_event received - extra message (counter): " + message);
+			} else if (intent.getAction().equals("controller_data_refreshed_event")) {
+				Log.d(TAG, "controller data refreshed - intent received");
+				refresh_spinner_list();
+			}
+
 		}
 	};
 

@@ -20,6 +20,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -32,13 +33,14 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import static com.kiand.LED2match.BtCOMMsService.BT_CONNECTED_PREFS;
 import static com.kiand.LED2match.Constants.CONFIG_SETTINGS;
 import static com.kiand.LED2match.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 
-public class TRSSettings extends Activity implements ServiceConnection {
+public class TRSSettings extends Activity {
 
     public static final String SHAREDPREFS_ONE_OFF_SEEKBARS = "one-off-seekbar-values.txt"; //Mauricio
     public static final String TIME_OFF_STORAGE = "shutdown_timer"; //Mauricio
@@ -55,16 +57,12 @@ public class TRSSettings extends Activity implements ServiceConnection {
     Button btnSave;
     Switch aSwitch;
 
-
-    private BtCOMMsService lclBTServiceInstance;
     public String TAG = "MORRIS-SETTINGS";
-    private Handler lclHandler;
+    private BtCOMMsService lclBTServiceInstance;
     private UsbCOMMsService lclUsbServiceInstance;
-    private BtCOMMsService btService;
     boolean mBound = false;
     boolean mBoundBT = false;
     final Context context = this;
-    private LightSettings.MyHandler mHandler;
     public final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     private boolean bl_bluetooth_forced_on;
     private CountDownTimer shutdownTimer;
@@ -119,14 +117,13 @@ public class TRSSettings extends Activity implements ServiceConnection {
     };
 
     private ServiceConnection mConnection = new ServiceConnection() {
-
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             UsbCOMMsService.UsbBinder binder = (UsbCOMMsService.UsbBinder) service;
             lclUsbServiceInstance = binder.getService();
             mBound = true;
-
+            Log.d(TAG, "mBound = " + mBound + ", mBoundBT = " + mBoundBT);
         }
 
         @Override
@@ -135,69 +132,67 @@ public class TRSSettings extends Activity implements ServiceConnection {
         }
     };
 
-    @Override
-    public void onServiceConnected(ComponentName name, IBinder binder) {
-        //BtCOMMsService.MyBinder b = (BtCOMMsService.MyBinder) binder;
-        //btService = b.getService();
-        //Toast.makeText(LightAdjustments.this, "666 Connected 666", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onServiceDisconnected(ComponentName name) {
-        btService = null;
-    }
 
     public final ServiceConnection btConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName arg0, IBinder arg1) {
-            btService = ((BtCOMMsService.MyBinder) arg1).getService();
-            btService.setHandler(mHandler);
+            lclBTServiceInstance = ((BtCOMMsService.MyBinder) arg1).getService();
+            Log.d(TAG, "BT Comms service connection established, btService communication interface established.");
             mBoundBT = true;
+            Log.d(TAG, "mBound = " + mBound + ", mBoundBT = " + mBoundBT);
+            trigger_temp_reading();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            btService = null;
+            lclBTServiceInstance = null;
             mBoundBT = false;
+            Log.d(TAG, "BT Comms service connection not available, probably remote service has been closed.");
         }
     };
 
     protected void onResume()
     {
         super.onResume();
-        //Toast.makeText(this.getBaseContext(),"mBound = " + mBound, Toast.LENGTH_SHORT).show();
-
-        if (!mBound) {
-            Intent intent = new Intent(this, UsbCOMMsService.class);
-            bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-            //Toast.makeText(this.getBaseContext(),"Service bound (onResume)", Toast.LENGTH_SHORT).show();
-            mBound = true;
-        }
-
-        if (!mBoundBT) {
-            Intent intent = new Intent(this, BtCOMMsService.class);
-            bindService(intent, btConnection, Context.BIND_AUTO_CREATE);
-            //Toast.makeText(this.getBaseContext(),"Service bound (onResume)", Toast.LENGTH_SHORT).show();
-            mBoundBT = true;
-        }
-
         populate_unit_config();
-        /*get_shutdown_delay();
-        get_TL84_delay();*/
+        Log.d(TAG, "mBound = " + mBound + ", mBoundBT = " + mBoundBT);
 
-        /*if (check_for_shutdown_timer_h() > 0) {
-            editOff_h.setText(String.valueOf(check_for_shutdown_timer_h()));
+    }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Extract data included in the Intent
+            if (intent == null) {
+                return;
+            }
+            if (intent.getAction().equals("temperature_reading_event")) {
+                String message = intent.getStringExtra("temperature");
+                Log.d(TAG, "Got message: " + message);
+                TextView textTemperature = findViewById(R.id.temperature_textview);
+                message += "\u2103";
+                textTemperature.setText(message);
+            }
         }
-        if (check_for_shutdown_timer_m() > 0) {
-            editOff_m.setText(String.valueOf(check_for_shutdown_timer_m()));
+    };
+
+    private void trigger_temp_reading() {
+        if (mBound) {
+            String sCommand = "G" + Constants.sNewLine;
+            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
         }
 
-        int delay = check_for_TL84_delay();
-        if (delay > 0) {
-            edit_TL84_delay.setText(String.valueOf(check_for_TL84_delay()));
-        } else {
-            edit_TL84_delay.setText(String.valueOf(TL84_DELAY_DEFAULT));
-        }*/
+        if (mBoundBT) {
+            SystemClock.sleep(500);
+            try {
+                String sSequence = "G";
+                Log.d(TAG, "Requesting temp reading from controller");
+                sSequence = sSequence.concat(System.lineSeparator());
+                lclBTServiceInstance.sendData(sSequence);
+            } catch (NullPointerException e) {
+                Log.d(TAG, "NullPointerException when sending command via Bluetooth");
+            }
+        }
     }
 
     private void populate_unit_config() {
@@ -257,10 +252,20 @@ public class TRSSettings extends Activity implements ServiceConnection {
     @Override
     protected void onStart() {
         super.onStart();
-        // Bind to UsbService
-        //Toast.makeText(this.getBaseContext(),"Activity started", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, UsbCOMMsService.class);
-        bindService (intent, mConnection, Context.BIND_AUTO_CREATE);
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("temperature_reading_event");
+        filter.addAction("controller_data_refreshed_event");
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, filter);
+
+        Intent intentUSB = new Intent(this, UsbCOMMsService.class);
+        bindService (intentUSB, mConnection, Context.BIND_AUTO_CREATE);
+
+        Log.d(TAG, "Creating IntentBT and binding it with BtCOMMsService");
+        Intent intentBT = new Intent(this, BtCOMMsService.class);
+        bindService(intentBT, btConnection, Context.BIND_AUTO_CREATE);
+
+
         //Toast.makeText(this.getBaseContext(),"Service bound (onStart)", Toast.LENGTH_SHORT).show();
         /*String sCommand = "J" + LightAdjustments.sNewLine; */
     }
@@ -313,7 +318,6 @@ public class TRSSettings extends Activity implements ServiceConnection {
         editOff_m = findViewById(R.id.editAutoShutOFF_m);
         edit_TL84_delay = findViewById(R.id.edit_TL84_delay);
 
-        lclHandler = new Handler();
         btnSave = findViewById(R.id.btnSave);
         btnSave.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_main));
         btnSave.setTextColor(Color.WHITE);
@@ -574,12 +578,9 @@ public class TRSSettings extends Activity implements ServiceConnection {
         String sCommand = "I" + settings_value + "$" + newLine;
 
         Long lTimeToOFF = (long) (iHours_idle_shutoff * 60 * 60 + iMinutes_idle_shutoff * 60);
-        //if (lTimeToOFF > 0) {
-        Log.d(TAG, "Setting timer on - switching OFF all lamps in " + iHours_idle_shutoff + " hours and " + iMinutes_idle_shutoff + " minutes (=" + lTimeToOFF + " seconds).");
-        Toast.makeText(TRSSettings.this, "Timer ON\nAll lamps off in " + iHours_idle_shutoff + " hours and " + iMinutes_idle_shutoff + " minutes.", Toast.LENGTH_LONG).show();
 
         if (mBoundBT) {
-            btService.sendData(sCommand);
+            lclBTServiceInstance.sendData(sCommand);
         } else {
             Log.d(TAG, "Service btService not connected!");
         }
@@ -592,17 +593,13 @@ public class TRSSettings extends Activity implements ServiceConnection {
         //}
     }
 
-    public void restart_idle_shutoff() {
-
-    }
-
     public void allOFF() {
         String sCommand = "S00000000000000000000";
         sCommand += "$" + newLine;
         //if (btService.connected) {
         if (mBoundBT) {
             //Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-            btService.sendData(sCommand);
+            lclBTServiceInstance.sendData(sCommand);
         } else {
             Log.d(TAG, "Service btService not connected!");
         }

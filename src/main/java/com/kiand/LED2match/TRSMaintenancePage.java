@@ -557,7 +557,6 @@ public class TRSMaintenancePage extends Activity {
             bl_valid_DAC_value = true;
         }*/
 
-
         /*Log.d(TAG, "DAC value of '" + value + "' stored in prefs file");
         makeToast( "DAC value of '" + value + "' successfully stored.");*/
         String sCommand = "M" + settings_value + "$" + newLine;
@@ -568,7 +567,6 @@ public class TRSMaintenancePage extends Activity {
             Log.d(TAG, "Service btService not connected when sending message: '" + sCommand + "'");
         }
         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-
 
         Float ampValue = 0.0f;
         int milliAmpValue = 0;
@@ -586,9 +584,7 @@ public class TRSMaintenancePage extends Activity {
             } catch (NumberFormatException e) {
                 makeToast("PSU power value does not look like an integer value.");
             }
-
         }
-
 
         if (bl_valid_psu_power) {
             SharedPreferences spFile = getSharedPreferences(Constants.PREFS_PSU_CURRENT, 0);
@@ -598,10 +594,9 @@ public class TRSMaintenancePage extends Activity {
             editor.putInt(prefs_psu_value_tag, milliAmpValue);
             editor.apply();
             Log.d(TAG, "PSU current of '" + milliAmpValue + "' stored in prefs file");
-            makeToast( "PSU current value of '" + milliAmpValue + " milli Amps' successfully stored.");
             //int value = spFile.getInt("dac_value", 0);
         }
-
+        makeToast( "Saving configuration data on Controller.");
 
     }
 
@@ -614,31 +609,6 @@ public class TRSMaintenancePage extends Activity {
         sValue = sValue.toUpperCase();
         return sValue;
     }
-
-    private void readDACvalue() {
-        EditText edit_dac = findViewById(R.id.edit_DACvalue);
-        SharedPreferences spFile = getSharedPreferences(PREFS_DAC_VALUE, 0);
-        Integer value = spFile.getInt("dac_value", 0);
-        if (value > 0) {
-            edit_dac.setText(String.valueOf(value));
-        }
-    }
-
-    private void readPSUpower() {
-        EditText edit_psu = findViewById(R.id.edit_PSU_current);
-        SharedPreferences spFile = getSharedPreferences(Constants.PREFS_PSU_CURRENT, 0);
-        //Float value = spFile.getFloat(prefs_psu_value_tag, 0.0f);
-        try {
-            int value = spFile.getInt(prefs_psu_value_tag, 0);
-            if (value > 0) {
-                edit_psu.setText(String.valueOf(value));
-            }
-        } catch (NumberFormatException e) {
-            makeToast("Unable to read the stored PSU power value");
-        }
-
-    }
-
 
     public void setLampName(int i, String sName) {
         if (i == 1) {

@@ -75,7 +75,7 @@ public class TRSDigitalPanel extends Activity {
     private LightSettings.MyHandler mHandler;
     public final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
 
-    boolean blLamp1_ON, blLamp2_ON, blLamp3_ON, blLamp4_ON, blLamp5_ON, blLamp6_ON, blLamp7_ON, blTL84_ON, blLamp10_ON, blLamp11_ON, blLamp12_ON;
+    boolean blLamp1_ON, blLamp2_ON, blLamp3_ON, blLamp4_ON, blLamp5_ON, blLamp6_ON, blLamp7_ON, blTL84_ON, blLamp10_ON, blLamp11_ON, blLamp12_ON, blPRG_ON;
     Button btnL1, btnL2, btnL3, btnL4, btnL5, btnL6, btnL7, btnLOW, btnL9, btnReassign, btnL10, btnL11, btnL12;
     ImageView usb_conn_indicator;
     ImageView bt_conn_indicator;
@@ -187,14 +187,7 @@ public class TRSDigitalPanel extends Activity {
             if (intent == null) {
                 return;
             }
-            if (intent.getAction().equals("temperature_reading_event")) {
-                String message = intent.getStringExtra("temperature");
-                Log.d(TAG, "Got message: " + message);
-                TextView textTemperature = findViewById(R.id.temperature_textview);
-                message += "\u2103";
-                textTemperature.setText(message);
-
-            } else if (intent.getAction().equals("button_highlight_event")) {
+            if (intent.getAction().equals("button_highlight_event")) {
                 String index = intent.getStringExtra("button_index");
                 //Log.d(TAG, "Got index of button to highlight: " + index);
                 if (TextUtils.isEmpty(index)) {
@@ -259,7 +252,6 @@ public class TRSDigitalPanel extends Activity {
         });
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction("temperature_reading_event");
         filter.addAction("controller_data_refreshed_event");
         filter.addAction("button_highlight_event");
         filter.addAction("button_highlight_extra");
@@ -300,7 +292,7 @@ public class TRSDigitalPanel extends Activity {
                     } catch (NullPointerException e) {
                         Log.e(TAG, "NullPointerException when sending command via Bluetooth");
                     }
-                    SystemClock.sleep(1500);
+                    SystemClock.sleep(500);
                 }
                 if (bluetooth_connected()) {
                     try {
@@ -382,7 +374,8 @@ public class TRSDigitalPanel extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         //Toast.makeText(this.getBaseContext(),"Main activity destroyed", Toast.LENGTH_SHORT).show();
-        //mark_BT_disconnected();
+        toggle_bt_icon_OFF();
+        mark_BT_disconnected();
 
 
     }
@@ -631,13 +624,14 @@ public class TRSDigitalPanel extends Activity {
     }
 
     public void mark_BT_disconnected() {
-        makeToast("Entering mark BT disconnected");
+        //makeToast("Entering mark BT disconnected");
         SharedPreferences prefs = getSharedPreferences(BT_CONNECTED_PREFS, Context.MODE_PRIVATE);
         SharedPreferences.Editor spEditor = prefs.edit();
         spEditor.clear();
         spEditor.putBoolean("CONNECTED", false);
         spEditor.apply();
         Log.d(TAG, "BT connection marked as false in the sp file");
+        toggle_bt_icon_OFF();
     }
 
     public void toggle_usb_icon(View view) {
@@ -678,6 +672,8 @@ public class TRSDigitalPanel extends Activity {
                     break;
                 case BluetoothDevice.ACTION_ACL_DISCONNECTED:
                     Log.d(TAG, "Broadcast receiver: ACL_DISCONNECTED");
+                    makeToast("Bluetooth communication has been disconnected.");
+                    mark_BT_disconnected();
                     break;
             }
             Bundle bundle = intent.getExtras();
@@ -1712,6 +1708,10 @@ public class TRSDigitalPanel extends Activity {
                         Log.d(TAG, " *** NEW TL84 command (ON): " + sCommand);
                         send_via_bt(sCommand);
                         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+
+                        sCommand = "B," + button.getTag().toString() + "1$" + sNewLine;
+                        send_via_bt(sCommand);
+                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                         blTL84_ON = true;
                     } else {
                         //sCommand = "S11000$" + sNewLine; //actually we want to send a S11000^ffffffff(...)
@@ -1962,7 +1962,7 @@ public class TRSDigitalPanel extends Activity {
         btnL7.setTextColor(Color.WHITE);
 
         if (bl_force_LOW_off) {
-            btnLOW.setBackgroundResource(R.drawable.buttonselector_low);
+            btnLOW.setBackgroundResource(R.drawable.buttonselector_main);
             btnLOW.setTextColor(Color.WHITE);
         }
 
@@ -2007,6 +2007,11 @@ public class TRSDigitalPanel extends Activity {
         blLamp6_ON = false;
         btnL6.setBackgroundResource(R.drawable.buttonselector_main);
         btnL6.setTextColor(Color.WHITE);
+
+        blPRG_ON = false;
+        btnL7.setBackgroundResource(R.drawable.buttonselector_main);
+        btnL7.setTextColor(Color.WHITE);
+
 
         blLamp10_ON = false;
         btnL10.setBackgroundResource(R.drawable.buttonselector_main);
@@ -2229,26 +2234,9 @@ public class TRSDigitalPanel extends Activity {
 
                         if (edtInput.getText().toString().equals(password)) {
 
-                            //getJSONFile();
-                            //String sCommand = "J" + sNewLine;
-
-                            /*int iResult = usbService.sendBytes(sCommand.getBytes());
-                            if (iResult < 0) {
-                                Toast.makeText(context, "Stream was null, no request sent", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(context, "I think I've sent " + iResult + " bytes.", Toast.LENGTH_SHORT).show();
-                            }*/
-
                             Intent intent = new Intent(TRSDigitalPanel.this, TRSMaintenancePage.class);
                             startActivity(intent);
-                            // Intent sequencerIntent = new Intent(this, BtSequencerActivity.class);
-                            // startActivity(sequencerIntent);
                         } else {
-                            /*Message msg = new Message();
-                            msg.what = MSG_SHOW_TOAST;
-                            msg.obj = "Password incorrect";
-                            messageHandler.sendMessage(msg);*/
-                            makeToast(edtInput.getText().toString());
                             makeToast("Password incorrect");
                         }
                     })
@@ -2373,41 +2361,20 @@ public class TRSDigitalPanel extends Activity {
 
     public void executePRG (final View v) {
 
-        Long lTime;
-        Long lNextStopTime;
-        String sSequence = "D";
-
         duplicateSPFile();
         makeToast("Executing sequence ... ");
-        Log.d(TAG, "Executing sequence, kicking off function processSequenceFile()");
 
-        //processSequenceFile();
-        SharedPreferences spLampTimers = getSharedPreferences(SP_LAMP_TIMERS, 0);
-        TreeMap<String, ?> allEntries = new TreeMap<String, Object>(spLampTimers.getAll());
-        int i = 1;
-        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-            String sVal = entry.getValue().toString();
-            String[] sBuffer = sVal.split(",");
-            sSequence = sSequence.concat("0" + i);
-            sSequence = sSequence.concat(sBuffer[1]);
-            Log.d(TAG, "Currently sSequence: " + entry.getKey() + ": " + sSequence);
-            i++;
-        }
+        blPRG_ON = true;
+        btnL7.setBackgroundResource(R.drawable.buttonselector_active);
+        btnL7.setTextColor(Color.BLACK);
 
-        sSequence = sSequence.concat("^").concat((check_sequence_for_loop()) ? "1" : "0");
-        sSequence = sSequence.concat(System.lineSeparator());
-        lclBTServiceInstance.sendData(sSequence);
-        lclUsbServiceInstance.sendBytes(sSequence.getBytes());
-
-        Log.d(TAG, "Sending Bytes: " + sSequence);
-        //makeToast(sSequence);
-
-        SystemClock.sleep(200);
+        String sCommand = "B,PRG1$" + sNewLine;
+        send_via_bt(sCommand);
+        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
         String sExecute = "E" + System.lineSeparator();
         lclBTServiceInstance.sendData(sExecute);
         lclUsbServiceInstance.sendBytes(sExecute.getBytes());
         Log.d(TAG, "Sending Bytes: " + sExecute);
-        //switch_all_off();
     }
 
     boolean check_sequence_for_loop() {
@@ -2536,7 +2503,7 @@ public class TRSDigitalPanel extends Activity {
                 } else {
                     Log.d(TAG, "Service btService not connected!");
                 }
-                btnLOW.setBackgroundResource(R.drawable.buttonselector_low);
+                btnLOW.setBackgroundResource(R.drawable.buttonselector_main);
                 btnLOW.setTextColor(Color.WHITE);
                 lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                 blTL84_ON = true;
@@ -2544,7 +2511,7 @@ public class TRSDigitalPanel extends Activity {
         }
 
         if (BL_LOW_MODE) {
-            btnLOW.setBackgroundResource(R.drawable.buttonselector_low);
+            btnLOW.setBackgroundResource(R.drawable.buttonselector_main);
             btnLOW.setTextColor(Color.WHITE);
         } else {
             btnLOW.setBackgroundResource(R.drawable.buttonselector_active);

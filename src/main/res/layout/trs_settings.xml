@@ -18,8 +18,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Settings"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
+            android:layout_marginLeft="@dimen/main_screen_sidemargin"
+            android:layout_marginRight="@dimen/main_screen_sidemargin"
             android:layout_marginTop="20dp"
             android:textSize="15sp"
             android:visibility="invisible"
@@ -31,11 +31,51 @@
             >
 
             <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/lLayoutControls"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_label_width"
+                    android:gravity="end|center_vertical"
+                    android:text="System Temp"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/button_text_size" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_value_width"
+                    android:gravity="left"
+                    android:id="@+id/temperature_textview"
+                    android:text=""
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/button_text_size" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="0.16"
+                    android:gravity="center"
+                    android:textSize="@dimen/button_text_size" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/lLayout1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:layout_marginTop="20dp"
                 android:baselineAligned="false"
                 >
@@ -79,8 +119,8 @@
                 android:id="@+id/lLayout2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:layout_below="@+id/lLayout1"
                 android:layout_marginTop="5dp"
                 android:baselineAligned="false"
@@ -122,8 +162,8 @@
                 android:id="@+id/lLayoutMID"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:layout_below="@+id/lLayout2"
                 android:layout_marginTop="5dp"
                 android:baselineAligned="false"
@@ -163,8 +203,8 @@
                 android:id="@+id/lLayout3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:layout_below="@+id/lLayoutMID"
                 android:layout_marginTop="40dp"
                 android:baselineAligned="false"
@@ -210,8 +250,8 @@
                 android:id="@+id/lLayout4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:layout_below="@+id/lLayout3"
                 android:layout_marginTop="10dp"
                 android:baselineAligned="false"
@@ -279,6 +319,8 @@
             </LinearLayout>
 
 
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -328,10 +370,25 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/lLayoutbottomspace"
-                android:layout_gravity="right|end"
+                android:id="@+id/lLayoutSysTemp"
+                android:layout_above="@+id/bottom_buttons_layout"
                 android:layout_marginLeft="40dp"
                 android:layout_marginRight="40dp"
+                android:layout_marginBottom="15dp"
+                android:gravity="end"
+                android:baselineAligned="false"
+                >
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/lLayoutbottomspace"
+                android:layout_gravity="right|end"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:layout_marginBottom="20dp"
                 android:baselineAligned="false"
                 android:id="@+id/bottom_buttons_layout"
