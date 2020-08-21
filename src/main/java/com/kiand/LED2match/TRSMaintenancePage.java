@@ -346,23 +346,20 @@ public class TRSMaintenancePage extends Activity {
 
     private void populate_unit_config() {
         Log.d(TAG, "Populating page with unit config values");
-        String ee_autoshutoff_tag = "eeprom_auto_shutoff";
-        String ee_tl84delay_tag = "eeprom_tl84_delay";
         String ee_psucurrent_tag = "eeprom_PSU_current";
         String ee_tl84dim_tag = "eeprom_tl84_dim_value";
         String ee_tl84masterdim_tag = "eeprom_tl84_master_dim_value";
 
         SharedPreferences spConfig = getSharedPreferences(CONFIG_SETTINGS, 0);
-        SharedPreferences.Editor spConfigEditor = spConfig.edit();
-        String s_eeprom_auto_shutoff  = spConfig.getString(ee_autoshutoff_tag, "");
-        String s_eeprom_tl84_delay = spConfig.getString(ee_tl84delay_tag, "");
         String s_eeprom_PSU_current = spConfig.getString(ee_psucurrent_tag, "");
         String s_eeprom_tl84_dim_value = spConfig.getString(ee_tl84dim_tag, "");
         String s_eeprom_tl84_master_dim_value = spConfig.getString(ee_tl84masterdim_tag,"");
 
         try {
             if (s_eeprom_PSU_current.length() > 0) {
-                edit_psu.setText(s_eeprom_PSU_current);
+                if (Integer.valueOf(s_eeprom_PSU_current) != 0) {
+                    edit_psu.setText(s_eeprom_PSU_current);
+                }
             }
         } catch (NullPointerException e) {
             makeToast("PSU current not yet defined for this unit");
@@ -370,7 +367,9 @@ public class TRSMaintenancePage extends Activity {
 
         try {
             if (s_eeprom_tl84_dim_value.length() > 0) {
-                edit_tl84_dim.setText(s_eeprom_tl84_dim_value);
+                if (Integer.valueOf(s_eeprom_tl84_dim_value) != 0) {
+                    edit_tl84_dim.setText(s_eeprom_tl84_dim_value);
+                }
             }
         } catch (NullPointerException e) {
             makeToast("TL84 dim value not yet defined for this unit");
@@ -378,7 +377,9 @@ public class TRSMaintenancePage extends Activity {
 
         try {
             if (s_eeprom_tl84_master_dim_value.length() > 0) {
-                edit_tl84_master_dim.setText(s_eeprom_tl84_master_dim_value);
+                if (Integer.valueOf(s_eeprom_tl84_master_dim_value) != 0) {
+                    edit_tl84_master_dim.setText(s_eeprom_tl84_master_dim_value);
+                }
             }
         } catch (NullPointerException e) {
             makeToast("Full brightness TL84 dim value not yet defined for this unit");

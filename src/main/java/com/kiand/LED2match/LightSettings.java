@@ -2652,21 +2652,6 @@ public class LightSettings extends Activity implements ServiceConnection {
 			Log.d(TAG, "Sending '" + sVal + "' to convert to HEX");
 			encodedPresetRGBs.add(convertRGBwithCommasToHexString(sVal));
 			encodedPresetNames.add(sKey);
-
-			/*String sNum = Integer.toString(i);
-			if (sNum.length() == 1) { sNum = "0"+sNum; }
-			Log.d(TAG, "Splitting entry from spsValues: sKey=" + sKey + ", sVal="+ sVal);
-			Log.d(TAG, "Sending: Q" + sNum + "," + sKey + "," +sVal + "\n");
-			String string  = "Q" + sNum + "," + sKey + "," +sVal + sNewLine;
-
-			if (lclBTServiceInstance.connected) {
-				Log.d(TAG, "Service btService connected. Calling lclBTServiceInstance.sendData with message '" + string.replace("\n", "\\n").replace("\r", "\\r") + "'");
-				//lclBTServiceInstance.sendData(string);
-			} else {
-				Log.d(TAG, "Service btService not connected!");
-			}
-
-			i++;*/
 		}
 
 		String sSize;

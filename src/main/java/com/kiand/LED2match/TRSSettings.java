@@ -560,17 +560,14 @@ public class TRSSettings extends Activity {
 
 
         if (!TextUtils.isEmpty(edit_TL84_delay.getText().toString())) {
-            if (!validate_tl84_delay(Integer.valueOf(edit_TL84_delay.getText().toString()))) {
-                makeToast("NO BUENO");
-                bl_edit_tl84delay = false;
-            } else {
-                bl_edit_tl84delay = true;
-            }
+            //makeToast("NO BUENO");
+            bl_edit_tl84delay = validate_tl84_delay(Integer.valueOf(edit_TL84_delay.getText().toString()));
         }
 
         if (bl_edit_tl84delay) {
             settings_value += string_int_to_hex_4(edit_TL84_delay.getText().toString());
-            makeToast("TL84 delay of " + edit_TL84_delay.getText().toString() + "ms stored in the config file.");
+            //makeToast("TL84 delay of " + edit_TL84_delay.getText().toString() + "ms stored in the config file.");
+            makeToast("Config settings stored.");
         } else {
             settings_value += string_int_to_hex_4("0000");
         }

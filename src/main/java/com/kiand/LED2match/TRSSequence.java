@@ -11,6 +11,7 @@ import android.os.Bundle;
 
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -396,6 +397,9 @@ public class TRSSequence extends ListActivity {
         int iCounter = 0;
         String sDelay = "0000";
 
+        ArrayList<String> encodedPresetRGBs = new ArrayList<>();
+        ArrayList<String> encodedPresetNames = new ArrayList<>();
+
         SharedPreferences sp = getSharedPreferences(CONFIG_SETTINGS, 0);
         SharedPreferences.Editor sp_editor = sp.edit();
 
@@ -407,14 +411,10 @@ public class TRSSequence extends ListActivity {
             sp_editor.putBoolean("LOOP_SEQUENCE", false);
             sp_editor.apply();
         }
-
-
         SharedPreferences spLampTimers = getSharedPreferences(SP_LAMP_TIMERS, 0);
         SharedPreferences.Editor editorLampTimer = spLampTimers.edit();
-
         editorLampTimer.clear();
         editorLampTimer.apply();
-
 
         for (String seq_step_entry: listItems) {
             //makeToast("Processing '" + seq_step_entry + "'");
@@ -436,13 +436,9 @@ public class TRSSequence extends ListActivity {
                     updateLampHEXsequence("SEQ"+iCounter, sPresetName+ "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00") + sDelay);
                     //generateSequenceCommand
                 }
-
-
             } catch ( IndexOutOfBoundsException e ) {
                 makeToast("Unable to process sequence step: '" + seq_step_entry + "'");
             }
-
-
         }
         if (get_prefs_contents_size(SP_LAMP_TIMERS) > 0) {
             Toast.makeText(this, "Sequence data stored on mobile device.\nPress PRG on main panel to run", Toast.LENGTH_SHORT).show();
@@ -450,11 +446,10 @@ public class TRSSequence extends ListActivity {
             Toast.makeText(this, "Nothing to be saved", Toast.LENGTH_SHORT).show();
         }
 
-
         //Moved from Digital Panel
         String sSequence = "D";
         duplicateSPFile();
-        spLampTimers = getSharedPreferences(TRSSequence_old.SP_LAMP_TIMERS, 0);
+        spLampTimers = getSharedPreferences(Constants.SP_LAMP_TIMERS, 0);
         TreeMap<String, ?> allEntries = new TreeMap<String, Object>(spLampTimers.getAll());
         int i = 1;
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
@@ -462,17 +457,25 @@ public class TRSSequence extends ListActivity {
             String[] sBuffer = sVal.split(",");
             sSequence = sSequence.concat("0" + i);
             sSequence = sSequence.concat(sBuffer[1]);
+            encodedPresetRGBs.add("0" + i + sBuffer[1]);
+            encodedPresetNames.add(sBuffer[0]);
             Log.d(TAG, "Currently sSequence: " + entry.getKey() + ": " + sSequence);
             i++;
         }
 
         sSequence = sSequence.concat("^").concat((check_sequence_for_loop()) ? "1" : "0");
         sSequence = sSequence.concat(System.lineSeparator());
+        String sTestString1 = TextUtils.join("", encodedPresetRGBs);
+        String sTestString2 = TextUtils.join(",", encodedPresetNames);
+        String sResult = sTestString1.concat(sTestString2).concat("^").concat((check_sequence_for_loop()) ? "1" : "0");
+        sSequence = "D" + String.format("%02d", i-1) + sResult + System.lineSeparator();
+        Log.d(TAG, "Plomien 81: " + sResult);
+
+        //lclBTServiceInstance.sendData(sSequence);
         lclBTServiceInstance.sendData(sSequence);
         //lclUsbServiceInstance.sendBytes(sSequence.getBytes());
 
         Log.d(TAG, "Sending Bytes: " + sSequence);
-        //makeToast(sSequence);
 
         SystemClock.sleep(200);
     }
@@ -480,6 +483,42 @@ public class TRSSequence extends ListActivity {
     public void onClickBack (View v) {
         finish();
     }
+
+    /*private void generate_sequence_ver2 () {
+        String sVal;
+        String sKey;
+        ArrayList<String> encodedPresetNames = new ArrayList<>();
+        ArrayList<String> encodedPresetRGBs = new ArrayList<>();
+
+        //For each pair of key-> value add item to the list
+
+        Map<String, ?> allEntries = spsValues.getAll();
+        int i = 1;
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            sKey = entry.getKey();
+            sVal = entry.getValue().toString();
+
+            Log.d(TAG, "Sending '" + sVal + "' to convert to HEX");
+            encodedPresetRGBs.add(convertRGBwithCommasToHexString(sVal));
+            encodedPresetNames.add(sKey);
+        }
+
+        String sSize;
+        if (encodedPresetNames.size() < 10) {
+            sSize =  "0" + encodedPresetNames.size();
+        } else {
+            sSize = String.valueOf(encodedPresetNames.size());
+        }
+
+        String sCommand = "Q" + sSize + TextUtils.join("", encodedPresetRGBs) + TextUtils.join(",", encodedPresetNames) + "$\n";
+        Log.d(TAG, sCommand);
+        if (lclBTServiceInstance.connected) {
+            Log.d(TAG, "New way to send the presets: '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
+            lclBTServiceInstance.sendData(sCommand);
+        } else {
+            Log.d(TAG, "Service btService not connected!");
+        }
+    }*/
 
     public void duplicateSPFile() {
         //sp1 is the shared pref to copy to

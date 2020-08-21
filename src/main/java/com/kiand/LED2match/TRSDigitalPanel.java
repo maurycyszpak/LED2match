@@ -33,6 +33,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -194,26 +196,26 @@ public class TRSDigitalPanel extends Activity {
                 if (TextUtils.isEmpty(index)) {
                     return;
                 }
-                switchButtonON(Integer.valueOf(index));
+                switchButtonON(Integer.valueOf(index), false);
                 //Log.d(TAG, "Button: " + index + " highlighted");
             } else if (intent.getAction().equals("controller_data_refreshed_event")) {
                 Log.d(TAG, "controller data refreshed - intent received");
                 refresh_unit_config();
             } else if (intent.getAction().equals("button_highlight_extra")) {
                 String name = intent.getStringExtra("button_name");
-                //Log.d(TAG, "Got additional button to highlight: " + name);
+                Log.d(TAG, "Got additional button to highlight: " + name);
                 if (TextUtils.isEmpty(name)) {
                     return;
                 }
 
                 if (name.equalsIgnoreCase("PRG")){
-                    switchButtonON(7);
+                    switchButtonON(7, false);
                    //Log.d(TAG, "PRG Button highlighted");
                 }
 
                 if (name.equalsIgnoreCase("LOW")){
                     if (!BL_LOW_MODE) {
-                        switchButtonON(8);
+                        switchButtonON(8, false);
                         //Log.d(TAG, "LOW Button highlighted");
                     } else {
                         switchButtonOFF(8);
@@ -222,13 +224,57 @@ public class TRSDigitalPanel extends Activity {
                 }
 
                 if (name.equalsIgnoreCase("OFF")){
-                    switchButtonON(9);
+                    switchButtonON(9, false);
                     //Log.d(TAG, "OFF Button highlighted");
                 }
+
+                Log.d(TAG, "Calling switch button by name: " + name);
+                switchButton_by_name_ON(name);
             }
 
         }
     };
+
+    private void switchButton_by_name_ON(String button_name) {
+        LinearLayout layout = findViewById(R.id.lLayout1);
+        int count = layout.getChildCount();
+        //Log.d(TAG, "layout_main has " + count + " children");
+        for (int i = 0; i < count; i++) {
+            View view = layout.getChildAt(i);
+            if (view instanceof Button) {
+                if (((Button) view).getText().toString().equals(button_name)) {
+                    view.setBackgroundResource(R.drawable.buttonselector_active);
+                    ((Button) view).setTextColor(Color.BLACK);
+                }
+            }
+        }
+
+        layout = findViewById(R.id.lLayout2);
+        count = layout.getChildCount();
+        //Log.d(TAG, "layout_main has " + count + " children");
+        for (int i = 0; i < count; i++) {
+            View view = layout.getChildAt(i);
+            if (view instanceof Button) {
+                if (((Button) view).getText().toString().equals(button_name)) {
+                    view.setBackgroundResource(R.drawable.buttonselector_active);
+                    ((Button) view).setTextColor(Color.BLACK);
+                }
+            }
+        }
+
+        layout = findViewById(R.id.lLayout3);
+        count = layout.getChildCount();
+        //Log.d(TAG, "layout_main has " + count + " children");
+        for (int i = 0; i < count; i++) {
+            View view = layout.getChildAt(i);
+            if (view instanceof Button) {
+                if (((Button) view).getText().toString().equals(button_name)) {
+                    view.setBackgroundResource(R.drawable.buttonselector_active);
+                    ((Button) view).setTextColor(Color.BLACK);
+                }
+            }
+        }
+    }
 
 
     protected void onResume()
@@ -258,7 +304,6 @@ public class TRSDigitalPanel extends Activity {
         filter.addAction("button_highlight_extra");
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, filter);
-        //Toast.makeText(this.getBaseContext(),"mBound = " + mBound, Toast.LENGTH_SHORT).show();
         if (!mBound) {
             Intent intent = new Intent(this, UsbCOMMsService.class);
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -891,7 +936,7 @@ public class TRSDigitalPanel extends Activity {
 
     }
 
-    public void switchButtonON(int index) {
+    public void switchButtonON(int index, boolean overwrite_OFF) {
         switch(index) {
             case 1:
                 if (!blLamp1_ON) {

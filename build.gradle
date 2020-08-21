@@ -21,8 +21,8 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         compileSdkVersion 28
-        versionCode 620
-        versionName "3.62"
+        versionCode 800
+        versionName "3.80"
     }
 
     flavorDimensions "api"

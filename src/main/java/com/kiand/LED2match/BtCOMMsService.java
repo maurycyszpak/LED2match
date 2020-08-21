@@ -157,7 +157,7 @@ public class BtCOMMsService extends Service {
 
     public void decodeBTResponse(String sDecodedReply) {
         //makeToast("Entering decodeBTResponse: '" + sReply + "'");
-        Log.d(TAG, "decodeBTResponse() - sDecodedReply = " + sDecodedReply);
+        //Log.d(TAG, "decodeBTResponse() - sDecodedReply = " + sDecodedReply);
 
         //String sDecodedReply = sReply;
         //logIncomingData(sDecodedReply);
@@ -176,7 +176,7 @@ public class BtCOMMsService extends Service {
         String sDataPart = sDecodedReply.substring(sDecodedReply.indexOf(",")+1); // expecting eg "J,255,0,234,123,..."
 
         if (sPrefix.equals("RGBW")) {
-            Log.d(TAG, "Decoding response, 'RGBW' found");
+            //Log.d(TAG, "Decoding response, 'RGBW' found");
             if (APP_DEBUG_MODE) {
                 Log.d(TAG, "Decoding response, RGBW found");
                 Log.d(TAG, "PAYLOAD: " + sDataPart);
@@ -317,6 +317,7 @@ public class BtCOMMsService extends Service {
             } else if ((sDataArray[0]).equals("BUTTON")) {
                 //this means we should check which button has a TAG equal to the returned value and illuminate it
                 //check in the file assignment order:
+                Log.d(TAG, "Received BUTTON command: " + sDecodedReply);
                 try {
                     //Log.d (TAG, "Locating preset '" + sDataArray[1] + "' in the lamp_button_assignments.xml");
                     int iButtonIndex;
@@ -325,17 +326,26 @@ public class BtCOMMsService extends Service {
                     if (sDataArray[1].equalsIgnoreCase("PRG")) {
                         Intent intent = new Intent("button_highlight_event");
                         intent.putExtra("button_index", 7);
-                        Log.d(TAG, "Found preset '" + sDataArray[1] + "' under index: 7");
+                        Log.d(TAG, "Sending intent to highlight PRG in APP (index 7)");
                         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                     } else {
-                        for (Map.Entry<String, ?> entry : keys.entrySet()) {
+                        if (sDataArray[1].indexOf("^") > 0) {
+                            Log.d(TAG, "Found '^' in the name of button to be highlighted!");
+                            sDataArray[1] = sDataArray[1].replace("^","");
 
-                            if (entry.getValue().toString().equalsIgnoreCase(sDataArray[1])) {
-                                iButtonIndex = Integer.valueOf(entry.getKey());
-                                Intent intent = new Intent("button_highlight_event");
-                                intent.putExtra("button_index", String.valueOf(iButtonIndex));
-                                Log.d(TAG, "Found preset '" + sDataArray[1] + "' under index: " + iButtonIndex);
-                                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                            Intent intent = new Intent("button_highlight_extra");
+                            intent.putExtra("button_name", sDataArray[1]);
+                            Log.d (TAG, "Additional button to highlight: " + sDataArray[1]);
+                            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                        } else {
+                            for (Map.Entry<String, ?> entry : keys.entrySet()) {
+                                if (entry.getValue().toString().equalsIgnoreCase(sDataArray[1])) {
+                                    iButtonIndex = Integer.valueOf(entry.getKey());
+                                    Intent intent = new Intent("button_highlight_event");
+                                    intent.putExtra("button_index", String.valueOf(iButtonIndex));
+                                    Log.d(TAG, "Found preset '" + sDataArray[1] + "' under index: " + iButtonIndex);
+                                    LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                                }
                             }
                         }
                     }
