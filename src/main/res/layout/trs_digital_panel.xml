@@ -263,7 +263,7 @@
 
                 <Button
                     android:id="@+id/btnReassign"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="@dimen/digital_panel_button_height"
                     android:gravity="center"
                     android:layout_gravity="center"
@@ -276,9 +276,6 @@
                     android:textColor="@color/black"
                     android:padding="@dimen/button_margin_10dp"
                     />
-
-
-
 
             </LinearLayout>
 

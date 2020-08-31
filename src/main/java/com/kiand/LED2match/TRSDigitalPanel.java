@@ -34,15 +34,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -56,7 +58,6 @@ import static com.kiand.LED2match.Constants.CONFIG_SETTINGS;
 import static com.kiand.LED2match.Constants.DEFAULT_PSU_POWER;
 import static com.kiand.LED2match.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 import static com.kiand.LED2match.Constants.sNewLine;
-import static com.kiand.LED2match.TRSSequence_old.SP_LAMP_TIMERS;
 import static com.kiand.LED2match.TRSSettings.TL84_DELAY_KEY;
 
 public class TRSDigitalPanel extends Activity {
@@ -94,6 +95,10 @@ public class TRSDigitalPanel extends Activity {
     public static final String SP_SEQUENCE_COMMAND_EXECUTED = "sequence_command_executed"; //Mauricio
     public static final String SHAREDPREFS_LAMP_ASSIGNMENTS = "lamp_button_assignments"; //Mauricio
     public boolean blSeqGreenLight = true;
+
+    private TransparentProgressDialog pd;
+    private Handler h;
+    private Runnable r;
 
 
     private BroadcastReceiver btReceiver = new BroadcastReceiver() {
@@ -191,12 +196,22 @@ public class TRSDigitalPanel extends Activity {
                 return;
             }
             if (intent.getAction().equals("button_highlight_event")) {
-                String index = intent.getStringExtra("button_index");
-                //Log.d(TAG, "Got index of button to highlight: " + index);
-                if (TextUtils.isEmpty(index)) {
+                String name = intent.getStringExtra("button_name");
+                Log.d(TAG, "Received intent 'button_highlight_event'. Name of button to highlight: " + name);
+                if (TextUtils.isEmpty(name)) {
                     return;
                 }
-                switchButtonON(Integer.valueOf(index), false);
+                //switchButtonON(Integer.valueOf(index), false);
+                switchButton_by_name_OFF("OFF");
+                switchButton_by_name_ON(name);
+                //Log.d(TAG, "Button: " + index + " highlighted");
+            } else if (intent.getAction().equals("button_dehighlight_event")) {
+                String name = intent.getStringExtra("button_name");
+                Log.d(TAG, "Got button to dehighlight: " + name);
+                if (TextUtils.isEmpty(name)) {
+                    return;
+                }
+                switchButton_by_name_OFF(name);
                 //Log.d(TAG, "Button: " + index + " highlighted");
             } else if (intent.getAction().equals("controller_data_refreshed_event")) {
                 Log.d(TAG, "controller data refreshed - intent received");
@@ -207,7 +222,6 @@ public class TRSDigitalPanel extends Activity {
                 if (TextUtils.isEmpty(name)) {
                     return;
                 }
-
                 if (name.equalsIgnoreCase("PRG")){
                     switchButtonON(7, false);
                    //Log.d(TAG, "PRG Button highlighted");
@@ -216,6 +230,7 @@ public class TRSDigitalPanel extends Activity {
                 if (name.equalsIgnoreCase("LOW")){
                     if (!BL_LOW_MODE) {
                         switchButtonON(8, false);
+                        BL_LOW_MODE = true;
                         //Log.d(TAG, "LOW Button highlighted");
                     } else {
                         switchButtonOFF(8);
@@ -224,8 +239,11 @@ public class TRSDigitalPanel extends Activity {
                 }
 
                 if (name.equalsIgnoreCase("OFF")){
+                    //allOFF(null);
                     switchButtonON(9, false);
-                    //Log.d(TAG, "OFF Button highlighted");
+                    BL_LOW_MODE = false;
+                    updateLampValue("000,000,000,000,000,000,000,000,000,000");
+                    Log.d(TAG, "clearing current lamp values in Shared Prefs");
                 }
 
                 Log.d(TAG, "Calling switch button by name: " + name);
@@ -234,6 +252,40 @@ public class TRSDigitalPanel extends Activity {
 
         }
     };
+
+    public String getJsonBody(String sSharedPrefsFilename) {
+        SharedPreferences spsValues = getSharedPreferences(sSharedPrefsFilename, 0);
+        return spsValues.getString("JSON", "");
+
+    }
+
+    public String extractJSONvalue(String sJSONbody_ref, String sKeyScanned) {
+        String sReturn = "";
+        String sJSONbody = getJsonBody(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE);
+        if (sJSONbody.length() == 0) {
+            return sReturn;
+        }
+
+        try {
+            JSONObject jsonStructure = new JSONObject(sJSONbody);
+            Iterator<String> iter = jsonStructure.keys();
+            while (iter.hasNext()) {
+                String sKey = iter.next();
+                try {
+                    if (sKey.equals(sKeyScanned)) {
+                        Object objValue = jsonStructure.get(sKey);
+                        //makeToast("key = " + key + ", value = " + value.toString());
+                        sReturn = objValue.toString();
+                    }
+                } catch (JSONException e) {
+                    // Something went wrong!
+                }
+            }
+        } catch (JSONException j) {
+            makeToast("Unable to parse string to JSON object");
+        }
+        return sReturn;
+    }
 
     private void switchButton_by_name_ON(String button_name) {
         LinearLayout layout = findViewById(R.id.lLayout1);
@@ -274,6 +326,78 @@ public class TRSDigitalPanel extends Activity {
                 }
             }
         }
+
+        //if it was a real preset - update lamps value
+        String sJsonBody = getJsonBody(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE);
+
+        String sValue = extractJSONvalue(sJsonBody, "preset_counter");
+        int iPresetCount = 0;
+
+        if (sValue.length() != 0) {
+            if (Integer.valueOf(sValue) == 0) {
+                makeToast("No presets stored in the controller's memory.");
+            }
+            iPresetCount = Integer.valueOf(sValue);
+        } else {
+            makeToast("No presets stored in the controller's memory.");
+        }
+
+        for (int i=0; i<iPresetCount;i++) {
+            int j = i+1;
+            String sKeyName = "preset" + j + "_name";
+            String sPresetName = extractJSONvalue(sJsonBody, sKeyName); //eg. "GTI+"
+            sKeyName = "preset" + j + "_rgbw";
+            String sPresetValue = extractJSONvalue(sJsonBody, sKeyName); //eg. "123,123,255,000,000,064,006,255,100,001"
+            if (sPresetName.equalsIgnoreCase(button_name)) {
+                Log.d(TAG, "switchButton_by_name_ON_() - marking '" + button_name + "' as current lamp in lamps_current_values");
+                updateLampValue(sPresetValue);
+            }
+        }
+
+    }
+
+    private void switchButton_by_name_OFF(String button_name) {
+        Log.d(TAG, "switchButton_by_name_OFF_() - dehighlighting button: " + button_name);
+        LinearLayout layout = findViewById(R.id.lLayout1);
+        int count = layout.getChildCount();
+        for (int i = 0; i < count; i++) {
+            View view = layout.getChildAt(i);
+            if (view instanceof Button) {
+                if (((Button) view).getText().toString().equals(button_name)) {
+                    view.setBackgroundResource(R.drawable.buttonselector_main);
+                    ((Button) view).setTextColor(Color.WHITE);
+                    Log.d(TAG, "switchButton_by_name_OFF_() - button: " + button_name + " dehighlighted.");
+                }
+            }
+        }
+
+        layout = findViewById(R.id.lLayout2);
+        count = layout.getChildCount();
+        //Log.d(TAG, "layout_main has " + count + " children");
+        for (int i = 0; i < count; i++) {
+            View view = layout.getChildAt(i);
+            if (view instanceof Button) {
+                if (((Button) view).getText().toString().equals(button_name)) {
+                    view.setBackgroundResource(R.drawable.buttonselector_main);
+                    ((Button) view).setTextColor(Color.WHITE);
+                    Log.d(TAG, "switchButton_by_name_OFF_() - button: " + button_name + " dehighlighted.");
+                }
+            }
+        }
+
+        layout = findViewById(R.id.lLayout3);
+        count = layout.getChildCount();
+        //Log.d(TAG, "layout_main has " + count + " children");
+        for (int i = 0; i < count; i++) {
+            View view = layout.getChildAt(i);
+            if (view instanceof Button) {
+                if (((Button) view).getText().toString().equals(button_name)) {
+                    view.setBackgroundResource(R.drawable.buttonselector_main);
+                    ((Button) view).setTextColor(Color.WHITE);
+                    Log.d(TAG, "switchButton_by_name_OFF_() - button: " + button_name + " dehighlighted.");
+                }
+            }
+        }
     }
 
 
@@ -301,6 +425,7 @@ public class TRSDigitalPanel extends Activity {
         IntentFilter filter = new IntentFilter();
         filter.addAction("controller_data_refreshed_event");
         filter.addAction("button_highlight_event");
+        filter.addAction("button_dehighlight_event");
         filter.addAction("button_highlight_extra");
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, filter);
@@ -339,16 +464,6 @@ public class TRSDigitalPanel extends Activity {
                         Log.e(TAG, "NullPointerException when sending command via Bluetooth");
                     }
                     SystemClock.sleep(500);
-                }
-                if (bluetooth_connected()) {
-                    try {
-                        String sSequence = "G";
-                        sSequence = sSequence.concat(System.lineSeparator());
-                        lclBTServiceInstance.sendData(sSequence);
-                    } catch (NullPointerException e) {
-                        Log.e(TAG, "NullPointerException when sending command via Bluetooth");
-                    }
-                    SystemClock.sleep(50);
                 }
                 if (bluetooth_connected()) {
                     try {
@@ -428,8 +543,7 @@ public class TRSDigitalPanel extends Activity {
         //Toast.makeText(this.getBaseContext(),"Main activity destroyed", Toast.LENGTH_SHORT).show();
         toggle_bt_icon_OFF();
         mark_BT_disconnected();
-
-
+        super.onDestroy();
     }
 
     @Override
@@ -459,6 +573,7 @@ public class TRSDigitalPanel extends Activity {
         populateButtonNames();
         setFiltersBT();
         setFiltersBTdevice();
+
 
         bt_conn_indicator.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -662,6 +777,17 @@ public class TRSDigitalPanel extends Activity {
         spConfigEditor.putString(ee_tl84dim_tag, s_eeprom_tl84_dim_value);
         spConfigEditor.putString(ee_tl84masterdim_tag, s_eeprom_tl84_master_dim_value);
         spConfigEditor.apply();
+
+    }
+
+    private void comms_dialog() {
+
+        Intent intent = new Intent(TRSDigitalPanel.this, OverlayPage.class);
+        startActivity(intent);
+    }
+
+    public void splash_screen(View v) {
+        comms_dialog();
 
     }
 
@@ -895,7 +1021,7 @@ public class TRSDigitalPanel extends Activity {
 
                 btnLOW.setBackgroundResource(R.drawable.buttonselector_main);
                 btnLOW.setTextColor(Color.WHITE);
-                makeToast("LOW mode switched off");
+                //makeToast("LOW mode switched off");
 
                 break;
 
@@ -1002,7 +1128,7 @@ public class TRSDigitalPanel extends Activity {
                 mark_all_buttons_off_on_mobile(true);
                 btnL7.setBackgroundResource(R.drawable.buttonselector_active);
                 btnL7.setTextColor(Color.BLACK);
-                //makeToast("SEQUENCE switched on");
+                Log.d(TAG, "switchButtonON_() - only PRG should be highlighted");
                 break;
 
             case 8: //LOW
@@ -1175,7 +1301,7 @@ public class TRSDigitalPanel extends Activity {
 
     }
 
-    public void btnClicked(View v) {
+    /*public void btnClicked(View v) {
 
         SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
         SharedPreferences spLampDefinitions = getSharedPreferences(Constants.SHAREDPREFS_LAMP_DEFINITIONS, 0);
@@ -1558,7 +1684,7 @@ public class TRSDigitalPanel extends Activity {
 
                 break;
         }
-    }
+    }*/
 
     private void send_via_bt(String command) {
         if (mBoundBT) {
@@ -1817,6 +1943,9 @@ public class TRSDigitalPanel extends Activity {
                         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                         Log.d(TAG, "I'm in LOW mode");
                         Log.d(TAG, "Illuminating lamps with: " + sCommand);
+                        sCommand = "B," + button.getTag().toString() + "1$" + sNewLine;
+                        send_via_bt(sCommand);
+                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                     }
                 }
                 button.setBackgroundResource(R.drawable.buttonselector_active);
@@ -2590,7 +2719,9 @@ public class TRSDigitalPanel extends Activity {
         lclBTServiceInstance.sendData(sCommand);
         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
 
+        SystemClock.sleep(300);
         sCommand= "B,LOW" + (BL_LOW_MODE ? 0 : 1) + "$" + sNewLine;
+        Log.d("MORRIS-TRSDIGITAL", "btnLOW(): sending: " + sCommand);
         lclBTServiceInstance.sendData(sCommand);
         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
         BL_LOW_MODE = !BL_LOW_MODE;

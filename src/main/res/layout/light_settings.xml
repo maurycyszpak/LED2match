@@ -162,7 +162,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/color_slider_height"
+            android:layout_height="@dimen/light_setting_pg_slider_row_height"
             android:orientation="horizontal"
             android:layout_below="@+id/rowLED27"
             android:id="@+id/rowRed"
@@ -177,7 +177,7 @@
 
             <TextView
                 android:layout_width="80dp"
-                android:layout_height="@dimen/color_slider_height"
+                android:layout_height="match_parent"
                 android:background="@color/white"
                 android:gravity="center"
                 android:text="Red"
@@ -187,7 +187,7 @@
             <EditText
                 android:id="@+id/edRed"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/color_slider_height"
+                android:layout_height="fill_parent"
                 android:background="@color/white"
                 android:ems="3"
                 android:gravity="center"
@@ -203,7 +203,7 @@
             <SeekBar
                 android:id="@+id/barRed"
                 android:layout_width="fill_parent"
-                android:layout_height="@dimen/color_slider_height"
+                android:layout_height="fill_parent"
                 android:layout_gravity="fill_horizontal"
                 android:background="@color/white"
                 android:thumbTint="@color/torso_blue_main"
@@ -216,7 +216,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/color_slider_height"
+            android:layout_height="@dimen/light_setting_pg_slider_row_height"
             android:orientation="horizontal"
             android:layout_below="@+id/rowRed"
             android:id="@+id/rowGreen"
@@ -263,7 +263,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/color_slider_height"
+            android:layout_height="@dimen/light_setting_pg_slider_row_height"
             android:orientation="horizontal"
             android:layout_below="@+id/rowGreen"
             android:id="@+id/rowBlue"
@@ -310,7 +310,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/color_slider_height"
+            android:layout_height="@dimen/light_setting_pg_slider_row_height"
             android:orientation="horizontal"
             android:layout_below="@+id/rowBlue"
             android:id="@+id/rowWhite"
@@ -356,7 +356,7 @@
         <LinearLayout
             android:id="@+id/rowLED65"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="@dimen/light_setting_pg_slider_row_height"
             android:orientation="horizontal"
             android:layout_marginBottom="@dimen/light_setting_pg_slider_bttm_margin">
 
@@ -402,7 +402,7 @@
         <LinearLayout
             android:id="@+id/rowLEDUVA"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/color_slider_height"
+            android:layout_height="@dimen/light_setting_pg_slider_row_height"
             android:layout_below="@+id/rowLED65"
             android:orientation="horizontal"
             android:layout_marginBottom="@dimen/light_setting_pg_slider_bttm_margin">
@@ -448,7 +448,7 @@
         <LinearLayout
             android:id="@+id/rowLED50"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/color_slider_height"
+            android:layout_height="@dimen/light_setting_pg_slider_row_height"
             android:layout_below="@+id/rowLEDUVA"
             android:orientation="horizontal"
             android:layout_marginBottom="@dimen/light_setting_pg_slider_bttm_margin">
@@ -495,7 +495,7 @@
         <LinearLayout
             android:id="@+id/rowLED27"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/color_slider_height"
+            android:layout_height="@dimen/light_setting_pg_slider_row_height"
             android:layout_below="@+id/rowLED50"
             android:orientation="horizontal"
             android:layout_marginBottom="@dimen/light_setting_pg_slider_bttm_margin" >
@@ -540,7 +540,7 @@
         <LinearLayout
             android:id="@+id/rowLED395"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/color_slider_height"
+            android:layout_height="@dimen/light_setting_pg_slider_row_height"
             android:layout_below="@+id/rowWhite"
             android:orientation="horizontal"
             android:layout_marginBottom="@dimen/light_setting_pg_slider_bttm_margin">
@@ -585,7 +585,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/color_slider_height"
+            android:layout_height="@dimen/light_setting_pg_slider_row_height"
             android:layout_below="@+id/rowLED395"
             android:orientation="horizontal"
             android:layout_marginBottom="@dimen/light_setting_pg_slider_bttm_margin">

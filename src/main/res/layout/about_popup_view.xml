@@ -5,6 +5,7 @@
     android:orientation="vertical"
     android:padding="10dp"
     android:backgroundTint="@color/white"
+    android:background="@color/white"
     >
 
     <LinearLayout
@@ -55,7 +56,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/button_margin_10dp">
 
 
         <TextView
@@ -84,7 +86,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/black"
             android:textSize="@dimen/larger_text_size"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="2dp"
             android:autoLink="web"
             />
     </LinearLayout>

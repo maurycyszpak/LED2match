@@ -151,6 +151,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="Press 3 seconds to reset"
+                    android:textColor="@color/dark_gray"
 
                     />
 
@@ -226,7 +227,7 @@
 
                     <TextView
                         android:id="@+id/address_label"
-                        android:layout_width="@dimen/recertification_label_width"
+                        android:layout_width="@dimen/maintenance_page_config_label_width"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
                         android:text="Slave address: " />
@@ -260,10 +261,12 @@
 
                 <TextView
                     android:id="@+id/TL84_fullbright_label"
-                    android:layout_width="@dimen/recertification_label_width"
+                    android:layout_width="@dimen/maintenance_page_config_label_width"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
-                    android:text="@string/maintenance_page_setting_1_label" />
+                    android:text="@string/maintenance_page_setting_1_label"
+                    android:textColor="@color/dark_gray"
+                    />
 
 
                 <EditText
@@ -275,6 +278,7 @@
                     android:nextFocusForward="@+id/edit_DACvalue"
                     android:singleLine="true"
                     android:textSize="13sp"
+                    android:textColor="@color/black"
 
                     />
 
@@ -293,10 +297,12 @@
 
                 <TextView
                     android:id="@+id/DAC_label"
-                    android:layout_width="@dimen/recertification_label_width"
+                    android:layout_width="@dimen/maintenance_page_config_label_width"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
-                    android:text="@string/maintenance_page_setting_2_label" />
+                    android:text="@string/maintenance_page_setting_2_label"
+                    android:textColor="@color/dark_gray"
+                    />
 
 
                 <EditText
@@ -308,7 +314,7 @@
                     android:nextFocusForward="@+id/edit_PSU_current"
                     android:singleLine="true"
                     android:textSize="13sp"
-
+                    android:textColor="@color/black"
                     />
 
 
@@ -327,10 +333,12 @@
 
                 <TextView
                     android:id="@+id/DACmax_power_label"
-                    android:layout_width="@dimen/recertification_label_width"
+                    android:layout_width="@dimen/maintenance_page_config_label_width"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
-                    android:text="@string/maintenance_page_setting_3_label" />
+                    android:text="@string/maintenance_page_setting_3_label"
+                    android:textColor="@color/dark_gray"
+                    />
 
 
                 <EditText
@@ -341,7 +349,7 @@
                     android:nextFocusForward="@+id/btnSave"
                     android:singleLine="true"
                     android:textSize="13sp"
-
+                    android:textColor="@color/black"
                     />
 
 
@@ -363,9 +371,11 @@
                     android:layout_height="match_parent"
                     android:layout_marginEnd="@dimen/button_margin"
                     android:layout_weight="@dimen/settings_pg_label_width"
-                    android:gravity="end|center_vertical"
+                    android:gravity="center_vertical"
                     android:text="Extended Lamps mode"
-                    android:textSize="@dimen/button_text_size" />
+                    android:textSize="@dimen/button_text_size"
+                    android:textColor="@color/dark_gray"
+                    />
 
                 <Switch
                     android:id="@+id/switch_extended_lamps_mode"
@@ -403,7 +413,8 @@
                     android:onClick="onClickBack"
                     android:text="back"
                     android:layout_marginBottom="@dimen/button_margin_10dp"
-                    android:textSize="@dimen/button_text_size" />
+                    android:textSize="@dimen/button_text_size"
+                    android:textColor="@color/black"/>
 
                 <Button
                     android:id="@+id/button_save"
@@ -427,7 +438,10 @@
                     android:layout_marginEnd="@dimen/button_margin"
                     android:onClick="openLightPage"
                     android:text="Light settings"
-                    android:textSize="@dimen/button_text_size" />
+                    android:textSize="@dimen/button_text_size"
+                    android:textColor="@color/black"
+                    android:backgroundTint="@color/torso_gray_button"
+                    />
 
                 <Button
                     android:id="@+id/btnFactoryReset"

@@ -325,8 +325,8 @@ public class BtCOMMsService extends Service {
                     TreeMap<String, ?> keys = new TreeMap<String, Object>(myPrefs.getAll());
                     if (sDataArray[1].equalsIgnoreCase("PRG")) {
                         Intent intent = new Intent("button_highlight_event");
-                        intent.putExtra("button_index", 7);
-                        Log.d(TAG, "Sending intent to highlight PRG in APP (index 7)");
+                        intent.putExtra("button_name", sDataArray[1]);
+                        Log.d(TAG, "Sending intent to highlight PRG in APP");
                         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                     } else {
                         if (sDataArray[1].indexOf("^") > 0) {
@@ -336,6 +336,13 @@ public class BtCOMMsService extends Service {
                             Intent intent = new Intent("button_highlight_extra");
                             intent.putExtra("button_name", sDataArray[1]);
                             Log.d (TAG, "Additional button to highlight: " + sDataArray[1]);
+                            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                        } else if (sDataArray[1].indexOf("#") > 0) {
+                            Log.d(TAG, "Found '#' in the name of button to be de-highlighted!");
+                            sDataArray[1] = sDataArray[1].replace("#","");
+                            Intent intent = new Intent("button_dehighlight_event");
+                            intent.putExtra("button_name", sDataArray[1]);
+                            Log.d (TAG, "Button to dehighlight: " + sDataArray[1]);
                             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                         } else {
                             for (Map.Entry<String, ?> entry : keys.entrySet()) {
@@ -354,7 +361,7 @@ public class BtCOMMsService extends Service {
                 }
 
                 //also check for modifiers / special buttons (LOW, UV, OFF, PRG)
-                List<String> extra = Arrays.asList("LOW", "OFF", "PRG");
+                List<String> extra = Arrays.asList("LOW", "OFF");
                 for (String entry: extra) {
                     try {
                         if (sDataArray[1].equalsIgnoreCase(entry)) {
@@ -634,10 +641,8 @@ public class BtCOMMsService extends Service {
     }
 
     private void write(byte[] data) {
-        //Log.d(TAG, "ONE");
         if (mConnectingThread != null) {
             try {
-                //Log.d(TAG, "TWOO");
                 mConnectingThread.mmSocket.getOutputStream().write(data);
             } catch (IOException e) {
                 Log.d (TAG, "EXCEPTION: unable to write data to btSocket");
@@ -646,8 +651,8 @@ public class BtCOMMsService extends Service {
             }
         } else {
             Log.d (TAG, "UNABLE to get mConnectingThread");
-        }
 
+        }
     }
 
     // New Class for Connected Thread

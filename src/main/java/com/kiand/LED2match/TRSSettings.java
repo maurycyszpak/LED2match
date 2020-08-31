@@ -69,7 +69,6 @@ public class TRSSettings extends Activity {
     private int iHours_idle_shutoff = 0;
     private int iMinutes_idle_shutoff = 0;
 
-    EditText editOff_h;
     EditText editOff_m;
     EditText edit_TL84_delay;
 
@@ -170,7 +169,7 @@ public class TRSSettings extends Activity {
                 String message = intent.getStringExtra("temperature");
                 Log.d(TAG, "Got message: " + message);
                 TextView textTemperature = findViewById(R.id.temperature_textview);
-                message += "\u2103";
+                message += " \u2103";
                 textTemperature.setText(message);
             }
         }
@@ -221,10 +220,7 @@ public class TRSSettings extends Activity {
 
         try {
             if (s_eeprom_auto_shutoff.length() > 0) {
-                //Long lTimeToOFF = (long) (iHours_idle_shutoff * 60 * 60 + iMinutes_idle_shutoff * 60);
-                int iHours = Integer.parseInt(s_eeprom_auto_shutoff) / 3600;
-                int iMinutes = (Integer.parseInt(s_eeprom_auto_shutoff) % 3600) / 60;
-                editOff_h.setText(String.valueOf(iHours));
+                int iMinutes = Integer.parseInt(s_eeprom_auto_shutoff) / 60;
                 editOff_m.setText(String.valueOf(iMinutes));
             }
         } catch (NullPointerException e) {
@@ -232,16 +228,6 @@ public class TRSSettings extends Activity {
         }
     }
 
-
-    int check_for_shutdown_timer_h() {
-        SharedPreferences prefs = getSharedPreferences(TIME_OFF_STORAGE, 0);
-        return prefs.getInt("hours", 0);
-    }
-
-    int check_for_shutdown_timer_m() {
-        SharedPreferences prefs = getSharedPreferences(TIME_OFF_STORAGE, 0);
-        return prefs.getInt("minutes", 0);
-    }
 
     int check_for_TL84_delay() {
         SharedPreferences prefs = getSharedPreferences(CONFIG_SETTINGS, 0);
@@ -314,7 +300,6 @@ public class TRSSettings extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.trs_settings);
 
-        editOff_h = findViewById(R.id.editAutoShutOFF_h);
         editOff_m = findViewById(R.id.editAutoShutOFF_m);
         edit_TL84_delay = findViewById(R.id.edit_TL84_delay);
 
@@ -327,11 +312,10 @@ public class TRSSettings extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
 
-        menu.add(Menu.NONE, 0, 0, "Light Settings").setIcon(
-                getResources().getDrawable(R.drawable.icon_scan));
+        //menu.add(Menu.NONE, 0, 0, "Light Settings").setIcon(getResources().getDrawable(R.drawable.icon_scan));
 
-        menu.add(Menu.NONE, 2, 2, "Operating Hours").setIcon(
-                getResources().getDrawable(R.drawable.icon_information));
+        //menu.add(Menu.NONE, 2, 2, "Operating Hours").setIcon(
+                //getResources().getDrawable(R.drawable.icon_information));
         menu.add(Menu.NONE, 3, 3, "Sequence Settings (PRG)").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));
         /*menu.add(Menu.NONE, 4, 4, "Settings").setIcon(
@@ -552,10 +536,9 @@ public class TRSSettings extends Activity {
 
         String settings_value = "";
 
-        if (editOff_h.getText().toString().isEmpty()) { iHours_idle_shutoff = 0; } else { iHours_idle_shutoff = Integer.valueOf(editOff_h.getText().toString()); }
         if (editOff_m.getText().toString().isEmpty()) { iMinutes_idle_shutoff = 0; } else { iMinutes_idle_shutoff = Integer.valueOf(editOff_m.getText().toString()); }
 
-        Integer iTimeToOFF = (iHours_idle_shutoff * 60 * 60 + iMinutes_idle_shutoff * 60);
+        Integer iTimeToOFF = iMinutes_idle_shutoff * 60;
         settings_value += string_int_to_hex_4(String.valueOf(iTimeToOFF));
 
 
@@ -573,9 +556,6 @@ public class TRSSettings extends Activity {
         }
 
         String sCommand = "I" + settings_value + "$" + newLine;
-
-        Long lTimeToOFF = (long) (iHours_idle_shutoff * 60 * 60 + iMinutes_idle_shutoff * 60);
-
         if (mBoundBT) {
             lclBTServiceInstance.sendData(sCommand);
         } else {
@@ -586,8 +566,6 @@ public class TRSSettings extends Activity {
         if (shutdownTimer != null) {
             shutdownTimer.cancel();
         }
-        //switchOFFAfterX(iHours_idle_shutoff, iMinutes_idle_shutoff);
-        //}
     }
 
     public void allOFF() {

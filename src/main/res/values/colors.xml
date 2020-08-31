@@ -25,4 +25,6 @@
     <color name="light_adjustments_pg_progress_slider_bg_tint_idle">#E3E3E3</color>
     <color name="light_adjustments_pg_progress_slider_bg_tint_active">#195B98</color>
 
+    <color name="black_overlay">#66000000</color>
+
 </resources>

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <resources>
 
     <style name="MySwitch" parent="@style/Widget.AppCompat.CompoundButton.Switch">
@@ -9,11 +8,43 @@
     </style>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light" />
+
     <style name="CustomSpinnerTheme" parent="android:Widget.Spinner">
         <item name="android:background">@drawable/sequence_bg_spinner</item>
     </style>
+
     <style name="BlackTextTheme" parent="@style/Theme.AppCompat.Light">
         <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="TransparentProgressDialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowTitleStyle">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="FullscreenTheme" parent="AppTheme">
+        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
+        <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
+    </style>
+
+    <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/black_overlay</item>
+    </style>
+
+    <style name="EditTextGrayUnderline" parent="Widget.AppCompat.EditText">
+        <item name="colorControlActivated">@color/torso_blue_main</item>
+        <item name="colorControlNormal">@color/dark_gray</item>
+        <item name="colorControlHighlight">#cc2233</item>
     </style>
 
 
