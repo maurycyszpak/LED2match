@@ -26,10 +26,10 @@
         android:label="LED2match"
         android:largeHeap="true"
         tools:ignore="GoogleAppIndexingWarning">
+
         <activity
             android:name=".TRSSequence"
             android:label="Sequence Programming (PRG)" />
-
         <activity android:name=".ReassignLamps" />
         <activity
             android:name=".LightSettings"
@@ -80,7 +80,6 @@
         <activity
             android:name=".TRSSettings"
             android:label="Settings"
-            android:theme="@style/BlackTextTheme"
             android:screenOrientation="portrait" />
         <activity
             android:name=".TRSManualPage"
@@ -98,6 +97,9 @@
             android:name=".sequenceSummaryPage"
             android:label="HTS-RGBW"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".OverlayPage"
+            android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".MyListAdapter"
             android:label="PRG Sequence list" />

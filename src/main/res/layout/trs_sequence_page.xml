@@ -74,7 +74,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginEnd="@dimen/button_margin"
                 android:layout_weight="@dimen/settings_pg_label_width"
-                android:gravity="end|center_vertical"
+                android:gravity="center_vertical"
                 android:text="Infinite loop"
                 android:textColor="@color/black"
                 android:textSize="@dimen/button_text_size" />

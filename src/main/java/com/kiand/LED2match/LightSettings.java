@@ -562,9 +562,9 @@ public class LightSettings extends Activity implements ServiceConnection {
 		Toast.makeText(this, "Bluetooth connected!", Toast.LENGTH_LONG).show();
 	}
 
-	public String sAppVersionDate = "2020/07/16";
+	public String sAppVersionDate = "2020/09/01";
 	Float versionName = BuildConfig.VERSION_CODE / 1000.0f;
-	public String apkVersion = "v" + versionName;
+	public String apkVersion = "v." + versionName;
 
 
 
@@ -651,14 +651,6 @@ public class LightSettings extends Activity implements ServiceConnection {
 		barLED27.setMax(255);
 		barLED395.setMax(255);
 		barLED660.setMax(255);
-		//setUiEnabled(false);
-		/*IntentFilter filter = new IntentFilter();
-        filter.addAction(ACTION_USB_PERMISSION);
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
-        registerReceiver(broadcastReceiver, filter);*/
-
-
 
 		spnPresetsAdapter = new ArrayAdapter<>(this, R.layout.sequence_add_item_spinner_text, spnPresetsArrayList); // Mauricio
 		spnPresetsAdapter.setDropDownViewResource(R.layout.sequence_add_item_spinner_dropdown);
@@ -1242,19 +1234,11 @@ public class LightSettings extends Activity implements ServiceConnection {
 					spsEditor_write.putString(edtPresetName.getText().toString().toUpperCase(), strComaDel);
 					spsEditor_write.commit();
 
+					show_splash_screen();
+
 					sendPresetsOverBT();
 					sendPresetsOverSerial();
 					getJSONFile();
-					/*SystemClock.sleep(1000);
-					extractPresetsFromJson();
-					spnPresetsAdapter.notifyDataSetChanged();*/
-
-					/*blSilent = true;
-					if (spnPresetsArrayList.size() > 0) {
-						spinner_control_preset_list.setSelection(0);
-						colorizeLayout214(spinner_control_preset_list.getSelectedItem().toString(), PRESETS_DEFINITION);
-					}
-					blSilent = false;*/
 
 				} else {
 					Toast.makeText(getBaseContext(), "Only " + NUM_PRESETS_MAX + " presets allowed. Please remove a preset to store a new one.\nCurrent size: " + spnPresetsArrayList.size(), Toast.LENGTH_SHORT).show();
@@ -1302,82 +1286,30 @@ public class LightSettings extends Activity implements ServiceConnection {
 			spsEditor_write.remove(sPrefsKeyToBeDeleted);
 			spsEditor_write.commit();
 
+			show_splash_screen();
+
 			if (spnPresetsArrayList.size() > 0) {
 				sendPresetsOverSerial();
 				sendPresetsOverBT();
 				SystemClock.sleep(100);
 
 				getJSONFile();
-				/*SystemClock.sleep(2000);
-				extractPresetsFromJson();
-				spnPresetsAdapter.notifyDataSetChanged();*/
-
-				/*blSilent = true;
-				if (spnPresetsArrayList.size()>0) {
-					spinner_control_preset_list.setSelection(0);
-					colorizeLayout214(spinner_control_preset_list.getSelectedItem().toString(), APP_SHAREDPREFS_READ);
-					//spnPresetsAdapter.notifyDataSetChanged(); // Mauricio - this might not be needed.
-				}
-				blSilent = false;*/
 			}
 			//hideSplash();
 		});
 
 
-		// load savedPreference _KEY_MACADDRESS
-		SharedPreferences prefs = getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE);
-
 		btnSend.setOnClickListener(view -> {
 			onClickSend(view);
 			Toast.makeText(getBaseContext(), "Color applied!", Toast.LENGTH_SHORT).show();
 
-			File file = getApplicationContext().getFileStreamPath("hts-chrono1");
-			if (!file.exists()) {
-				writeData(findViewById(R.id.wrap_content), "hts-chrono1", String.valueOf(SystemClock.elapsedRealtime()));
-			}
 
-			String factorFileName = "hts-chrono1.REDfactor";
-			file = getApplicationContext().getFileStreamPath(factorFileName);
-			if (file.exists()) {
-				String currentFileContent = readData(findViewById(R.id.wrap_content), factorFileName);
-				currentFileContent += "|" + SystemClock.elapsedRealtime() + "-" + edRed.getText().toString();
-				writeData(findViewById(R.id.wrap_content), factorFileName, currentFileContent);
-			} else {
-				writeData(findViewById(R.id.wrap_content), factorFileName, SystemClock.elapsedRealtime() + "-" + edRed.getText().toString());
-			}
-
-			factorFileName = "hts-chrono1.GREENfactor";
-			file = getApplicationContext().getFileStreamPath(factorFileName);
-			if (file.exists()) {
-				String currentFileContent = readData(findViewById(R.id.wrap_content), factorFileName);
-				currentFileContent += "|" + SystemClock.elapsedRealtime() + "-" + edGreen.getText().toString();
-				writeData(findViewById(R.id.wrap_content), factorFileName, currentFileContent);
-			} else {
-				writeData(findViewById(R.id.wrap_content), factorFileName, SystemClock.elapsedRealtime() + "-" + edGreen.getText().toString());
-			}
-
-			factorFileName = "hts-chrono1.BLUEfactor";
-			file = getApplicationContext().getFileStreamPath(factorFileName);
-			if (file.exists()) {
-				String currentFileContent = readData(findViewById(R.id.wrap_content), factorFileName);
-				currentFileContent += "|" + SystemClock.elapsedRealtime() + "-" + edBlue.getText().toString();
-				writeData(findViewById(R.id.wrap_content), factorFileName, currentFileContent);
-				currentFileContent = readData(findViewById(R.id.wrap_content), factorFileName);
-			} else {
-				writeData(findViewById(R.id.wrap_content), factorFileName, SystemClock.elapsedRealtime() + "-" + edBlue.getText().toString());
-			}
-
-			factorFileName = "hts-chrono1.WHITEfactor";
-			file = getApplicationContext().getFileStreamPath(factorFileName);
-			if (file.exists()) {
-				String currentFileContent = readData(findViewById(R.id.wrap_content), factorFileName);
-				currentFileContent += "|" + SystemClock.elapsedRealtime() + "-" + edWhite.getText().toString();
-				writeData(findViewById(R.id.wrap_content), factorFileName, currentFileContent);
-				currentFileContent = readData(findViewById(R.id.wrap_content), factorFileName);
-			} else {
-				writeData(findViewById(R.id.wrap_content), factorFileName, SystemClock.elapsedRealtime() + "-" + edWhite.getText().toString());
-			}
 		});
+	}
+
+	private void show_splash_screen() {
+		Intent intent = new Intent(LightSettings.this, OverlayPage.class);
+		startActivity(intent);
 	}
 
 	private void refresh_spinner_list() {
@@ -2514,7 +2446,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 		LayoutInflater inflater = this.getLayoutInflater();
 		View dialogView = inflater.inflate(R.layout.about_popup_view, null);
 		dlgBuilder.setView(dialogView);
-		dlgBuilder.setTitle(getString(R.string.app_header_title) + " app " + apkVersion);
+		dlgBuilder.setTitle(getString(R.string.app_header_title) + " App " + apkVersion);
 		TextView tv_fwversion = dialogView.findViewById(R.id.FWversion_value);
 		tv_fwversion.setText(sFWverLcl);
 		//dlg.setMessage("Hi-Tec-Support GmbH\nCopyright (R) 2018\nVersion " + sFormattedDate + "\nFirmware version: " + sFWverLcl);
