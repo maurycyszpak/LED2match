@@ -241,8 +241,9 @@
                     android:singleLine="true"
                     android:inputType="number"
                     android:textSize="13sp"
-                    android:theme="@style/EditTextGrayUnderline"
+                    android:textColor="@color/black"
                     android:textColorHint="@color/dark_gray"
+                    android:theme="@style/EditTextGrayUnderline"
                     />
 
 

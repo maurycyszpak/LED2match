@@ -42,6 +42,7 @@
         android:layout_marginTop="@dimen/button_margin_10dp">
 
         <TextView
+            android:id="@+id/about_line_1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/about_app_info_static"
@@ -61,7 +62,7 @@
 
 
         <TextView
-            android:id="@+id/torso_footer_info"
+            android:id="@+id/about_line_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/torso_footer_address"
@@ -79,7 +80,7 @@
 
 
         <TextView
-            android:id="@+id/unitycolor_hyperlink"
+            android:id="@+id/about_hyperlink"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="www.unitycolor.com"

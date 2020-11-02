@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TRSSequence_old">
+    tools:context=".TRSManualPage">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="@color/app_background"
-
         >
 
         <TextView
@@ -30,17 +29,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
-                android:id="@+id/lLayout1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_marginTop="5dp"
-                android:baselineAligned="false"
-                >
 
-                <TextView
+                <WebView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/button_margin_10dp"
+                    android:id="@+id/manual_webview"
+
+                    />
+
+                <!--<TextView
                     android:id="@+id/textview_manual"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -50,65 +48,62 @@
                     android:textSize="@dimen/manual_text_size"
                     android:scrollbars="vertical"
                     android:textColor="@color/black"
-                    />
+                    android:layout_marginRight="@dimen/button_margin" />-->
+        </RelativeLayout>
 
-            </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/lLayoutbottomspace"
+            android:layout_gravity="right|end"
+            android:layout_marginLeft="@dimen/main_screen_sidemargin"
+            android:layout_marginRight="@dimen/main_screen_sidemargin"
+            android:layout_marginBottom="5dp"
+            android:baselineAligned="false"
 
-            <RelativeLayout
-                android:layout_width="match_parent"
+            >
+
+
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/lLayoutbottomspace"
-                android:layout_gravity="right|end"
-                android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_marginBottom="5dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="@dimen/button_margin"
                 android:baselineAligned="false"
-
-                >
-
-
-                <Button
-                    android:id="@+id/btnSave"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginEnd="@dimen/button_margin"
-                    android:baselineAligned="false"
-                    android:gravity="center"
-                    android:onClick="goBack"
-                    android:text="BACK"
-                    android:textSize="@dimen/button_text_size" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/lLayoutbottomspace"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="5dp"
-                android:baselineAligned="true"
-                android:layout_alignParentBottom="true"
-
-                >
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="10sp"
-                    android:text="@string/torso_footer_address"
-                    android:textColor="@color/black"
-                    android:visibility="gone"
-                    />
-
-
-            </RelativeLayout>
+                android:gravity="center"
+                android:onClick="goBack"
+                android:text="BACK"
+                android:textSize="@dimen/button_text_size"
+                android:layout_marginRight="@dimen/button_margin" />
 
         </RelativeLayout>
 
+        <RelativeLayout
+            android:id="@+id/lLayoutbottomspace"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/main_screen_sidemargin"
+            android:layout_marginRight="@dimen/main_screen_sidemargin"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="5dp"
+            android:baselineAligned="true"
+            android:layout_alignParentBottom="true"
+
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                android:text="@string/torso_footer_address"
+                android:textColor="@color/black"
+                android:visibility="gone"
+                />
+
+
+        </RelativeLayout>
     </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

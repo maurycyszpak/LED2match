@@ -1,5 +1,7 @@
 package com.kiand.LED2match;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -12,15 +14,24 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
+import android.support.multidex.BuildConfig;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
@@ -34,11 +45,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -51,14 +69,17 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import static com.kiand.LED2match.BtCOMMsService.SHAREDPREFS_UNITNAME;
-import static com.kiand.LED2match.BtCOMMsService.BT_CONNECTED_PREFS;
+import static com.kiand.LED2match.Constants.BT_CONNECTED_PREFS;
 import static com.kiand.LED2match.Constants.CONFIG_SETTINGS;
 import static com.kiand.LED2match.Constants.DEFAULT_PSU_POWER;
 import static com.kiand.LED2match.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 import static com.kiand.LED2match.Constants.sNewLine;
 import static com.kiand.LED2match.TRSSettings.TL84_DELAY_KEY;
+import static java.lang.System.lineSeparator;
 
 public class TRSDigitalPanel extends Activity {
 
@@ -69,6 +90,7 @@ public class TRSDigitalPanel extends Activity {
     public boolean BL_LOW_MODE = false;
     public boolean BL_UV_MODE = false;
     public boolean BL_COMMAND_SENT = false;
+    private final boolean BL_USE_CUSTOM_LOGO = false;
     public static final String NO_PRESET_TEXT = "#n/a";
     public static final String TL84_TAG = "TL84";
     private static final String password = "hokus";
@@ -77,8 +99,9 @@ public class TRSDigitalPanel extends Activity {
     private boolean bl_bluetooth_forced_on;
     private LightSettings.MyHandler mHandler;
     public final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+    private FileUtilities fileUtilities;
 
-    boolean blLamp1_ON, blLamp2_ON, blLamp3_ON, blLamp4_ON, blLamp5_ON, blLamp6_ON, blLamp7_ON, blTL84_ON, blLamp10_ON, blLamp11_ON, blLamp12_ON, blPRG_ON;
+    boolean blLamp1_ON, blLamp2_ON, blLamp3_ON, blLamp4_ON, blLamp5_ON, blLamp6_ON, blLamp7_ON, BL_TL84_ON, blLamp10_ON, blLamp11_ON, blLamp12_ON, blPRG_ON;
     Button btnL1, btnL2, btnL3, btnL4, btnL5, btnL6, btnL7, btnLOW, btnL9, btnReassign, btnL10, btnL11, btnL12;
     ImageView usb_conn_indicator;
     ImageView bt_conn_indicator;
@@ -94,28 +117,35 @@ public class TRSDigitalPanel extends Activity {
     public static final String SP_SEQUENCE_COMMAND_GENERATED = "sequence_command_generated"; //Mauricio
     public static final String SP_SEQUENCE_COMMAND_EXECUTED = "sequence_command_executed"; //Mauricio
     public static final String SHAREDPREFS_LAMP_ASSIGNMENTS = "lamp_button_assignments"; //Mauricio
+
     public boolean blSeqGreenLight = true;
 
     private TransparentProgressDialog pd;
     private Handler h;
     private Runnable r;
 
+    private static final int CAMERA_PERMISSION_CODE = 100;
+    private static final int STORAGE_PERMISSION_CODE = 101;
 
-    private BroadcastReceiver btReceiver = new BroadcastReceiver() {
+    Float versionName = com.kiand.LED2match.BuildConfig.VERSION_CODE / 1000.0f;
+    public String apkVersion = "v." + versionName;
+
+
+    private final BroadcastReceiver btReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             Bundle bundle = intent.getExtras();
 
             String action = intent.getAction();
-            Log.d(TAG, "btReceiver received some intent");
+            logme(TAG, "btReceiver received some intent");
             if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
                 final int bluetoothState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
                         BluetoothAdapter.ERROR);
                 switch (bluetoothState) {
                     case BluetoothAdapter.STATE_ON:
                         if (bl_bluetooth_forced_on) {
-                            Log.d(TAG, " *** Calling start BT Service");
+                            logme(TAG, " *** Calling start BT Service");
                             startBluetoothService();
                             Intent new_intent = new Intent(TRSDigitalPanel.this, TRSBluetoothDevicesScan.class);
                             startActivity(new_intent); //or start activity for result? this should be "modal"
@@ -135,7 +165,7 @@ public class TRSDigitalPanel extends Activity {
     };
 
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -166,7 +196,7 @@ public class TRSDigitalPanel extends Activity {
         }
     };
 
-    private Handler messageHandler = new Handler(Looper.getMainLooper()) {
+    private final Handler messageHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == MSG_SHOW_TOAST) {
@@ -188,7 +218,7 @@ public class TRSDigitalPanel extends Activity {
         }
     };
 
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             // Extract data included in the Intent
@@ -197,44 +227,44 @@ public class TRSDigitalPanel extends Activity {
             }
             if (intent.getAction().equals("button_highlight_event")) {
                 String name = intent.getStringExtra("button_name");
-                Log.d(TAG, "Received intent 'button_highlight_event'. Name of button to highlight: " + name);
+                logme(TAG, "Received intent 'button_highlight_event'. Name of button to highlight: " + name);
                 if (TextUtils.isEmpty(name)) {
                     return;
                 }
                 //switchButtonON(Integer.valueOf(index), false);
                 switchButton_by_name_OFF("OFF");
                 switchButton_by_name_ON(name);
-                //Log.d(TAG, "Button: " + index + " highlighted");
+                //logme(TAG, "Button: " + index + " highlighted");
             } else if (intent.getAction().equals("button_dehighlight_event")) {
                 String name = intent.getStringExtra("button_name");
-                Log.d(TAG, "Got button to dehighlight: " + name);
+                logme(TAG, "Got button to dehighlight: " + name);
                 if (TextUtils.isEmpty(name)) {
                     return;
                 }
                 switchButton_by_name_OFF(name);
-                //Log.d(TAG, "Button: " + index + " highlighted");
+                //logme(TAG, "Button: " + index + " highlighted");
             } else if (intent.getAction().equals("controller_data_refreshed_event")) {
-                Log.d(TAG, "controller data refreshed - intent received");
+                logme(TAG, "controller data refreshed - intent received");
                 refresh_unit_config();
             } else if (intent.getAction().equals("button_highlight_extra")) {
                 String name = intent.getStringExtra("button_name");
-                Log.d(TAG, "Got additional button to highlight: " + name);
+                logme(TAG, "Got additional button to highlight: " + name);
                 if (TextUtils.isEmpty(name)) {
                     return;
                 }
                 if (name.equalsIgnoreCase("PRG")){
                     switchButtonON(7, false);
-                   //Log.d(TAG, "PRG Button highlighted");
+                   //logme(TAG, "PRG Button highlighted");
                 }
 
                 if (name.equalsIgnoreCase("LOW")){
                     if (!BL_LOW_MODE) {
                         switchButtonON(8, false);
                         BL_LOW_MODE = true;
-                        //Log.d(TAG, "LOW Button highlighted");
+                        //logme(TAG, "LOW Button highlighted");
                     } else {
                         switchButtonOFF(8);
-                       // Log.d(TAG, "LOW Button deactivated");
+                       // logme(TAG, "LOW Button deactivated");
                     }
                 }
 
@@ -243,10 +273,10 @@ public class TRSDigitalPanel extends Activity {
                     switchButtonON(9, false);
                     BL_LOW_MODE = false;
                     updateLampValue("000,000,000,000,000,000,000,000,000,000");
-                    Log.d(TAG, "clearing current lamp values in Shared Prefs");
+                    logme(TAG, "clearing current lamp values in Shared Prefs");
                 }
 
-                Log.d(TAG, "Calling switch button by name: " + name);
+                logme(TAG, "Calling switch button by name: " + name);
                 switchButton_by_name_ON(name);
             }
 
@@ -288,9 +318,18 @@ public class TRSDigitalPanel extends Activity {
     }
 
     private void switchButton_by_name_ON(String button_name) {
+
+        if (button_name.equalsIgnoreCase("TL84")) {
+            logme(TAG, "Marking TL84 as active");
+            BL_TL84_ON = true;
+        } else {
+            logme(TAG, "Marking TL84 as inactive");
+            BL_TL84_ON = false;
+        }
+
         LinearLayout layout = findViewById(R.id.lLayout1);
         int count = layout.getChildCount();
-        //Log.d(TAG, "layout_main has " + count + " children");
+        //logme(TAG, "layout_main has " + count + " children");
         for (int i = 0; i < count; i++) {
             View view = layout.getChildAt(i);
             if (view instanceof Button) {
@@ -303,7 +342,7 @@ public class TRSDigitalPanel extends Activity {
 
         layout = findViewById(R.id.lLayout2);
         count = layout.getChildCount();
-        //Log.d(TAG, "layout_main has " + count + " children");
+        //logme(TAG, "layout_main has " + count + " children");
         for (int i = 0; i < count; i++) {
             View view = layout.getChildAt(i);
             if (view instanceof Button) {
@@ -316,7 +355,7 @@ public class TRSDigitalPanel extends Activity {
 
         layout = findViewById(R.id.lLayout3);
         count = layout.getChildCount();
-        //Log.d(TAG, "layout_main has " + count + " children");
+        //logme(TAG, "layout_main has " + count + " children");
         for (int i = 0; i < count; i++) {
             View view = layout.getChildAt(i);
             if (view instanceof Button) {
@@ -349,7 +388,7 @@ public class TRSDigitalPanel extends Activity {
             sKeyName = "preset" + j + "_rgbw";
             String sPresetValue = extractJSONvalue(sJsonBody, sKeyName); //eg. "123,123,255,000,000,064,006,255,100,001"
             if (sPresetName.equalsIgnoreCase(button_name)) {
-                Log.d(TAG, "switchButton_by_name_ON_() - marking '" + button_name + "' as current lamp in lamps_current_values");
+                logme(TAG, "switchButton_by_name_ON_() - marking '" + button_name + "' as current lamp in lamps_current_values");
                 updateLampValue(sPresetValue);
             }
         }
@@ -357,7 +396,7 @@ public class TRSDigitalPanel extends Activity {
     }
 
     private void switchButton_by_name_OFF(String button_name) {
-        Log.d(TAG, "switchButton_by_name_OFF_() - dehighlighting button: " + button_name);
+        logme(TAG, "switchButton_by_name_OFF_() - dehighlighting button: " + button_name);
         LinearLayout layout = findViewById(R.id.lLayout1);
         int count = layout.getChildCount();
         for (int i = 0; i < count; i++) {
@@ -366,41 +405,42 @@ public class TRSDigitalPanel extends Activity {
                 if (((Button) view).getText().toString().equals(button_name)) {
                     view.setBackgroundResource(R.drawable.buttonselector_main);
                     ((Button) view).setTextColor(Color.WHITE);
-                    Log.d(TAG, "switchButton_by_name_OFF_() - button: " + button_name + " dehighlighted.");
+                    logme(TAG, "switchButton_by_name_OFF_() - button: " + button_name + " dehighlighted.");
                 }
             }
         }
 
         layout = findViewById(R.id.lLayout2);
         count = layout.getChildCount();
-        //Log.d(TAG, "layout_main has " + count + " children");
+        //logme(TAG, "layout_main has " + count + " children");
         for (int i = 0; i < count; i++) {
             View view = layout.getChildAt(i);
             if (view instanceof Button) {
                 if (((Button) view).getText().toString().equals(button_name)) {
                     view.setBackgroundResource(R.drawable.buttonselector_main);
                     ((Button) view).setTextColor(Color.WHITE);
-                    Log.d(TAG, "switchButton_by_name_OFF_() - button: " + button_name + " dehighlighted.");
+                    logme(TAG, "switchButton_by_name_OFF_() - button: " + button_name + " dehighlighted.");
                 }
             }
         }
 
         layout = findViewById(R.id.lLayout3);
         count = layout.getChildCount();
-        //Log.d(TAG, "layout_main has " + count + " children");
+        //logme(TAG, "layout_main has " + count + " children");
         for (int i = 0; i < count; i++) {
             View view = layout.getChildAt(i);
             if (view instanceof Button) {
                 if (((Button) view).getText().toString().equals(button_name)) {
                     view.setBackgroundResource(R.drawable.buttonselector_main);
                     ((Button) view).setTextColor(Color.WHITE);
-                    Log.d(TAG, "switchButton_by_name_OFF_() - button: " + button_name + " dehighlighted.");
+                    logme(TAG, "switchButton_by_name_OFF_() - button: " + button_name + " dehighlighted.");
                 }
             }
         }
     }
 
 
+    @SuppressLint("NewApi")
     protected void onResume()
     {
         super.onResume();
@@ -442,7 +482,7 @@ public class TRSDigitalPanel extends Activity {
             mBound = true;
         }
 
-        Log.d(TAG, "starting Bluetooth connection service");
+        logme(TAG, "starting Bluetooth connection service");
 
         if (!mBoundBT) {
             Intent intent = new Intent(this, BtCOMMsService.class);
@@ -457,7 +497,7 @@ public class TRSDigitalPanel extends Activity {
                 if (bluetooth_connected()) {
                     try {
                         String sSequence = "F";
-                        sSequence = sSequence.concat(System.lineSeparator());
+                        sSequence = sSequence.concat(lineSeparator());
 
                         lclBTServiceInstance.sendData(sSequence);
                     } catch (NullPointerException e) {
@@ -482,9 +522,9 @@ public class TRSDigitalPanel extends Activity {
 
         if (shared_prefs_exists(SHAREDPREFS_LAMP_ASSIGNMENTS, "666")) {
             repopulate_button_assignments();
-            Log.d(TAG, "Repopulating button captions");
+            logme(TAG, "Repopulating button captions");
         } else {
-            Log.d(TAG, "Key 666 not found. Populating button names from JSON");
+            logme(TAG, "Key 666 not found. Populating button names from JSON");
             populateButtonNames();
         }
 
@@ -524,6 +564,7 @@ public class TRSDigitalPanel extends Activity {
         }
         mBoundBT = false;
         mBound = false;
+        logme(TAG, "onStop_() - onStop");
 
         /*SharedPreferences prefs = getSharedPreferences(BT_PREFS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -543,9 +584,18 @@ public class TRSDigitalPanel extends Activity {
         //Toast.makeText(this.getBaseContext(),"Main activity destroyed", Toast.LENGTH_SHORT).show();
         toggle_bt_icon_OFF();
         mark_BT_disconnected();
+        //mark_customer_data_use_in_config(false);
+        //mark_customer_logo_use_in_config(false);
         super.onDestroy();
     }
 
+
+    @Override
+    public void onBackPressed() {
+        logme(TAG, "Back button pressed");
+        finish();
+    }
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -573,7 +623,17 @@ public class TRSDigitalPanel extends Activity {
         populateButtonNames();
         setFiltersBT();
         setFiltersBTdevice();
+        fileUtilities = new FileUtilities(get_path_to_customer_datafile(), get_path_to_customer_logofile());
+        check_for_customer_data_use();
 
+
+        btnReassign.setOnLongClickListener(arg0 -> {
+
+            mark_customer_zipfile_processed_in_config(false);
+            makeToast("ZIP file processed marked as false");
+
+            return true;
+        });
 
         bt_conn_indicator.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -583,13 +643,13 @@ public class TRSDigitalPanel extends Activity {
                 //makeToast("Long click detected");
 
                 if (btAdapter == null) {
-                    Log.d(TAG, "BT adapter is null");
+                    logme(TAG, "BT adapter is null");
                 }
 
                 if (btAdapter.isEnabled()) {
-                    Log.d(TAG, "BT enabled on the mobile");
+                    logme(TAG, "BT enabled on the mobile");
                     if (!bl_bluetooth_forced_on) {
-                        Log.d(TAG, " **** starting Bluetooth connection service");
+                        logme(TAG, " **** starting Bluetooth connection service");
                         startBluetoothService();
                     }
                     if (!check_for_BT_connection()) {
@@ -597,7 +657,7 @@ public class TRSDigitalPanel extends Activity {
                         startActivity(intent); //or start activity for result? this should be "modal"
                     }
                 } else {
-                    Log.d(TAG, "Requesting to enable BT on mobile");
+                    logme(TAG, "Requesting to enable BT on mobile");
                     startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), 1);
                     bl_bluetooth_forced_on = true;
                 }
@@ -701,6 +761,60 @@ public class TRSDigitalPanel extends Activity {
             populateButtonNames();
         }
 
+        Log.d(TAG, "Requesting storage permission");
+        check_and_request_permissions(STORAGE_PERMISSION_CODE);
+
+    }
+
+    private void check_and_request_permissions(int requestCode) {
+        // Function to check and request permission
+
+
+                String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+            // Checking if permission is not granted
+            if (ContextCompat.checkSelfPermission(
+                    TRSDigitalPanel.this,
+                    permission)
+                    == PackageManager.PERMISSION_DENIED) {
+                ActivityCompat
+                        .requestPermissions(
+                                TRSDigitalPanel.this,
+                                new String[] { permission },
+                                requestCode);
+            }
+            else {
+                /*Toast
+                        .makeText(TRSDigitalPanel.this,
+                                "Permission already granted",
+                                Toast.LENGTH_SHORT)
+                        .show();*/
+                Log.d(TAG, "Storage permission already granted");
+            }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super
+                .onRequestPermissionsResult(requestCode,
+                        permissions,
+                        grantResults);
+
+        if (requestCode == STORAGE_PERMISSION_CODE) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(TRSDigitalPanel.this,
+                        "Storage Permission Granted",
+                        Toast.LENGTH_SHORT)
+                        .show();
+            } else {
+                Toast.makeText(TRSDigitalPanel.this,
+                        "Storage Permission Denied",
+                        Toast.LENGTH_SHORT)
+                        .show();
+            }
+        }
     }
 
     private void check_extended_mode() {
@@ -713,6 +827,29 @@ public class TRSDigitalPanel extends Activity {
         } else {
             layout_extended.setVisibility(View.INVISIBLE);
         }
+    }
+
+    private void mark_customer_logo_use_in_config(boolean flag) {
+        SharedPreferences prefs = getSharedPreferences(Constants.CONFIG_SETTINGS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(Constants.CUSTOMER_LOGO_FLAG, flag);
+        editor.apply();
+    }
+
+    private void mark_customer_data_use_in_config(boolean flag) {
+        SharedPreferences prefs = getSharedPreferences(Constants.CONFIG_SETTINGS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        logme(TAG, "Setting USE CUSTOMER DATA to: " + flag);
+        editor.putBoolean(Constants.CUSTOMER_DATA_FLAG, flag);
+        editor.apply();
+    }
+
+    private void mark_customer_zipfile_processed_in_config(boolean flag) {
+        SharedPreferences prefs = getSharedPreferences(Constants.CONFIG_SETTINGS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        logme(TAG, "Setting USE CUSTOMER ZIPFILE PROCESSED to: " + flag);
+        editor.putBoolean(Constants.CUSTOMER_ZIPFILE_PROCESSED, flag);
+        editor.apply();
     }
 
     private void startBluetoothService() {
@@ -761,13 +898,15 @@ public class TRSDigitalPanel extends Activity {
         String ee_psucurrent_tag = "eeprom_PSU_current";
         String ee_tl84dim_tag = "eeprom_tl84_dim_value";
         String ee_tl84masterdim_tag = "eeprom_tl84_master_dim_value";
+        String ee_noofpanels_tag = "eeprom_no_of_panels";
 
-        //Log.d(TAG, "bluetoothAskReply(V1)");
+        //logme(TAG, "bluetoothAskReply(V1)");
         String s_eeprom_auto_shutoff = json_analyst.getJSONValue(ee_autoshutoff_tag);
         String s_eeprom_tl84_delay = json_analyst.getJSONValue(ee_tl84delay_tag);
         String s_eeprom_PSU_current = json_analyst.getJSONValue(ee_psucurrent_tag);
         String s_eeprom_tl84_dim_value = json_analyst.getJSONValue(ee_tl84dim_tag);
         String s_eeprom_tl84_master_dim_value = json_analyst.getJSONValue(ee_tl84masterdim_tag);
+        String s_eeprom_no_of_panels = json_analyst.getJSONValue(ee_noofpanels_tag);
 
         SharedPreferences spConfig = getSharedPreferences(CONFIG_SETTINGS, 0);
         SharedPreferences.Editor spConfigEditor = spConfig.edit();
@@ -776,6 +915,7 @@ public class TRSDigitalPanel extends Activity {
         spConfigEditor.putString(ee_psucurrent_tag, s_eeprom_PSU_current);
         spConfigEditor.putString(ee_tl84dim_tag, s_eeprom_tl84_dim_value);
         spConfigEditor.putString(ee_tl84masterdim_tag, s_eeprom_tl84_master_dim_value);
+        spConfigEditor.putString(ee_noofpanels_tag, s_eeprom_no_of_panels);
         spConfigEditor.apply();
 
     }
@@ -798,7 +938,7 @@ public class TRSDigitalPanel extends Activity {
         spEditor.clear();
         spEditor.putBoolean("CONNECTED", true);
         spEditor.apply();
-        Log.d(TAG, "BT connection marked as true in the sp file");
+        logme(TAG, "BT connection marked as true in the sp file");
     }
 
     public void mark_BT_disconnected() {
@@ -808,7 +948,7 @@ public class TRSDigitalPanel extends Activity {
         spEditor.clear();
         spEditor.putBoolean("CONNECTED", false);
         spEditor.apply();
-        Log.d(TAG, "BT connection marked as false in the sp file");
+        logme(TAG, "BT connection marked as false in the sp file");
         toggle_bt_icon_OFF();
     }
 
@@ -838,7 +978,7 @@ public class TRSDigitalPanel extends Activity {
 
     }
 
-    private BroadcastReceiver btReceiverBTdevice = new BroadcastReceiver() {
+    private final BroadcastReceiver btReceiverBTdevice = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -846,10 +986,10 @@ public class TRSDigitalPanel extends Activity {
 
             switch (action){
                 case BluetoothDevice.ACTION_ACL_CONNECTED:
-                    Log.d(TAG, "Broadcast receiver: ACL_CONNECTED");
+                    logme(TAG, "Broadcast receiver: ACL_CONNECTED");
                     break;
                 case BluetoothDevice.ACTION_ACL_DISCONNECTED:
-                    Log.d(TAG, "Broadcast receiver: ACL_DISCONNECTED");
+                    logme(TAG, "Broadcast receiver: ACL_DISCONNECTED");
                     makeToast("Bluetooth communication has been disconnected.");
                     mark_BT_disconnected();
                     break;
@@ -878,7 +1018,7 @@ public class TRSDigitalPanel extends Activity {
 
     public boolean shared_prefs_exists(String sFileName, String sKey) {
         SharedPreferences spFile = getSharedPreferences(sFileName, 0);
-        Log.d(TAG, "Shared_prefs_exists (" + sFileName+ "): " + spFile.contains(sKey));
+        logme(TAG, "Shared_prefs_exists (" + sFileName+ "): " + spFile.contains(sKey));
         return spFile.contains(sKey);
     }
 
@@ -955,7 +1095,7 @@ public class TRSDigitalPanel extends Activity {
                     btnL12.setTag(entry.getValue().toString());
                     break;
 
-                //Log.d(TAG, entry.getKey() + ":" + entry.getValue());
+                //logme(TAG, entry.getKey() + ":" + entry.getValue());
                 //some code
             }
         }
@@ -1026,8 +1166,8 @@ public class TRSDigitalPanel extends Activity {
                 break;
 
             case 11:
-                if (blTL84_ON) {
-                    blTL84_ON = false;
+                if (BL_TL84_ON) {
+                    BL_TL84_ON = false;
                 }
                 break;
 
@@ -1128,7 +1268,7 @@ public class TRSDigitalPanel extends Activity {
                 mark_all_buttons_off_on_mobile(true);
                 btnL7.setBackgroundResource(R.drawable.buttonselector_active);
                 btnL7.setTextColor(Color.BLACK);
-                Log.d(TAG, "switchButtonON_() - only PRG should be highlighted");
+                logme(TAG, "switchButtonON_() - only PRG should be highlighted");
                 break;
 
             case 8: //LOW
@@ -1145,9 +1285,9 @@ public class TRSDigitalPanel extends Activity {
                 break;
 
             case 11:
-                if (!blTL84_ON) {
+                if (!BL_TL84_ON) {
                     mark_all_buttons_off_on_mobile(false);
-                    blTL84_ON = true;
+                    BL_TL84_ON = true;
                 }
                 break;
 
@@ -1200,7 +1340,7 @@ public class TRSDigitalPanel extends Activity {
         SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
         JSON_analyst json_analyst = new JSON_analyst(spFile);
 
-        //Log.d(TAG, "bluetoothAskReply(V1)");
+        //logme(TAG, "bluetoothAskReply(V1)");
         final String sLamp1Name = json_analyst.getJSONValue("preset1_name");
         final String sLamp2Name = json_analyst.getJSONValue("preset2_name");
         final String sLamp3Name = json_analyst.getJSONValue("preset3_name");
@@ -1296,402 +1436,17 @@ public class TRSDigitalPanel extends Activity {
     }
     public String get_tl84_delay() {
         SharedPreferences config_prefs = getSharedPreferences(Constants.CONFIG_SETTINGS, 0);
-        Log.d(TAG, " ** TL84_delay from file: " + String.format(Locale.US, "%04d", config_prefs.getInt(TL84_DELAY_KEY, 0)));
+        logme(TAG, " ** TL84_delay from file: " + String.format(Locale.US, "%04d", config_prefs.getInt(TL84_DELAY_KEY, 0)));
         return String.format(Locale.US, "%04d", config_prefs.getInt(TL84_DELAY_KEY, 0));
 
     }
 
-    /*public void btnClicked(View v) {
-
-        SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
-        SharedPreferences spLampDefinitions = getSharedPreferences(Constants.SHAREDPREFS_LAMP_DEFINITIONS, 0);
-        String sPresetRGBValues = "000,000,000,000,000,000,000,000,000,000";
-        String sCommand = "";
-        //JSON_analyst json_analyst = new JSON_analyst(spFile);
-
-        String buttonCaption = v.getTag().toString();
-        if (!TextUtils.isEmpty(buttonCaption)) {
-            if (!buttonCaption.equalsIgnoreCase("LOW") && !buttonCaption.equalsIgnoreCase("UV")) {
-                mark_all_buttons_off_on_mobile(false);
-            }
-        }
-
-        BL_LOW_MODE = false;
-        Log.d(TAG, "switching off LOW mode - shouldn't happen, this function is redundant");
-
-        switch (v.getId()) {
-            case R.id.btnL1:
-                if (spLampDefinitions.contains(btnL1.getText().toString())) {
-                    sPresetRGBValues = spLampDefinitions.getString(btnL1.getText().toString(), null);
-                    Log.d(TAG, "sending " + sPresetRGBValues + " to controller");
-                    if (sPresetRGBValues != null) {
-
-                        if (btnL1.getText().toString().equalsIgnoreCase("UV")) {
-                            //complementary light - keep current on and add UV definition for non-zeros - when switching ON UV mode. Otherwise switch off additional lamps
-                            sCommand = "P" + convertRGB2complementaryLight(sPresetRGBValues, (!BL_UV_MODE));
-                            sCommand += "$" + sNewLine;
-                            if (mBoundBT) {
-                                Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                                lclBTServiceInstance.sendData(sCommand);
-                            } else {
-                                Log.d(TAG, "Service btService not connected!");
-                            }
-                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-
-                            sCommand = "B," + btnL1.getTag().toString() + (BL_UV_MODE ? 0 : 1) + "$" + sNewLine;
-                            if (mBoundBT) {
-                                Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                                lclBTServiceInstance.sendData(sCommand);
-                            } else {
-                                Log.d(TAG, "Service btService not connected!");
-                            }
-                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-
-                            BL_UV_MODE = !BL_UV_MODE;
-                            String s = (BL_UV_MODE ? "active" : "inactive");
-                            Log.d(TAG, "UV mode - " + s);
-                            if (BL_UV_MODE) {
-                                btnL1.setBackgroundResource(R.drawable.buttonselector_active);
-                                btnL1.setTextColor(Color.BLACK);
-                            } else {
-                                btnL1.setBackgroundResource(R.drawable.buttonselector_main);
-                                btnL1.setTextColor(Color.WHITE);
-                            }
-                        } else {
-
-                            sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
-                            sCommand += "$" + sNewLine;
-                            //if (btService.connected) {
-                            if (mBoundBT) {
-                                Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                                lclBTServiceInstance.sendData(sCommand);
-                            } else {
-                                Log.d(TAG, "Service btService not connected!");
-                            }
-                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                            sCommand = "B," + btnL1.getTag().toString() + "1$" + sNewLine;
-                            if (mBoundBT) {
-                                Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                                lclBTServiceInstance.sendData(sCommand);
-                            } else {
-                                Log.d(TAG, "Service btService not connected!");
-                            }
-                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-
-                            if (btnL1.getText().toString().equalsIgnoreCase(TL84_TAG)) {
-                                if (BL_LOW_MODE) {
-                                    sCommand = "S11050" + sNewLine;
-                                } else {
-                                    sCommand = "S11100" + sNewLine;
-                                }
-                                if (mBoundBT) {
-                                    //Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                                    lclBTServiceInstance.sendData(sCommand);
-                                } else {
-                                    Log.d(TAG, "Service btService not connected!");
-                                }
-                                lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                                blTL84_ON = true;
-                            } else {
-                                sCommand = "S11000" + sNewLine;
-                                blTL84_ON = false;
-                                if (mBoundBT) {
-                                    lclBTServiceInstance.sendData(sCommand);
-                                }
-                            }
-                            btnL1.setBackgroundResource(R.drawable.buttonselector_active);
-                            btnL1.setTextColor(Color.BLACK);
-                        }
-                        blLamp1_ON = true;
-                        updateLampValue(sPresetRGBValues);
-                    }
-                } else {
-                    makeToast("No lamp preset assigned to this button!");
-                }
-                break;
-
-            case R.id.btnL2:
-
-                if (spLampDefinitions.contains(btnL2.getText().toString())) {
-                    sPresetRGBValues = spLampDefinitions.getString(btnL2.getText().toString(), null);
-                    sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
-                    sCommand += "$" + sNewLine;
-                    //if (btService.connected) {
-                    if (mBoundBT) {
-                        Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                        lclBTServiceInstance.sendData(sCommand);
-                    } else {
-                        Log.d(TAG, "Service btService not connected!");
-                    }
-                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                    sCommand = "B," + btnL2.getTag().toString() + "1$" + sNewLine;
-                    if (mBoundBT) {
-                        Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                        lclBTServiceInstance.sendData(sCommand);
-                    } else {
-                        Log.d(TAG, "Service btService not connected!");
-                    }
-                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-
-                    if (btnL2.getText().toString().equalsIgnoreCase(TL84_TAG)) {
-                        if (BL_LOW_MODE) {
-                            sCommand = "S11050" + sNewLine;
-                        } else {
-                            sCommand = "S11100" + sNewLine;
-                        }
-                        if (mBoundBT) {
-                            Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                            lclBTServiceInstance.sendData(sCommand);
-
-                        } else {
-                            Log.d(TAG, "Service btService not connected!");
-                        }
-                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                        blTL84_ON = true;
-                    } else {
-                        sCommand = "S11000" + sNewLine;
-                        blTL84_ON = false;
-                        if (mBoundBT) {
-                            lclBTServiceInstance.sendData(sCommand);
-                        }
-                    }
-                    blLamp2_ON = true;
-                    btnL2.setBackgroundResource(R.drawable.buttonselector_active);
-                    btnL2.setTextColor(Color.BLACK);
-                    updateLampValue(sPresetRGBValues);
-                } else {
-                    makeToast("No lamp preset assign to this button!");
-                }
-                break;
-
-            case R.id.btnL3:
-
-                if (spLampDefinitions.contains(btnL3.getText().toString())) {
-                    sPresetRGBValues = spLampDefinitions.getString(btnL3.getText().toString(), null);
-                    sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
-                    sCommand += "$" + sNewLine;
-                    //if (btService.connected) {
-                    if (mBoundBT) {
-                        Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                        lclBTServiceInstance.sendData(sCommand);
-                    } else {
-                        Log.d(TAG, "Service btService not connected!");
-                    }
-                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                    sCommand = "B," + btnL3.getTag().toString() + "1$" + sNewLine;
-                    if (mBoundBT) {
-                        Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                        lclBTServiceInstance.sendData(sCommand);
-                    } else {
-                        Log.d(TAG, "Service btService not connected!");
-                    }
-                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-
-                    if (btnL3.getText().toString().equalsIgnoreCase(TL84_TAG)) {
-                        if (BL_LOW_MODE) {
-                            sCommand = "S11050" + sNewLine;
-                        } else {
-                            sCommand = "S11100" + sNewLine;
-                        }
-                        if (mBoundBT) {
-                            Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                            lclBTServiceInstance.sendData(sCommand);
-
-                        } else {
-                            Log.d(TAG, "Service btService not connected!");
-                        }
-                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                        blTL84_ON = true;
-                    } else {
-                        sCommand = "S11000" + sNewLine;
-                        blTL84_ON = false;
-                        if (mBoundBT) {
-                            lclBTServiceInstance.sendData(sCommand);
-                        }
-                    }
-                    blLamp3_ON = true;
-                    btnL3.setBackgroundResource(R.drawable.buttonselector_active);
-                    btnL3.setTextColor(Color.BLACK);
-                    updateLampValue(sPresetRGBValues);
-                } else {
-                    makeToast("No lamp preset assign to this button!");
-                }
-                break;
-            case R.id.btnL4:
-
-                if (spLampDefinitions.contains(btnL4.getText().toString())) {
-                    sPresetRGBValues = spLampDefinitions.getString(btnL4.getText().toString(), null);
-                    sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
-                    sCommand += "$" + sNewLine;
-                    //if (btService.connected) {
-                    if (mBoundBT) {
-                        Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                        lclBTServiceInstance.sendData(sCommand);
-                    } else {
-                        Log.d(TAG, "Service btService not connected!");
-                    }
-                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                    sCommand = "B," + btnL4.getTag().toString() + "1$" + sNewLine;
-                    if (mBoundBT) {
-                        Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                        lclBTServiceInstance.sendData(sCommand);
-                    } else {
-                        Log.d(TAG, "Service btService not connected!");
-                    }
-                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-
-                    if (btnL4.getText().toString().equalsIgnoreCase(TL84_TAG)) {
-                        if (BL_LOW_MODE) {
-                            sCommand = "S11050" + sNewLine;
-                        } else {
-                            sCommand = "S11100" + sNewLine;
-                        }
-                        if (mBoundBT) {
-                            Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                            lclBTServiceInstance.sendData(sCommand);
-
-                        } else {
-                            Log.d(TAG, "Service btService not connected!");
-                        }
-                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                        blTL84_ON = true;
-                    } else {
-                        sCommand = "S11000" + sNewLine;
-                        blTL84_ON = false;
-                        if (mBoundBT) {
-                            lclBTServiceInstance.sendData(sCommand);
-                        }
-                    }
-                    blLamp4_ON = true;
-                    btnL4.setBackgroundResource(R.drawable.buttonselector_active);
-                    btnL4.setTextColor(Color.BLACK);
-                    updateLampValue(sPresetRGBValues);
-                } else {
-                    makeToast("No lamp preset assign to this button!");
-                }
-                break;
-            case R.id.btnL5:
-
-                if (spLampDefinitions.contains(btnL5.getText().toString())) {
-                    sPresetRGBValues = spLampDefinitions.getString(btnL5.getText().toString(), null);
-                    sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
-                    sCommand += "$" + sNewLine;
-                    //if (btService.connected) {
-                    if (mBoundBT) {
-                        Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                        lclBTServiceInstance.sendData(sCommand);
-                    } else {
-                        Log.d(TAG, "Service btService not connected!");
-                    }
-                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                    sCommand = "B," + btnL5.getTag().toString() + "1$" + sNewLine;
-                    if (mBoundBT) {
-                        Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                        lclBTServiceInstance.sendData(sCommand);
-                    } else {
-                        Log.d(TAG, "Service btService not connected!");
-                    }
-                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-
-                    if (btnL5.getText().toString().equalsIgnoreCase(TL84_TAG)) {
-                        if (BL_LOW_MODE) {
-                            sCommand = "S11050" + sNewLine;
-                        } else {
-                            sCommand = "S11100" + sNewLine;
-                        }
-                        if (mBoundBT) {
-                            Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                            lclBTServiceInstance.sendData(sCommand);
-
-                        } else {
-                            Log.d(TAG, "Service btService not connected!");
-                        }
-                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                        blTL84_ON = true;
-                    } else {
-                        sCommand = "S11000" + sNewLine;
-                        blTL84_ON = false;
-                        if (mBoundBT) {
-                            //lclBTServiceInstance.sendData(sCommand);
-                        }
-                    }
-                    blLamp5_ON = true;
-                    btnL5.setBackgroundResource(R.drawable.buttonselector_active);
-                    btnL5.setTextColor(Color.BLACK);
-                    updateLampValue(sPresetRGBValues);
-                } else {
-                    makeToast("No lamp preset assign to this button!");
-                }
-                break;
-            case R.id.btnL6:
-
-                if (spLampDefinitions.contains(btnL6.getText().toString())) {
-                    sPresetRGBValues = spLampDefinitions.getString(btnL6.getText().toString(), null);
-                    sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
-                    sCommand += "$" + sNewLine;
-                    //if (btService.connected) {
-                    if (mBoundBT) {
-                        Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                        lclBTServiceInstance.sendData(sCommand);
-                    } else {
-                        Log.d(TAG, "Service btService not connected!");
-                    }
-                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                    sCommand = "B," + btnL6.getTag().toString() + "1$" + sNewLine;
-                    if (mBoundBT) {
-                        Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                        lclBTServiceInstance.sendData(sCommand);
-                    } else {
-                        Log.d(TAG, "Service btService not connected!");
-                    }
-                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-
-                    if (btnL6.getText().toString().equalsIgnoreCase(TL84_TAG)) {
-                        if (BL_LOW_MODE) {
-                            sCommand = "S11050" + sNewLine;
-                        } else {
-                            sCommand = "S11100" + sNewLine;
-                        }
-                        if (mBoundBT) {
-                            Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-                            lclBTServiceInstance.sendData(sCommand);
-
-                        } else {
-                            Log.d(TAG, "Service btService not connected!");
-                        }
-                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                        blTL84_ON = true;
-                    } else {
-                        sCommand = "S11000" + sNewLine;
-                        blTL84_ON = false;
-                        if (mBoundBT) {
-                            lclBTServiceInstance.sendData(sCommand);
-                        }
-                    }
-                    blLamp6_ON = true;
-                    btnL6.setBackgroundResource(R.drawable.buttonselector_active);
-                    btnL6.setTextColor(Color.BLACK);
-                    updateLampValue(sPresetRGBValues);
-                } else {
-                    makeToast("No lamp preset assign to this button!");
-                }
-                break;
-
-            case R.id.btnL7:
-                blLamp7_ON = true;
-                btnL7.setBackgroundResource(R.drawable.buttonselector_active);
-                btnL7.setTextColor(Color.BLACK);
-
-                break;
-        }
-    }*/
-
     private void send_via_bt(String command) {
         if (mBoundBT) {
-            Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + command.replace("\n", "\\n").replace("\r", "\\r") + "'");
+            logme(TAG, "Service btService connected. Calling btService.sendData with message '" + command.replace("\n", "\\n").replace("\r", "\\r") + "'");
             lclBTServiceInstance.sendData(command);
         } else {
-            Log.d(TAG, "Service btService not connected!");
+            logme(TAG, "Service btService not connected!");
         }
     }
 
@@ -1703,7 +1458,7 @@ public class TRSDigitalPanel extends Activity {
         String buttonCaption = v.getTag().toString();
         if (!TextUtils.isEmpty(buttonCaption)) {
             if (!buttonCaption.equalsIgnoreCase("LOW") && !buttonCaption.equalsIgnoreCase("UV")) {
-                Log.d(TAG, "switching off all lamps");
+                logme(TAG, "switching off all lamps");
                 mark_all_buttons_off_on_mobile(false);
             }
         }
@@ -1729,7 +1484,7 @@ public class TRSDigitalPanel extends Activity {
             if (!power_drain_check(sPresetRGBValues)) {
                 return;
             }
-            Log.d(TAG, "sending " + sPresetRGBValues + " to controller");
+            logme(TAG, "sending " + sPresetRGBValues + " to controller");
             if (sPresetRGBValues != null) {
 
                 if (button.getText().toString().equalsIgnoreCase("UV")) {
@@ -1740,13 +1495,13 @@ public class TRSDigitalPanel extends Activity {
                     lclUsbServiceInstance.sendBytes(sCommand.getBytes());
 
                     sCommand = "B," + button.getTag().toString() + (BL_UV_MODE ? 0 : 1) + "$" + sNewLine;
-                    Log.d(TAG, "sendviabt ** B command with tag: "+ button.getTag().toString() + " text: " + button.getText());
+                    logme(TAG, "sendviabt ** B command with tag: "+ button.getTag().toString() + " text: " + button.getText());
                     send_via_bt(sCommand);
                     lclUsbServiceInstance.sendBytes(sCommand.getBytes());
 
                     BL_UV_MODE = !BL_UV_MODE;
                     String s = (BL_UV_MODE ? "active" : "inactive");
-                    Log.d(TAG, "UV mode - " + s);
+                    logme(TAG, "UV mode - " + s);
                     if (BL_UV_MODE) {
                         button.setBackgroundResource(R.drawable.buttonselector_active);
                         button.setTextColor(Color.BLACK);
@@ -1758,26 +1513,26 @@ public class TRSDigitalPanel extends Activity {
 
                 } else {
                     if (!BL_LOW_MODE) {
-                        Log.d(TAG, "I'm not in LOW mode");
+                        logme(TAG, "I'm not in LOW mode");
 
                         if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
                             get_tl84_delay();
                             sCommand = "S11100" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + sNewLine;
-                            Log.d(TAG, " *** NEW TL84 command (ON): " + sCommand);
+                            logme(TAG, " *** NEW TL84 command (ON): " + sCommand);
                             send_via_bt(sCommand);
                             lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                            blTL84_ON = true;
+                            BL_TL84_ON = true;
                         } else {
                             //sCommand = "S11000$" + sNewLine; //actually we want to send a S11000^ffffffff(...)
                             sCommand  = "S11000" + convertRGBwithCommasToHexString(sPresetRGBValues) + "$" + sNewLine;
-                            blTL84_ON = false;
+                            BL_TL84_ON = false;
                             send_via_bt(sCommand);
 
                             BL_COMMAND_SENT = true;
                             if (!BL_COMMAND_SENT) {
                                 sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
                                 sCommand += "$" + sNewLine;
-                                Log.d(TAG, " *** NEW TL84 command (OFF): " + sCommand);
+                                logme(TAG, " *** NEW TL84 command (OFF): " + sCommand);
                                 send_via_bt(sCommand);
                                 lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                             }
@@ -1794,14 +1549,14 @@ public class TRSDigitalPanel extends Activity {
 
                         if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
                             sCommand = "S11050" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + sNewLine;
-                            Log.d(TAG, " *** NEW TL84 command (LOW): " + sCommand);
+                            logme(TAG, " *** NEW TL84 command (LOW): " + sCommand);
                             send_via_bt(sCommand);
                             lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                            blTL84_ON = true;
+                            BL_TL84_ON = true;
                         } else {
                             sCommand = "S11000$" + sNewLine;
-                            blTL84_ON = false;
-                            Log.d(TAG, " *** NEW TL84 command (OFF): " + sCommand);
+                            BL_TL84_ON = false;
+                            logme(TAG, " *** NEW TL84 command (OFF): " + sCommand);
                             send_via_bt(sCommand);
                             String[] sRGB_in = sPresetRGBValues.split(",");
                             String[] sRGB_out = sRGB_in;
@@ -1815,8 +1570,8 @@ public class TRSDigitalPanel extends Activity {
                             sCommand = "S" + sHex + "$" + sNewLine;
                             send_via_bt(sCommand);
                             lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                            Log.d(TAG, "I'm in LOW mode");
-                            Log.d(TAG, "Illuminating lamps with: " + sCommand);
+                            logme(TAG, "I'm in LOW mode");
+                            logme(TAG, "Illuminating lamps with: " + sCommand);
                         }
                     }
 
@@ -1851,7 +1606,7 @@ public class TRSDigitalPanel extends Activity {
         String buttonCaption = v.getTag().toString();
         if (!TextUtils.isEmpty(buttonCaption)) {
             if (!buttonCaption.equalsIgnoreCase("LOW")) {
-                Log.d(TAG, "switching off all lamps");
+                logme(TAG, "switching off all lamps");
                 mark_all_buttons_off_on_mobile(false);
             }
         }
@@ -1875,33 +1630,33 @@ public class TRSDigitalPanel extends Activity {
             if (!power_drain_check(sPresetRGBValues)) {
                 return;
             }
-            Log.d(TAG, "sending " + sPresetRGBValues + " to controller");
+            logme(TAG, "sending " + sPresetRGBValues + " to controller");
             if (sPresetRGBValues != null) {
                 if (!BL_LOW_MODE) {
-                    Log.d(TAG, "I'm not in LOW mode");
+                    logme(TAG, "I'm not in LOW mode");
 
                     if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
                         get_tl84_delay();
                         sCommand = "S11100" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + sNewLine;
-                        Log.d(TAG, " *** NEW TL84 command (ON): " + sCommand);
+                        logme(TAG, " *** NEW TL84 command (ON): " + sCommand);
                         send_via_bt(sCommand);
                         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
 
                         sCommand = "B," + button.getTag().toString() + "1$" + sNewLine;
                         send_via_bt(sCommand);
                         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                        blTL84_ON = true;
+                        BL_TL84_ON = true;
                     } else {
                         //sCommand = "S11000$" + sNewLine; //actually we want to send a S11000^ffffffff(...)
                         sCommand  = "S11000" + convertRGBwithCommasToHexString(sPresetRGBValues) + "$" + sNewLine;
-                        blTL84_ON = false;
+                        BL_TL84_ON = false;
                         send_via_bt(sCommand);
 
                         BL_COMMAND_SENT = true;
                         if (!BL_COMMAND_SENT) {
                             sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
                             sCommand += "$" + sNewLine;
-                            Log.d(TAG, " *** NEW TL84 command (OFF): " + sCommand);
+                            logme(TAG, " *** NEW TL84 command (OFF): " + sCommand);
                             send_via_bt(sCommand);
                             lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                         }
@@ -1918,15 +1673,18 @@ public class TRSDigitalPanel extends Activity {
 
                     if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
                         sCommand = "S11050" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + sNewLine;
-                        Log.d(TAG, " *** NEW TL84 command (LOW): " + sCommand);
+                        logme(TAG, " *** NEW TL84 command (LOW): " + sCommand);
                         send_via_bt(sCommand);
                         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                        blTL84_ON = true;
+                        sCommand = "B," + button.getTag().toString() + "1$" + sNewLine;
+                        send_via_bt(sCommand);
+                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+                        BL_TL84_ON = true;
                     } else {
                         //sCommand = "S11000$" + sNewLine;
                         //sCommand  = "S11000" + convertRGBwithCommasToHexString(sPresetRGBValues) + "$" + sNewLine;
-                        blTL84_ON = false;
-                        Log.d(TAG, " *** Not a TL84 light.");
+                        BL_TL84_ON = false;
+                        logme(TAG, " *** Not a TL84 light.");
                         //send_via_bt(sCommand);
                         String[] sRGB_in = sPresetRGBValues.split(",");
                         String[] sRGB_out = sRGB_in;
@@ -1941,8 +1699,8 @@ public class TRSDigitalPanel extends Activity {
                         sCommand  = "S11000" + sHex + "$" + sNewLine;
                         send_via_bt(sCommand);
                         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                        Log.d(TAG, "I'm in LOW mode");
-                        Log.d(TAG, "Illuminating lamps with: " + sCommand);
+                        logme(TAG, "I'm in LOW mode");
+                        logme(TAG, "Illuminating lamps with: " + sCommand);
                         sCommand = "B," + button.getTag().toString() + "1$" + sNewLine;
                         send_via_bt(sCommand);
                         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
@@ -1981,7 +1739,7 @@ public class TRSDigitalPanel extends Activity {
         //String sCommand = "S11000$" + sNewLine;
         String sCommand  = "S11000" + "00000000000000000000" + "$" + sNewLine;
 
-        blTL84_ON = false;
+        BL_TL84_ON = false;
         send_via_bt(sCommand);
     }
 
@@ -2044,6 +1802,7 @@ public class TRSDigitalPanel extends Activity {
     private Integer check_light_power(String sPresetRGBValues) {
         Integer iPower = 0;
         Integer i = 0;
+        int iPanels = 1;
         /*"Assign specific power drain to indidual LEDs:
         Each Count 255:
 
@@ -2094,11 +1853,30 @@ public class TRSDigitalPanel extends Activity {
             //Log.d (TAG, iDecimal + " / 210 = " + (int)Math.round(1000 * iDecimal / 210) + " mA");
             sPresetRGBValues = sPresetRGBValues.substring(2);
         }
-        Log.d (TAG, "No more preset light to check. Overall light power is: " + iPower);
+        Log.d (TAG, "check_light_power_() - light power of 1 panel: " + iPower);
+
+
+        String ee_noofpanels_tag = "eeprom_no_of_panels";
+
+        SharedPreferences spConfig = getSharedPreferences(CONFIG_SETTINGS, 0);
+        String s_eeprom_no_of_panels = spConfig.getString(ee_noofpanels_tag, "1");
+
+        try {
+            if (s_eeprom_no_of_panels.length() > 0) {
+                if (Integer.parseInt(s_eeprom_no_of_panels) != 0) {
+                    iPanels = Integer.parseInt(s_eeprom_no_of_panels);
+                }
+            }
+        } catch (NullPointerException e) {
+            makeToast("No of panels not defined for this unit");
+        }
+        logme(TAG, "check_light_power_() - multiplying power by '" + iPanels + "' panels.");
+        iPower *= iPanels;
+        Log.d (TAG, "check_light_power_() - Overall light power for all panels: " + iPower);
         return iPower;
     }
 
-    private int get_max_power() {
+    /*private int get_max_power() {
         SharedPreferences spFile = getSharedPreferences(Constants.PREFS_PSU_CURRENT, 0);
         //Float fPower = spFile.getFloat("psu_current", 0.0f) * 1000;
         int power = 0;
@@ -2107,6 +1885,27 @@ public class TRSDigitalPanel extends Activity {
         } catch (NumberFormatException e) {
             makeToast("Unable to get the stored PSU power value");
         }
+        return power;
+    }*/
+
+    private int get_max_power() {
+        int power = 0;
+        logme(TAG, "get_max_power_() - checking max PSU power from " + CONFIG_SETTINGS);
+        String ee_psucurrent_tag = "eeprom_PSU_current";
+
+        SharedPreferences spConfig = getSharedPreferences(CONFIG_SETTINGS, 0);
+        String s_eeprom_PSU_current = spConfig.getString(ee_psucurrent_tag, "");
+
+        try {
+            if (s_eeprom_PSU_current.length() > 0) {
+                if (Integer.parseInt(s_eeprom_PSU_current) != 0) {
+                    power = Integer.parseInt(s_eeprom_PSU_current);
+                }
+            }
+        } catch (NullPointerException e) {
+            makeToast("PSU current not yet defined for this unit");
+        }
+        logme(TAG, "get_max_power_() - max PSU current defined for this unit is: " + power);
         return power;
     }
 
@@ -2218,7 +2017,7 @@ public class TRSDigitalPanel extends Activity {
 
         }
 
-        blTL84_ON = false;
+        BL_TL84_ON = false;
         TL84_OFF();
         sCommand = "S00000000000000000000$" + sNewLine;
         send_via_bt(sCommand);
@@ -2312,11 +2111,6 @@ public class TRSDigitalPanel extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
 
-        /*menu.add(Menu.NONE, 0, 0, "Light Settings").setIcon(
-                getResources().getDrawable(R.drawable.icon_scan));
-        menu.add(Menu.NONE, 1, 1, "Home / Light sources").setIcon(
-                getResources().getDrawable(R.drawable.icon_information));*/
-
         menu.add(Menu.NONE, 2, 2, "Operating Hours").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));
         menu.add(Menu.NONE, 3, 3, "Sequence Settings (PRG)").setIcon(
@@ -2327,9 +2121,10 @@ public class TRSDigitalPanel extends Activity {
                 getResources().getDrawable(R.drawable.icon_information));
         menu.add(Menu.NONE, 6, 6, "Maintenance").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));
-        /*menu.add(Menu.NONE, 7, 7, "ListView page").setIcon(
-                getResources().getDrawable(R.drawable.icon_information));*/
-
+        menu.add(Menu.NONE, 7, 7, "License Page").setIcon(
+                getResources().getDrawable(R.drawable.icon_information));
+        menu.add(Menu.NONE, 8, 8, "About").setIcon(
+                getResources().getDrawable(R.drawable.icon_information));
 
         getMenuInflater().inflate(R.menu.menu, menu);
         MenuItem item = menu.findItem(R.id.menu_color_picker);
@@ -2386,9 +2181,18 @@ public class TRSDigitalPanel extends Activity {
                 //startActivity(intent9);
                 break;
 
-            /*case 7:
-                Intent intent9 = new Intent(TRSDigitalPanel.this, TRSSequence.class);
-                startActivity(intent9);
+            case 7:
+                Intent intent = new Intent(TRSDigitalPanel.this, LicenseClass.class);
+                startActivity(intent);
+                break;
+
+            case 8:
+                openAboutDialog();
+                break;
+
+            /*case 99:
+                Intent intent99 = new Intent(TRSDigitalPanel.this, TstVrly.class);
+                startActivity(intent99);
                 break;*/
 
         }
@@ -2438,9 +2242,61 @@ public class TRSDigitalPanel extends Activity {
         }
     }
 
-    public void openPRG (final View v) {
-        Intent intent = new Intent(TRSDigitalPanel.this, TRSSequence_old.class);
-        startActivity(intent);
+    private String getFWver_JSON() {
+        String sReturn = "";
+        sReturn = extractJSONvalue("", "firmware_version");
+
+        return sReturn;
+    }
+
+    public boolean display_custom_data() {
+        SharedPreferences prefs = getSharedPreferences(Constants.CONFIG_SETTINGS, Context.MODE_PRIVATE);
+        Boolean bl_custom_data = prefs.getBoolean(Constants.CUSTOMER_DATA_FLAG, false);
+        Log.d(TAG, "display_custom_data_(): USE CUSTOMER DATA = " + bl_custom_data);
+        return bl_custom_data;
+    }
+
+    private void openAboutDialog() {
+        String sFWverLcl = getFWver_JSON();
+
+        AlertDialog.Builder dlgBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.about_popup_view, null);
+        dlgBuilder.setView(dialogView);
+        dlgBuilder.setTitle(getString(R.string.app_header_title) + " App " + apkVersion);
+
+        TextView tv_fwversion = dialogView.findViewById(R.id.FWversion_value);
+        tv_fwversion.setText(sFWverLcl);
+
+        if (display_custom_data()) {
+            String about_dialog_line1 = fileUtilities.get_value_from_customer_data(Constants.CUSTOMER_DATA_ABOUT_PAGE_LINE_1_TAG);
+            String about_dialog_line2 = fileUtilities.get_value_from_customer_data(Constants.CUSTOMER_DATA_ABOUT_PAGE_LINE_2_TAG);
+            String about_dialog_line3 = fileUtilities.get_value_from_customer_data(Constants.CUSTOMER_DATA_ABOUT_PAGE_LINE_3_TAG);
+            String about_dialog_line4 = fileUtilities.get_value_from_customer_data(Constants.CUSTOMER_DATA_ABOUT_PAGE_LINE_4_TAG);
+            String about_dialog_hyperlink = fileUtilities.get_value_from_customer_data(Constants.CUSTOMER_DATA_ABOUT_PAGE_HYPERLINK);
+
+            about_dialog_line1 = about_dialog_line1.replace("\\n", System.lineSeparator());
+            about_dialog_line2 = about_dialog_line2.replace("\\n", System.lineSeparator());
+            about_dialog_line3 = about_dialog_line3.replace("\\n", System.lineSeparator());
+            about_dialog_line4 = about_dialog_line4.replace("\\n", System.lineSeparator());
+
+            Log.d(TAG, "openAboutDialog_() - setting custom data in line 1: " + about_dialog_line1);
+            TextView view = dialogView.findViewById(R.id.about_line_1);
+            view.setText(about_dialog_line1);
+
+            view = dialogView.findViewById(R.id.about_line_2);
+            view.setText(about_dialog_line2);
+
+            view = dialogView.findViewById(R.id.about_hyperlink);
+            view.setText(about_dialog_hyperlink);
+
+
+        }
+
+
+        dlgBuilder.setIcon(R.drawable.icon_main);
+        AlertDialog alertDialog = dlgBuilder.create();
+        dlgBuilder.show();
     }
 
     public void switchOnLamp (int iIndex) {
@@ -2528,15 +2384,15 @@ public class TRSDigitalPanel extends Activity {
                     Integer iTimer = Integer.valueOf(sTimer);
 
                     //makeToast("Switching on timed preset '" + sPresetName +"'.");
-                    Log.d(TAG, "Executing preset #" + sPresetName + "# for " + iTimer + " seconds via reverseTimer()");
+                    logme(TAG, "Executing preset #" + sPresetName + "# for " + iTimer + " seconds via reverseTimer()");
                     S_CURRENT_SEQ_ITEM = sPresetName;
                     reverseTimer(iTimer, sPresetName);
-                    Log.d(TAG, "Removing preset with key="+key+".");
+                    logme(TAG, "Removing preset with key="+key+".");
                     blSeqGreenLight = false;
                 }
             }
         //} else {
-            //Log.d(TAG, "Sequence execution finished");
+            //logme(TAG, "Sequence execution finished");
        // }
     }
 
@@ -2552,10 +2408,10 @@ public class TRSDigitalPanel extends Activity {
         String sCommand = "B,PRG1$" + sNewLine;
         send_via_bt(sCommand);
         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-        String sExecute = "E" + System.lineSeparator();
+        String sExecute = "E" + lineSeparator();
         lclBTServiceInstance.sendData(sExecute);
         lclUsbServiceInstance.sendBytes(sExecute.getBytes());
-        Log.d(TAG, "Sending Bytes: " + sExecute);
+        logme(TAG, "Sending Bytes: " + sExecute);
     }
 
     boolean check_sequence_for_loop() {
@@ -2565,6 +2421,74 @@ public class TRSDigitalPanel extends Activity {
 
         return flag;
     }
+
+    private void check_for_customer_data_use() {
+
+        Log.d(TAG, "check_for_customer_data_use_() - executing function");
+        PackageManager m = getPackageManager();
+        String s = getPackageName();
+        try {
+            PackageInfo p = m.getPackageInfo(s, 0);
+            s = p.applicationInfo.dataDir;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        
+        if (customer_zipfile_processed()) {
+            logme(TAG, "check_for_customer_data_use_() - customer zipfile already processd.");
+            if (use_custom_logo()) {
+                logme(TAG, "check_for_customer_data_use_() - changing logo to customer's.");
+                change_logo(s + "/" + Constants.CUSTOMER_LOGO_FILENAME);
+            }
+            return;
+        }
+        
+        logme(TAG, "check_for_customer_data_use_() - looking for customer ZIP file");
+        
+        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        if (fileExists(path + "/" + Constants.CUSTOMER_DATA_ARCHIVE_FILENAME)) {
+            logme(TAG, "check_for_customer_data_use_() - ZIP file '" + Constants.CUSTOMER_DATA_ARCHIVE_FILENAME + "' found in path: " + path);
+            unzip(path + "/" + Constants.CUSTOMER_DATA_ARCHIVE_FILENAME, s);
+            logme(TAG, "check_for_customer_data_use_() - ZIP file '" + Constants.CUSTOMER_DATA_ARCHIVE_FILENAME + "' unzipped to path: " + s);
+            mark_customer_zipfile_processed_in_config(true);
+
+            fileUtilities = new FileUtilities(get_path_to_customer_datafile(), get_path_to_customer_logofile());
+            if (fileUtilities.logoFileExists()) {
+                logme(TAG, "check_for_customer_data_use_() - LOGO file '" + Constants.CUSTOMER_LOGO_FILENAME + "' found in path: " + s+ ". Using new logo.");
+                mark_customer_data_use_in_config(true);
+                change_logo(s + "/" + Constants.CUSTOMER_LOGO_FILENAME);
+            }
+        } else {
+            logme(TAG, "check_for_customer_data_use_() - ZIP file '" + Constants.CUSTOMER_DATA_ARCHIVE_FILENAME + "' not found. Stock execution");
+        }
+        //process_customer_data(s + "/" + Constants.CUSTOMER_DATA_FILENAME);
+    }
+
+    public boolean fileExists(String filePath) {
+        File file = new File(filePath);
+        if (file.exists()) {
+            logme(TAG, "FILE EXISTS: " + filePath);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    private boolean customer_zipfile_processed() {
+        SharedPreferences prefs = getSharedPreferences(Constants.CONFIG_SETTINGS, Context.MODE_PRIVATE);
+        Boolean ret = prefs.getBoolean(Constants.CUSTOMER_ZIPFILE_PROCESSED, false);
+
+        logme(TAG, "TAG: " + Constants.CUSTOMER_ZIPFILE_PROCESSED + ": " + ret);
+        return ret;
+    }
+
+    private boolean use_custom_logo() {
+        SharedPreferences prefs = getSharedPreferences(Constants.CONFIG_SETTINGS, Context.MODE_PRIVATE);
+
+        Boolean ret = prefs.getBoolean(Constants.CUSTOMER_LOGO_FLAG, false);
+        return ret;
+    }
+
 
     public boolean trim_sequence_file(String sCurrentItem) {
         /*  This function accepts a String preset name and looks to find it in the SP_SEQUENCE_COMMAND_EXECUTED file
@@ -2612,7 +2536,7 @@ public class TRSDigitalPanel extends Activity {
                 int seconds = (int) (millisUntilFinished / 1000);
                 int minutes = seconds / 60;
                 seconds = seconds % 60;
-                Log.d(TAG, "TICK: " + seconds + " left for preset #" + sPresetName +"#");
+                logme(TAG, "TICK: " + seconds + " left for preset #" + sPresetName +"#");
                 switch_preset_on(sPresetName);
                 blSeqGreenLight = false;
             }
@@ -2620,10 +2544,10 @@ public class TRSDigitalPanel extends Activity {
             public void onFinish() {
                 trim_sequence_file(sPresetName);
                 boolean blNextStep = (getPrefsFileSize(SP_SEQUENCE_COMMAND_EXECUTED) > 0);
-                Log.d(TAG, "reverseTimer finished. Preset #" + sPresetName +"# removed from EXECUTE file. More presets left to execute: " + getPrefsFileSize(SP_SEQUENCE_COMMAND_EXECUTED));
+                logme(TAG, "reverseTimer finished. Preset #" + sPresetName +"# removed from EXECUTE file. More presets left to execute: " + getPrefsFileSize(SP_SEQUENCE_COMMAND_EXECUTED));
                 //makeToast("Executing trim sequence file. S_NEXT_SEQ_ITEM=" + S_NEXT_SEQ_ITEM);
                 blSeqGreenLight = true;
-                Log.d(TAG, "blSeqGreenLight = " + blSeqGreenLight);
+                logme(TAG, "blSeqGreenLight = " + blSeqGreenLight);
 
                 if (blNextStep) {
                     makeToast("NEXT ITEM IN SEQUENCE");
@@ -2654,40 +2578,41 @@ public class TRSDigitalPanel extends Activity {
 
         for (Map.Entry<String, String> entry : sorted.entrySet()) {
             editor.putString(entry.getKey(), entry.getValue());
-            //Log.d(TAG, "sorted: " + entry.getKey() + ", " + entry.getValue());
+            //logme(TAG, "sorted: " + entry.getKey() + ", " + entry.getValue());
         }
         editor.apply();
     }
 
     public void btnLOW(View v) {
         SharedPreferences spLampDefinitions = getSharedPreferences(Constants.SHAREDPREFS_LAMP_DEFINITIONS, 0);
-        if (blTL84_ON) {
+        if (BL_TL84_ON) {
+            logme(TAG, "TL84 flag is on");
             String sPresetRGBValues = spLampDefinitions.getString(Constants.TL84_TAG, null);
             if (!BL_LOW_MODE) {
 
                 String sCommand = "S11050" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + sNewLine;
                 if (mBoundBT) {
-                    Log.d(TAG, "LOW function - Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
+                    logme(TAG, "LOW function - Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
                     lclBTServiceInstance.sendData(sCommand);
                 } else {
-                    Log.d(TAG, "Service btService not connected!");
+                    logme(TAG, "Service btService not connected!");
                 }
                 btnLOW.setBackgroundResource(R.drawable.buttonselector_active);
                 btnLOW.setTextColor(Color.BLACK);
                 lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                blTL84_ON = true;
+                BL_TL84_ON = true;
             } else {
                 String sCommand = "S11100" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + sNewLine;
                 if (mBoundBT) {
-                    Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
+                    logme(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
                     lclBTServiceInstance.sendData(sCommand);
                 } else {
-                    Log.d(TAG, "Service btService not connected!");
+                    logme(TAG, "Service btService not connected!");
                 }
                 btnLOW.setBackgroundResource(R.drawable.buttonselector_main);
                 btnLOW.setTextColor(Color.WHITE);
                 lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                blTL84_ON = true;
+                BL_TL84_ON = true;
             }
         }
 
@@ -2715,16 +2640,146 @@ public class TRSDigitalPanel extends Activity {
 
         String sHex = convertRGBwithCommasToHexString(TextUtils.join(",", concatValues));
         String sCommand = "S" + sHex + "$" + sNewLine;
-        Log.d("MORRIS-TRSDIGITAL", "btnLOW: sending command:" + sCommand);
+        logme("MORRIS-TRSDIGITAL", "btnLOW: sending command:" + sCommand);
         lclBTServiceInstance.sendData(sCommand);
         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
 
         SystemClock.sleep(300);
         sCommand= "B,LOW" + (BL_LOW_MODE ? 0 : 1) + "$" + sNewLine;
-        Log.d("MORRIS-TRSDIGITAL", "btnLOW(): sending: " + sCommand);
+        logme("MORRIS-TRSDIGITAL", "btnLOW(): sending: " + sCommand);
         lclBTServiceInstance.sendData(sCommand);
         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
         BL_LOW_MODE = !BL_LOW_MODE;
+    }
+
+    private void move_custom_data_to_app_dir() {
+
+    }
+
+    private void clear_custom_data_to_app_dir() {
+
+    }
+
+    public void unzip (String _zipFile, String _targetLocation) {
+        try {
+            FileInputStream fin = new FileInputStream(_zipFile);
+            ZipInputStream zin = new ZipInputStream(fin);
+
+            ZipEntry ze = null;
+            while ((ze = zin.getNextEntry()) != null) {
+                FileOutputStream fout = new FileOutputStream(_targetLocation + "/" + ze.getName());
+
+                for (int c = zin.read(); c != -1; c = zin.read()) {
+                    fout.write(c);
+                }
+                zin.closeEntry();
+                fout.close();
+            }
+            zin.close();
+            //makeToast("Unzip successful");
+        } catch (Exception e) {
+            System.out.println(e);
+            makeToast("Error when unzipping customer data");
+            Log.e(TAG, "Error when unzipping: " + e.getMessage());
+        }
+
+    }
+
+    public void change_logo(String path_to_logo) {
+        if (!fileUtilities.logoFileExists()) {
+            makeToast("Expecting file '" + Constants.CUSTOMER_LOGO_FILENAME + "' , but can't find it!");
+            return;
+        } else {
+            logme(TAG, "change_logo_() - customer logo file found");
+            File imgFile = new File(path_to_logo);
+            Bitmap myBitmap = BitmapFactory.decodeFile(String.valueOf(imgFile));
+            ImageView myImage = findViewById(R.id.unitycolor_logo);
+            logme(TAG, "Setting logo with '" + path_to_logo + "'");
+            myImage.setImageBitmap(myBitmap);
+            logme(TAG, "Logo changed");
+            mark_customer_logo_use_in_config(true);
+        }
+    }
+
+    public void logme(String tag, String message) {
+        SharedPreferences log_file = getSharedPreferences(Constants.SHAREDPREFS_DIAGNOSTIC_DATA, MODE_PRIVATE);
+        SharedPreferences.Editor editor = log_file.edit();
+        Long tsLong = System.currentTimeMillis()/1000;
+        String ts = tsLong.toString();
+
+        editor.putString(ts, tag + " | " + message);
+        editor.apply();
+
+        Log.d(tag, message);
+    }
+
+    public void process_customer_data(String path_to_datafile) {
+        if (!fileUtilities.dataFileExists()) {
+            makeToast("File '" + Constants.CUSTOMER_DATA_FILENAME + "' couldn't be found!");
+            return;
+        } else {
+            logme(TAG, "Customer data XML file found");
+            try {
+                logme(TAG, "Opening JSON file for parsing");
+                JSONObject jsonObject = new JSONObject(get_string_from_file(path_to_datafile));
+                String item = jsonObject.getString("manual_content");
+                item.replace("\n", "\\n").replace("\r", "\\r");
+                //logme(TAG, "manual content:" + item);
+                //makeToast(item);
+                mark_customer_data_use_in_config(true);
+                makeToast("Customer data found");
+
+            } catch (Exception e) {
+                Log.w(TAG, "Parsing JSON failed. Check format.");
+
+                e.printStackTrace();
+            }
+            logme(TAG, "Customer data processed");
+        }
+    }
+
+    public static String get_string_from_file(String filePath) throws Exception {
+        File file = new File(filePath);
+        FileInputStream fin = new FileInputStream(file);
+        String ret = convertStreamToString(fin);
+
+        fin.close();
+        return ret;
+    }
+
+    public static String convertStreamToString(InputStream is) throws Exception {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            sb.append(line).append(System.lineSeparator());
+        }
+        reader.close();
+        return sb.toString();
+    }
+
+    private String get_path_to_customer_datafile() {
+        PackageManager m = getPackageManager();
+        String s = getPackageName();
+        try {
+            PackageInfo p = m.getPackageInfo(s, 0);
+            s = p.applicationInfo.dataDir;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return s + "/" + Constants.CUSTOMER_DATA_FILENAME;
+    }
+
+    private String get_path_to_customer_logofile() {
+        PackageManager m = getPackageManager();
+        String s = getPackageName();
+        try {
+            PackageInfo p = m.getPackageInfo(s, 0);
+            s = p.applicationInfo.dataDir;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return s + "/" + Constants.CUSTOMER_LOGO_FILENAME;
     }
 
     public void makeToast (String message) {

@@ -33,7 +33,7 @@
                 <Button
                     android:id="@+id/btnL1"
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:layout_height="@dimen/operating_hours_button_height"
                     android:gravity="center"
                     android:text="D65"
                     android:layout_marginEnd="@dimen/button_margin"
@@ -49,7 +49,7 @@
                 <Button
                     android:id="@+id/btnL2"
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:layout_height="@dimen/operating_hours_button_height"
                     android:gravity="center"
                     android:text="D50"
                     android:layout_marginEnd="@dimen/button_margin"
@@ -64,7 +64,7 @@
                 <Button
                     android:id="@+id/btnL3"
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:layout_height="@dimen/operating_hours_button_height"
                     android:gravity="center"
                     android:text="A\n1540"
                     android:layout_marginEnd="@dimen/button_margin"
@@ -93,7 +93,7 @@
                 <Button
                     android:id="@+id/btnL4"
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:layout_height="@dimen/operating_hours_button_height"
                     android:gravity="center"
                     android:text="LED\n1540"
                     android:layout_weight="4"
@@ -109,7 +109,7 @@
                 <Button
                     android:id="@+id/btnL5"
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:layout_height="@dimen/operating_hours_button_height"
                     android:gravity="center"
                     android:text="TL84\n1540"
                     android:layout_marginEnd="@dimen/button_margin"
@@ -125,7 +125,7 @@
                 <Button
                     android:id="@+id/btnL6"
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:layout_height="@dimen/operating_hours_button_height"
                     android:gravity="center"
                     android:text="UVA\n1540"
                     android:layout_marginEnd="@dimen/button_margin"
@@ -224,6 +224,7 @@
                 >
 
                 <TextView
+                    android:id="@+id/text_customer_address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="10sp"

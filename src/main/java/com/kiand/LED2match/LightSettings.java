@@ -73,6 +73,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import static com.kiand.LED2match.BtScannerActivity.BT_PREFS;
+import static com.kiand.LED2match.Constants.CONFIG_SETTINGS;
 import static com.kiand.LED2match.Constants.DEFAULT_PSU_POWER;
 import static com.kiand.LED2match.TRSSettings.TL84_DELAY_KEY;
 
@@ -101,7 +102,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 	Boolean blLamp1_ON, blLamp2_ON, blLamp3_ON;
 
 
-	private Handler messageHandler = new Handler(Looper.getMainLooper()) {
+	private final Handler messageHandler = new Handler(Looper.getMainLooper()) {
 		@Override
 		public void handleMessage(Message msg) {
 			if (msg.what == MSG_SHOW_TOAST) {
@@ -156,26 +157,6 @@ public class LightSettings extends Activity implements ServiceConnection {
 	static boolean updateText = false;
 	public static String sUSBResponse ="";
 
-
-    /*UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() { //Defining a Callback which triggers whenever data is read.
-        @Override
-        public void onReceivedData(byte[] arg0) {
-            String data = null;
-            try {
-                data = new String(arg0, "UTF-8");
-                sUSBResponse.concat(data);
-                if (sUSBResponse.length() > 10) {
-					makeToast("UsbReadCallback: " + sUSBResponse);
-					decodeBTResponse(sUSBResponse);
-					sUSBResponse = null;
-				}
-
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-        }
-    };*/
-
 	private ProgressDialog dlgProgressSplash;
 	public Spinner spinner_control_preset_list; // Mauricio
 	public Button btnStore, btnRemove, btnRead; // Mauricio
@@ -208,7 +189,7 @@ public class LightSettings extends Activity implements ServiceConnection {
         }
     };
 
-    private ServiceConnection btConnection = new ServiceConnection() {
+    private final ServiceConnection btConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -250,25 +231,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 		//btService = null;
 	}
 
-    /*UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() { //Defining a Callback which triggers whenever data is read.
-        @Override
-        public void onReceivedData(byte[] arg0) {
-            String data = null;
-            try {
-                data = new String(arg0, "UTF-8");
-                //data.concat("/n");
-                //makeToast("USB RCVD:" + data);
-                //sUSBResponse = data;
-				tvAppend(data);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-
-
-        }
-    };*/
-
-	private BroadcastReceiver btReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver btReceiver = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -276,7 +239,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 
 		}
 	};
-	private BroadcastReceiver btReceiverBTdevice = new BroadcastReceiver() {
+	private final BroadcastReceiver btReceiverBTdevice = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -446,8 +409,8 @@ public class LightSettings extends Activity implements ServiceConnection {
 		menu.add(Menu.NONE, 1, 1, "Service page").setIcon(
 				getResources().getDrawable(R.drawable.icon_scan));
 
-		menu.add(Menu.NONE, 2, 2, "About").setIcon(
-				getResources().getDrawable(R.drawable.icon_information));
+		/*menu.add(Menu.NONE, 2, 2, "About").setIcon(
+				getResources().getDrawable(R.drawable.icon_information));*/
 
 
 		menu.add(Menu.NONE, 3, 3, "View firmware data").setIcon(getResources().getDrawable(R.drawable.icon_information));
@@ -1308,7 +1271,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 	}
 
 	private void show_splash_screen() {
-		Intent intent = new Intent(LightSettings.this, OverlayPage.class);
+		Intent intent = new Intent(LightSettings.this, DisabledOverlayPage.class);
 		startActivity(intent);
 	}
 
@@ -1823,6 +1786,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 	private Integer check_light_power(String sPresetRGBValues) {
 		Integer iPower = 0;
 		Integer i = 0;
+		int iPanels = 1;
         /*"Assign specific power drain to indidual LEDs:
         Each Count 255:
 
@@ -1873,7 +1837,26 @@ public class LightSettings extends Activity implements ServiceConnection {
 			//Log.d (TAG, iDecimal + " / 210 = " + (int)Math.round(1000 * iDecimal / 210) + " mA");
 			sPresetRGBValues = sPresetRGBValues.substring(2);
 		}
-		Log.d (TAG, "No more preset light to check. Overall light power is: " + iPower);
+		Log.d (TAG, "check_light_power_() - light power of 1 panel: " + iPower);
+
+
+		String ee_noofpanels_tag = "eeprom_no_of_panels";
+
+		SharedPreferences spConfig = getSharedPreferences(CONFIG_SETTINGS, 0);
+		String s_eeprom_no_of_panels = spConfig.getString(ee_noofpanels_tag, "1");
+
+		try {
+			if (s_eeprom_no_of_panels.length() > 0) {
+				if (Integer.parseInt(s_eeprom_no_of_panels) != 0) {
+					iPanels = Integer.parseInt(s_eeprom_no_of_panels);
+				}
+			}
+		} catch (NullPointerException e) {
+			makeToast("No of panels not defined for this unit");
+		}
+		Log.d(TAG, "check_light_power_() - multiplying power by '" + iPanels + "' panels.");
+		iPower *= iPanels;
+		Log.d (TAG, "check_light_power_() - Overall light power for all panels: " + iPower);
 		return iPower;
 	}
 
@@ -1892,13 +1875,21 @@ public class LightSettings extends Activity implements ServiceConnection {
 	}*/
 
 	private int get_max_power() {
-		SharedPreferences spFile = getSharedPreferences(Constants.PREFS_PSU_CURRENT, 0);
-		//Float fPower = spFile.getFloat("psu_current", 0.0f) * 1000;
 		int power = 0;
+		Log.d(TAG, "get_max_power_() - checking max PSU power from " + CONFIG_SETTINGS);
+		String ee_psucurrent_tag = "eeprom_PSU_current";
+
+		SharedPreferences spConfig = getSharedPreferences(CONFIG_SETTINGS, 0);
+		String s_eeprom_PSU_current = spConfig.getString(ee_psucurrent_tag, "");
+
 		try {
-			power = spFile.getInt("psu_current", 0);
-		} catch (NumberFormatException e) {
-			makeToast("Unable to get the stored PSU power value");
+			if (s_eeprom_PSU_current.length() > 0) {
+				if (Integer.parseInt(s_eeprom_PSU_current) != 0) {
+					power = Integer.parseInt(s_eeprom_PSU_current);
+				}
+			}
+		} catch (NullPointerException e) {
+			makeToast("PSU current not yet defined for this unit");
 		}
 		return power;
 	}
@@ -1990,7 +1981,7 @@ public class LightSettings extends Activity implements ServiceConnection {
         }
 	}
 
-	private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			// Extract data included in the Intent
@@ -2245,10 +2236,6 @@ public class LightSettings extends Activity implements ServiceConnection {
 			 openDialog(findViewById(R.id.wrap_content));
 			 break;
 
-		case 2:
-			openAboutDialog();
-			break;
-
 		case 3:
 			openJSONReport();
 			break;
@@ -2302,13 +2289,6 @@ public class LightSettings extends Activity implements ServiceConnection {
 		dlg.setMessage(sJSONbody);
 		dlg.setIcon(R.drawable.icon_main);
 		dlg.show();
-	}
-
-	private String getFWver_JSON() {
-		String sReturn = "";
-		sReturn = extractJSONvalue("", "firmware_version");
-
-		return sReturn;
 	}
 
 	public void btnClicked(View v) {
@@ -2425,34 +2405,6 @@ public class LightSettings extends Activity implements ServiceConnection {
 		blLamp3_ON = false;
 		btnL3.setBackgroundResource(R.drawable.buttonselector_main);
 		btnL3.setTextColor(Color.WHITE);
-	}
-
-	private void openAboutDialog() {
-		//String sFWver = "N/A";
-		//getFWver();
-		String sFWverLcl = getFWver_JSON();
-
-		String sFormattedDate = "";
-		try {
-			SimpleDateFormat sdfSource = new SimpleDateFormat("yyyy/MM/dd");
-			Date date = sdfSource.parse(sAppVersionDate);
-			SimpleDateFormat sdfDest = new SimpleDateFormat("dd MMMM yy");
-			sFormattedDate = sdfDest.format(date);
-
-		} catch (ParseException pe) {
-			System.out.println("Parse exception:" + pe);
-		}
-		AlertDialog.Builder dlgBuilder = new AlertDialog.Builder(this);
-		LayoutInflater inflater = this.getLayoutInflater();
-		View dialogView = inflater.inflate(R.layout.about_popup_view, null);
-		dlgBuilder.setView(dialogView);
-		dlgBuilder.setTitle(getString(R.string.app_header_title) + " App " + apkVersion);
-		TextView tv_fwversion = dialogView.findViewById(R.id.FWversion_value);
-		tv_fwversion.setText(sFWverLcl);
-		//dlg.setMessage("Hi-Tec-Support GmbH\nCopyright (R) 2018\nVersion " + sFormattedDate + "\nFirmware version: " + sFWverLcl);
-		dlgBuilder.setIcon(R.drawable.icon_main);
-		AlertDialog alertDialog = dlgBuilder.create();
-		dlgBuilder.show();
 	}
 
 	public void fncRefreshRGB() {
@@ -2680,10 +2632,10 @@ public class LightSettings extends Activity implements ServiceConnection {
 
 	static public class MyAsyncTask extends AsyncTask<Void, Void, String> {
 
-		private Context mContext;
-		private UsbCOMMsService mUsbService;
+		private final Context mContext;
+		private final UsbCOMMsService mUsbService;
 
-		private String sBuffer;
+		private final String sBuffer;
 
 		public MyAsyncTask(Context context, UsbCOMMsService usbService, String buffer) {
 			mContext = context;
@@ -2711,7 +2663,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 
 	public class JSONFileRefresh extends AsyncTask<Void, Void, String> {
 
-		private Context mContext;
+		private final Context mContext;
 		private String sBuffer;
 
 		JSONFileRefresh(Context context) {
@@ -2741,7 +2693,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 
 	public class PopupAsyncTask extends AsyncTask<Void, Void, String> {
 
-		private Context mContext;
+		private final Context mContext;
 		private String sBuffer;
 
 		public PopupAsyncTask( Context context, String buffer) {
@@ -2804,8 +2756,8 @@ public class LightSettings extends Activity implements ServiceConnection {
 
 
 	public static class BTCommsLog {
-		private String sMessage;
-		private String sKey;
+		private final String sMessage;
+		private final String sKey;
 
 
 		BTCommsLog(String sKey, String sMessage) {this.sKey = sKey; this.sMessage = sMessage; }

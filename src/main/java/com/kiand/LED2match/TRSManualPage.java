@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,14 +16,27 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import static com.kiand.LED2match.Constants.CONFIG_SETTINGS;
 
 public class TRSManualPage extends Activity {
 
     public static final String SHAREDPREFS_ONE_OFF_SEEKBARS = "one-off-seekbar-values.txt"; //Mauricio
     public static final String newLine = System.getProperty("line.separator");
+    public static final String TAG = "MORRIS-MANUAL-PG";
+
 
     boolean blLamp1_ON, blLamp2_ON, blLamp3_ON, blLamp4_ON, blLamp5_ON, blLamp6_ON;
     Button btnBack;
@@ -30,9 +45,10 @@ public class TRSManualPage extends Activity {
     private UsbCOMMsService lclUsbServiceInstance;
     boolean mBound = false;
     final Context context = this;
+    private FileUtilities fileUtilities;
 
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -59,6 +75,9 @@ public class TRSManualPage extends Activity {
             //Toast.makeText(this.getBaseContext(),"Service bound (onResume)", Toast.LENGTH_SHORT).show();
             mBound = true;
         }
+
+        Log.d(TAG, "onResume_() - kicking off manual content check");
+        set_manual_content();
     }
 
     @Override
@@ -90,14 +109,69 @@ public class TRSManualPage extends Activity {
 
         lclHandler = new Handler();
         btnBack = findViewById(R.id.btnBack);
-        TextView tv = findViewById(R.id.textview_manual);
-        tv.setMovementMethod(new ScrollingMovementMethod());
-
+        //TextView tv = findViewById(R.id.textview_manual);
+        //tv.setMovementMethod(new ScrollingMovementMethod());
         //populateButtonNames();
+        fileUtilities = new FileUtilities(get_path_to_customer_datafile(), get_path_to_customer_logofile());
     }
 
     public void goBack(View v){
         finish();
+    }
+
+    private void set_manual_content() {
+        if (display_custom_manual()) {
+            // get the content from XML file
+            String custom_manual_content = fileUtilities.get_value_from_customer_data(Constants.CUSTOMER_DATA_MANUAL_CONTENT);
+            Log.d(TAG, "Setting customer manual content. Custom manual content length: " + custom_manual_content.length());
+            if (custom_manual_content.length() > 0) {
+                WebView wv = findViewById(R.id.manual_webview);
+
+                String wv_mimetype = "text/html";
+                String wv_charset = "UTF-8";
+                wv.loadData(custom_manual_content, wv_mimetype, wv_charset);
+            }
+
+        } else {
+            WebView wv = findViewById(R.id.manual_webview);
+
+            String wv_mimetype = "text/html";
+            String wv_charset = "UTF-8";
+            String manual_content = getString(R.string.ledbar_manual);
+            manual_content.replace("\n", "\\n").replace("\r", "\\r");
+            wv.loadData(manual_content, wv_mimetype, wv_charset);
+        }
+    }
+
+    private boolean display_custom_manual() {
+        SharedPreferences prefs = getSharedPreferences(Constants.CONFIG_SETTINGS, Context.MODE_PRIVATE);
+        Boolean bl_custom_manual = prefs.getBoolean(Constants.CUSTOMER_DATA_FLAG, false);
+        Log.d(TAG, "display_custom_manual_(): USE CUSTOMER DATA = " + bl_custom_manual);
+        return bl_custom_manual;
+    }
+
+    private String get_path_to_customer_datafile() {
+        PackageManager m = getPackageManager();
+        String s = getPackageName();
+        try {
+            PackageInfo p = m.getPackageInfo(s, 0);
+            s = p.applicationInfo.dataDir;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return s + "/" + Constants.CUSTOMER_DATA_FILENAME;
+    }
+
+    private String get_path_to_customer_logofile() {
+        PackageManager m = getPackageManager();
+        String s = getPackageName();
+        try {
+            PackageInfo p = m.getPackageInfo(s, 0);
+            s = p.applicationInfo.dataDir;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return s + "/" + Constants.CUSTOMER_LOGO_FILENAME;
     }
 
     public void updateUIView() {

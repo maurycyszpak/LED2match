@@ -273,12 +273,13 @@
                     android:id="@+id/edit_TL84_fullbright_value"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Full TL84 brightness (500-900)"
+                    android:hint="Full brightness (500-900)"
                     android:imeOptions="actionNext"
                     android:nextFocusForward="@+id/edit_DACvalue"
                     android:singleLine="true"
                     android:textSize="13sp"
                     android:textColor="@color/black"
+
 
                     />
 
@@ -356,6 +357,43 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/lLayout9"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/lLayout8"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:id="@+id/no_of_panels_label"
+                    android:layout_width="@dimen/maintenance_page_config_label_width"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:text="@string/maintenance_page_setting_4_label"
+                    android:textColor="@color/dark_gray"
+                    />
+
+
+                <EditText
+                    android:id="@+id/edit_no_of_panels"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="# of panels"
+                    android:nextFocusForward="@+id/btnSave"
+                    android:singleLine="true"
+                    android:textSize="13sp"
+                    android:textColor="@color/black"
+                    />
+
+
+            </LinearLayout>
+
+
+
+            <LinearLayout
                 android:id="@+id/layout_extended_mode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -406,7 +444,7 @@
                 <Button
                     android:id="@+id/button_back"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/button_backsave_height"
                     android:layout_marginLeft="5dp"
                     android:layout_alignParentStart="true"
                     android:background="@color/torso_gray_button"
@@ -419,7 +457,7 @@
                 <Button
                     android:id="@+id/button_save"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/button_backsave_height"
                     android:layout_marginEnd="5dp"
                     android:layout_alignParentRight="true"
                     android:layout_marginBottom="@dimen/button_margin_10dp"

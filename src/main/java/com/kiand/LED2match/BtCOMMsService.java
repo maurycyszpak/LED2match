@@ -33,6 +33,7 @@ import java.util.TreeMap;
 import java.util.UUID;
 import java.util.regex.PatternSyntaxException;
 
+import static com.kiand.LED2match.Constants.BT_CONNECTED_PREFS;
 import static com.kiand.LED2match.LightSettings.SHAREDPREFS_LAMP_STATE;
 import static com.kiand.LED2match.LightSettings.SHAREDPREFS_LED_TIMERS;
 import static com.kiand.LED2match.TRSDigitalPanel.SHAREDPREFS_LAMP_ASSIGNMENTS;
@@ -50,7 +51,6 @@ public class BtCOMMsService extends Service {
     public static final String BT_PREFS = "bluetooth_status";
     public static final String SHAREDPREFS_PRESETS = "presets_definition";
     public static final String SHAREDPREFS_UNITNAME = "unit_name";
-    public static final String BT_CONNECTED_PREFS = "bluetooth_connection_status";
     public static final String BT_COMMS_LOG = "bluetooth_controller-communication-log"; //Mauricio
     private ConnectingThread mConnectingThread;
     private ConnectedThread mConnectedThread;
@@ -60,10 +60,10 @@ public class BtCOMMsService extends Service {
     // SPP UUID service - this should work for most devices
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private String MAC_ADDRESS = null;
-    private StringBuilder recDataString = new StringBuilder();
+    private final StringBuilder recDataString = new StringBuilder();
     private final IBinder mBinder = new MyBinder();
     private Handler mHandler;
-    private String newline = "\r\n";
+    private final String newline = "\r\n";
     private BluetoothDevice device;
     public static String sBTResponse ="";
     public AsyncTask<?, ?, ?> running_task;
@@ -478,8 +478,8 @@ public class BtCOMMsService extends Service {
     }
 
     public static class BluetoothCommsLog {
-        private String sMessage;
-        private String sKey;
+        private final String sMessage;
+        private final String sKey;
 
 
         BluetoothCommsLog(String sKey, String sMessage) {this.sKey = sKey; this.sMessage = sMessage; }
@@ -510,8 +510,11 @@ public class BtCOMMsService extends Service {
 
         spEditor.clear();
         spEditor.putBoolean("CONNECTED", true);
+        spEditor.putString(Constants.SESSION_CONNECTED_MAC_TAG, MAC_ADDRESS);
         spEditor.apply();
         Log.d(TAG, "BT connection marked as true in the sp file");
+
+
     }
 
     public void mark_BT_disconnected() {

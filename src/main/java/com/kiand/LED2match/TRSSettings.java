@@ -13,6 +13,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -36,7 +38,15 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import static com.kiand.LED2match.BtCOMMsService.BT_CONNECTED_PREFS;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
+
+import static com.kiand.LED2match.Constants.BT_CONNECTED_PREFS;
 import static com.kiand.LED2match.Constants.CONFIG_SETTINGS;
 import static com.kiand.LED2match.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 
@@ -53,6 +63,8 @@ public class TRSSettings extends Activity {
     private static final String password = "hokus";
     private static final int MSG_SHOW_TOAST = 1;
     private static final int TOAST_MESSAGE = 1;
+    private FileUtilities fileUtilities;
+
 
     Button btnSave;
     Switch aSwitch;
@@ -66,15 +78,18 @@ public class TRSSettings extends Activity {
     public final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     private boolean bl_bluetooth_forced_on;
     private CountDownTimer shutdownTimer;
-    private int iHours_idle_shutoff = 0;
+    private final int iHours_idle_shutoff = 0;
     private int iMinutes_idle_shutoff = 0;
 
     EditText editOff_m;
     EditText edit_TL84_delay;
 
+    Float versionName = BuildConfig.VERSION_CODE / 1000.0f;
+    public String apkVersion = "v." + versionName;
 
 
-    private BroadcastReceiver btReceiver = new BroadcastReceiver() {
+
+    private final BroadcastReceiver btReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -96,7 +111,7 @@ public class TRSSettings extends Activity {
 
         }
     };
-    private BroadcastReceiver btReceiverBTdevice = new BroadcastReceiver() {
+    private final BroadcastReceiver btReceiverBTdevice = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -115,7 +130,7 @@ public class TRSSettings extends Activity {
         }
     };
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
@@ -155,10 +170,58 @@ public class TRSSettings extends Activity {
         super.onResume();
         populate_unit_config();
         Log.d(TAG, "mBound = " + mBound + ", mBoundBT = " + mBoundBT);
+        license_check();
+    }
+
+    public int get_tier() {
+        boolean connected = get_connection_status();
+
+        SharedPreferences prefs_config = getSharedPreferences(Constants.CONFIG_SETTINGS, 0);
+        int current_tier = prefs_config.getInt(Constants.LICENSE_TIER_TAG, 0);
+
+        Log.d(TAG, "get_tier_() - CONNECTED status: " + connected);
+        if (connected) {
+            String licensed_mac = prefs_config.getString(Constants.LICENSE_MAC_ADDR_TAG, "NO DATA");
+            SharedPreferences prefs_connection = getSharedPreferences(Constants.BT_CONNECTED_PREFS, 0);
+            String connected_mac = prefs_connection.getString(Constants.SESSION_CONNECTED_MAC_TAG, "NO DATA");
+            Log.d(TAG, "get_tier_() - Licensed MAC: " + licensed_mac);
+            Log.d(TAG, "get_tier_() - Connected MAC: " + connected_mac);
+            if (!licensed_mac.equalsIgnoreCase(connected_mac)) {
+                Log.d(TAG, "Detected connection to a non-licensed MAC address");
+                makeToast("Detected connection to a non-licensed MAC address");
+                current_tier = 0;
+            }
+        }
+        Log.d(TAG, "get_tier_() - returning TIER " + current_tier);
+        return current_tier;
+    }
+
+    public boolean get_connection_status() {
+        SharedPreferences prefs_config = getSharedPreferences(Constants.BT_CONNECTED_PREFS, 0);
+        boolean status= prefs_config.getBoolean("CONNECTED", false);
+
+        return status;
+    }
+
+    private void license_check() {
+        int current_tier = get_tier();
+
+        if (current_tier < Constants.LICENSE_TIER_SETTINGS_PAGE) {
+            Log.d(TAG, "Blocking page");
+            block_current_page();
+        } else {
+            Log.d(TAG, "Not blocking page");
+        }
+    }
+
+    private void block_current_page() {
+        Intent intent = new Intent(TRSSettings.this, DisabledOverlayPage.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK) ;
+        startActivity(intent);
 
     }
 
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             // Extract data included in the Intent
@@ -306,6 +369,7 @@ public class TRSSettings extends Activity {
         btnSave = findViewById(R.id.btnSave);
         btnSave.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_main));
         btnSave.setTextColor(Color.WHITE);
+        fileUtilities = new FileUtilities(get_path_to_customer_datafile(), get_path_to_customer_logofile());
     }
 
     @Override
@@ -325,6 +389,8 @@ public class TRSSettings extends Activity {
         menu.add(Menu.NONE, 6, 6, "Maintenance page").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));
         menu.add(Menu.NONE, 7, 7, "Digital Panel").setIcon(
+                getResources().getDrawable(R.drawable.icon_information));
+        menu.add(Menu.NONE, 8, 8, "About").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));
 
         getMenuInflater().inflate(R.menu.menu, menu);
@@ -375,8 +441,127 @@ public class TRSSettings extends Activity {
                 startActivity(intent9);
                 break;
 
+            case 8:
+                openAboutDialog();
+                break;
+
         }
         return true;
+    }
+
+    private void openAboutDialog() {
+        String sFWverLcl = getFWver_JSON();
+
+        AlertDialog.Builder dlgBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.about_popup_view, null);
+        dlgBuilder.setView(dialogView);
+        dlgBuilder.setTitle(getString(R.string.app_header_title) + " App " + apkVersion);
+
+        TextView tv_fwversion = dialogView.findViewById(R.id.FWversion_value);
+        tv_fwversion.setText(sFWverLcl);
+
+        if (display_custom_data()) {
+            String about_dialog_line1 = fileUtilities.get_value_from_customer_data(Constants.CUSTOMER_DATA_ABOUT_PAGE_LINE_1_TAG);
+            String about_dialog_line2 = fileUtilities.get_value_from_customer_data(Constants.CUSTOMER_DATA_ABOUT_PAGE_LINE_2_TAG);
+            String about_dialog_line3 = fileUtilities.get_value_from_customer_data(Constants.CUSTOMER_DATA_ABOUT_PAGE_LINE_3_TAG);
+            String about_dialog_line4 = fileUtilities.get_value_from_customer_data(Constants.CUSTOMER_DATA_ABOUT_PAGE_LINE_4_TAG);
+            String about_dialog_hyperlink = fileUtilities.get_value_from_customer_data(Constants.CUSTOMER_DATA_ABOUT_PAGE_HYPERLINK);
+
+            about_dialog_line1 = about_dialog_line1.replace("\\n", System.lineSeparator());
+            about_dialog_line2 = about_dialog_line2.replace("\\n", System.lineSeparator());
+            about_dialog_line3 = about_dialog_line3.replace("\\n", System.lineSeparator());
+            about_dialog_line4 = about_dialog_line4.replace("\\n", System.lineSeparator());
+
+            Log.d(TAG, "openAboutDialog_() - setting custom data in line 1: " + about_dialog_line1);
+            TextView view = dialogView.findViewById(R.id.about_line_1);
+            view.setText(about_dialog_line1);
+
+            view = dialogView.findViewById(R.id.about_line_2);
+            view.setText(about_dialog_line2);
+
+            view = dialogView.findViewById(R.id.about_hyperlink);
+            view.setText(about_dialog_hyperlink);
+
+
+        }
+
+
+        dlgBuilder.setIcon(R.drawable.icon_main);
+        AlertDialog alertDialog = dlgBuilder.create();
+        dlgBuilder.show();
+    }
+
+    public boolean display_custom_data() {
+        SharedPreferences prefs = getSharedPreferences(Constants.CONFIG_SETTINGS, Context.MODE_PRIVATE);
+        Boolean bl_custom_data = prefs.getBoolean(Constants.CUSTOMER_DATA_FLAG, false);
+        Log.d(TAG, "display_custom_data_(): USE CUSTOMER DATA = " + bl_custom_data);
+        return bl_custom_data;
+    }
+
+    private String getFWver_JSON() {
+        String sReturn = "";
+        sReturn = extractJSONvalue("", "firmware_version");
+
+        return sReturn;
+    }
+
+    public String extractJSONvalue(String sJSONbody_ref, String sKeyScanned) {
+        String sReturn = "";
+        String sJSONbody = getJsonBody(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE);
+        if (sJSONbody.length() == 0) {
+            return sReturn;
+        }
+
+        try {
+            JSONObject jsonStructure = new JSONObject(sJSONbody);
+            Iterator<String> iter = jsonStructure.keys();
+            while (iter.hasNext()) {
+                String sKey = iter.next();
+                try {
+                    if (sKey.equals(sKeyScanned)) {
+                        Object objValue = jsonStructure.get(sKey);
+                        //makeToast("key = " + key + ", value = " + value.toString());
+                        sReturn = objValue.toString();
+                    }
+                } catch (JSONException e) {
+                    // Something went wrong!
+                }
+            }
+        } catch (JSONException j) {
+            makeToast("Unable to parse string to JSON object");
+        }
+        return sReturn;
+    }
+
+    public String getJsonBody(String sSharedPrefsFilename) {
+        SharedPreferences spsValues = getSharedPreferences(sSharedPrefsFilename, 0);
+        return spsValues.getString("JSON", "");
+
+    }
+
+    private String get_path_to_customer_datafile() {
+        PackageManager m = getPackageManager();
+        String s = getPackageName();
+        try {
+            PackageInfo p = m.getPackageInfo(s, 0);
+            s = p.applicationInfo.dataDir;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return s + "/" + Constants.CUSTOMER_DATA_FILENAME;
+    }
+
+    private String get_path_to_customer_logofile() {
+        PackageManager m = getPackageManager();
+        String s = getPackageName();
+        try {
+            PackageInfo p = m.getPackageInfo(s, 0);
+            s = p.applicationInfo.dataDir;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return s + "/" + Constants.CUSTOMER_LOGO_FILENAME;
     }
 
     public void goto_maintenance(final View view) {
@@ -438,7 +623,7 @@ public class TRSSettings extends Activity {
         }
     }
 
-    private Handler messageHandler = new Handler(Looper.getMainLooper()) {
+    private final Handler messageHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == MSG_SHOW_TOAST) {
@@ -462,8 +647,6 @@ public class TRSSettings extends Activity {
 
     private boolean check_for_BT_connection() {
         SharedPreferences prefs = getSharedPreferences(BT_CONNECTED_PREFS, Context.MODE_PRIVATE);
-
-        //aSwitch.setChecked(true);
         return prefs.getBoolean("CONNECTED", false);
     }
 

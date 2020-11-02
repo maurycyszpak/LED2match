@@ -55,9 +55,9 @@ public class TRSSequence extends ListActivity {
     private BtCOMMsService lclBTServiceInstance;
     boolean mBound = false;
     boolean mBoundBT = false;
-    public static final String TAG = "MORRIS-LSTVIEW";
+    public static final String TAG = "MORRIS-SQNC";
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -104,6 +104,9 @@ public class TRSSequence extends ListActivity {
             SystemClock.sleep(50);
             mBoundBT = true;
         }
+
+        Log.d(TAG, "Executing license check");
+        license_check();
     }
 
     @Override
@@ -170,7 +173,53 @@ public class TRSSequence extends ListActivity {
             String concat_value = (index +1) + ". " + sLampName + ": " + sLampDelay + "s";
             listItems.set(index, concat_value);
         }
+    }
 
+    public int get_tier() {
+        boolean connected = get_connection_status();
+
+        SharedPreferences prefs_config = getSharedPreferences(Constants.CONFIG_SETTINGS, 0);
+        int current_tier = prefs_config.getInt(Constants.LICENSE_TIER_TAG, 0);
+
+        Log.d(TAG, "get_tier_() - CONNECTED status: " + connected);
+        if (connected) {
+            String licensed_mac = prefs_config.getString(Constants.LICENSE_MAC_ADDR_TAG, "NO DATA");
+            SharedPreferences prefs_connection = getSharedPreferences(Constants.BT_CONNECTED_PREFS, 0);
+            String connected_mac = prefs_connection.getString(Constants.SESSION_CONNECTED_MAC_TAG, "NO DATA");
+            Log.d(TAG, "get_tier_() - Licensed MAC: " + licensed_mac);
+            Log.d(TAG, "get_tier_() - Connected MAC: " + connected_mac);
+            if (!licensed_mac.equalsIgnoreCase(connected_mac)) {
+                Log.d(TAG, "Detected connection to a non-licensed MAC address");
+                makeToast("Detected connection to a non-licensed MAC address");
+                current_tier = 0;
+            }
+        }
+        Log.d(TAG, "get_tier_() - returning TIER " + current_tier);
+        return current_tier;
+    }
+
+    public boolean get_connection_status() {
+        SharedPreferences prefs_config = getSharedPreferences(Constants.BT_CONNECTED_PREFS, 0);
+        boolean status= prefs_config.getBoolean("CONNECTED", false);
+
+        return status;
+    }
+
+    private void license_check() {
+        int current_tier = get_tier();
+
+        if (current_tier < Constants.LICENSE_TIER_SEQUENCE_SETTINGS_PAGE) {
+            Log.d(TAG, "Blocking page");
+            block_current_page();
+        } else {
+            Log.d(TAG, "Not blocking page");
+        }
+    }
+
+    private void block_current_page() {
+        Intent intent = new Intent(TRSSequence.this, DisabledOverlayPage.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK) ;
+        startActivity(intent);
 
     }
 

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LicenseClass"
+    android:background="@color/white"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/mac_address_layout"
+            android:layout_marginBottom="25dp"
+            android:background="#100000ff">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:padding="@dimen/button_margin_10dp"
+                android:layout_marginEnd="@dimen/button_margin"
+                android:gravity="start"
+                android:text="Connected Device:"
+                android:textColor="@color/dark_gray"
+                android:textSize="@dimen/regular_text_size" />
+
+            <TextView
+                android:id="@+id/textMACconnected"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:padding="@dimen/button_margin_10dp"
+                android:layout_marginEnd="@dimen/button_margin"
+                android:gravity="start"
+                android:textColor="@color/black"
+                android:text=""
+                android:textSize="@dimen/larger_text_size" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/tier_info_layout_1"
+            android:layout_marginBottom="5dp"
+            android:background="#100000ff">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:padding="@dimen/button_margin_10dp"
+                android:layout_marginEnd="@dimen/button_margin"
+                android:gravity="start"
+                android:text="Licensed Tier:"
+                android:textColor="@color/dark_gray"
+                android:textSize="@dimen/regular_text_size" />
+
+            <TextView
+                android:id="@+id/textLicensedTier"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:padding="@dimen/button_margin_10dp"
+                android:layout_marginEnd="@dimen/button_margin"
+                android:gravity="start"
+                android:textColor="@color/black"
+                android:text=""
+                android:textSize="@dimen/larger_text_size" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/tier_info_layout_2"
+            android:layout_marginBottom="50dp"
+            android:background="#100000ff">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:padding="@dimen/button_margin_10dp"
+                android:layout_marginEnd="@dimen/button_margin"
+                android:gravity="start"
+                android:text="Licensed Date:"
+                android:textColor="@color/dark_gray"
+                android:textSize="@dimen/regular_text_size" />
+
+            <TextView
+                android:id="@+id/textLicensedDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:padding="@dimen/button_margin_10dp"
+                android:layout_marginEnd="@dimen/button_margin"
+                android:gravity="start"
+                android:textColor="@color/black"
+                android:text=""
+                android:textSize="@dimen/larger_text_size" />
+
+        </LinearLayout>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/button_margin_10dp"
+            android:layout_marginEnd="@dimen/button_margin"
+            android:gravity="center_vertical|center_horizontal"
+            android:textColor="@color/dark_gray"
+            android:text="Input License code:"
+            android:textSize="@dimen/button_text_size"
+            />
+
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/editLicenseCode"
+            android:gravity="center"
+            android:text=""
+            android:textSize="@dimen/button_text_size"
+            android:inputType="text"
+            android:textColor="@color/black"/>
+
+        <Button
+            android:id="@+id/btnValidate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/torso_blue_main"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="Validate"
+            android:onClick="validateLicense"
+            android:textColor="@color/white"
+            android:textSize="@dimen/button_text_size"
+            android:layout_marginTop="@dimen/button_margin_10dp"/>
+
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:onClick="onClickBack"
+            android:text="BACK"
+            android:textSize="@dimen/button_text_size"
+            android:layout_marginTop="@dimen/button_margin_10dp"
+            android:textColor="@color/black"
+            />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+
+            <TextView
+                android:id="@+id/text_customer_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/torso_footer_address"
+                android:textSize="12sp"
+                android:textColor="@color/dark_gray"
+                />
+        </RelativeLayout>
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

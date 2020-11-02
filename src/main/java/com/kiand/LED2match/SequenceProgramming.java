@@ -42,7 +42,8 @@ import java.util.Timer;
 public class SequenceProgramming extends Activity implements Runnable {
 
     public static String TAG = "MORRIS-SEQ-PROGRAM";
-    public static final String APP_SEQ_PRESET = "EEPROM_SEQ_PRESET"; //Mauricio
+    public static final String APP_SEQ_PRESET = "EEPROM_SEQ_PRESET";
+    public static final String PAGE_LICENSE_NAME = "SEQUENCE_PROGRAMMING_PAGE";
     private static final int MSG_EXIT_LOOP = 1;
     public boolean blRunningThread;
 
@@ -60,7 +61,7 @@ public class SequenceProgramming extends Activity implements Runnable {
     EditText edTextDebug;
     public static Thread T1;
 
-    private static Handler messageHandler = new Handler() {
+    private static final Handler messageHandler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             if (msg.what == MSG_EXIT_LOOP) {
                 String message = (String)msg.obj;
@@ -345,8 +346,10 @@ public class SequenceProgramming extends Activity implements Runnable {
     protected void onResume()
     {
         super.onResume();
-        //Toast.makeText(this.getBaseContext(),"Activity resumed", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this.getBaseContext(),"Activity resumed", Toast.LENGTH_SHORT).show();
         populateLampNames();
+        Log.d(TAG, "Executing license check");
+        license_check();
     }
     protected void onDestroy()
     {
@@ -359,6 +362,27 @@ public class SequenceProgramming extends Activity implements Runnable {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_, menu);
         return true;
+    }
+    public int get_tier() {
+        SharedPreferences prefs_config = getSharedPreferences(Constants.CONFIG_SETTINGS, 0);
+        int current_tier = prefs_config.getInt(Constants.LICENSE_TIER_TAG, 0);
+
+        return current_tier;
+    }
+
+    private void license_check() {
+        int current_tier = get_tier();
+        if (current_tier < Constants.LICENSE_TIER_SEQUENCE_SETTINGS_PAGE) {
+             Log.d(TAG, "Blocking page");
+             block_current_page();
+        } else {
+            Log.d(TAG, "Not blocking page");
+        }
+     }
+
+    private void block_current_page() {
+        Intent intent = new Intent(SequenceProgramming.this, DisabledOverlayPage.class);
+        startActivity(intent);
     }
 
     public void populateLampNames() {
@@ -976,7 +1000,7 @@ public class SequenceProgramming extends Activity implements Runnable {
     }
 
     private class RGBTextWatcher implements TextWatcher {
-        private EditText editTextControl;
+        private final EditText editTextControl;
 
         public RGBTextWatcher(EditText e) {
             editTextControl = e;
@@ -1001,7 +1025,7 @@ public class SequenceProgramming extends Activity implements Runnable {
     }
 
     private class TIMETextWatcher implements TextWatcher {
-        private EditText editTextControl;
+        private final EditText editTextControl;
 
         public TIMETextWatcher(EditText e) {
             editTextControl = e;
@@ -1387,7 +1411,7 @@ public class SequenceProgramming extends Activity implements Runnable {
         this.runOnUiThread(Timer_Tick);
     }
 
-    private Runnable Timer_Tick = new Runnable() {
+    private final Runnable Timer_Tick = new Runnable() {
         public void run() {
 
             //This method runs in the same thread as the UI.

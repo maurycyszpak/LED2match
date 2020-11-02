@@ -31,12 +31,9 @@
     <string name="checked">checked</string>
     <string name="unchecked">unchecked</string>
 
-    <string name="ledbar_manual">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sem massa, pellentesque ac sodales a, egestas ac nunc. Curabitur finibus scelerisque nisl, sed suscipit ipsum mattis et. Phasellus porttitor aliquam diam at porttitor. Duis auctor venenatis ex quis eleifend. Suspendisse potenti. Integer malesuada tincidunt nulla, nec volutpat risus rutrum eu. Aliquam efficitur convallis orci at rutrum. Aenean sed vestibulum ante. In consequat iaculis ante, sit amet tempor purus imperdiet a. In vel rutrum mi. Aliquam sollicitudin diam magna, quis pellentesque mi elementum condimentum. Quisque mi nisl, auctor sed ante et, sagittis feugiat velit. Nullam ligula erat, semper nec iaculis non, tincidunt ut tortor.
-\n\n
-Praesent congue nisl ornare, faucibus nisl ac, sodales odio. Nunc a sem ut lorem laoreet rutrum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam ornare sem sapien, non porttitor risus vestibulum eget. Nam pharetra massa erat, sit amet pharetra ex imperdiet id. Integer egestas lorem in suscipit euismod. Sed quis ullamcorper velit. Curabitur ut tortor nisl.
-\n\n
-Donec semper sagittis tellus, id molestie quam suscipit sit amet. Aenean posuere sed nisi ullamcorper aliquam. In id quam eu erat placerat convallis et quis erat. Maecenas eget augue ac erat tincidunt efficitur. Nam et quam vel elit vulputate ultricies sit amet nec turpis. Curabitur blandit pellentesque elementum. Duis lectus arcu, feugiat in finibus ut, aliquam nec metus. Phasellus dignissim arcu libero, sit amet ornare nulla gravida nec. Pellentesque in vestibulum eros, non consequat lorem. Fusce ut aliquam orci. Aliquam massa nunc, ornare ut purus sed, tincidunt egestas ante. Pellentesque rhoncus, orci sit amet aliquam varius, leo diam consequat tellus, at sagittis lacus risus a ligula. Integer et odio sem. Ut mattis consequat diam at finibus. Sed non urna in odio consequat congue sit amet in est. Maecenas condimentum iaculis metus nec eleifend.
-\n\n\n\n\n\n\n
+    <string name="ledbar_manual">
+    Las plantillas de evitar el Lorem Ipsum, optando en su lugar para el texto de marcador de posición que está en la llanura Inglés y más de cerca se asemeja real de la copia.\n\n
+    Las plantillas de evitar el Lorem Ipsum, optando en su lugar para el texto de marcador de posición que está en la llanura Inglés y más de cerca se asemeja real de la copia.
     </string>
     <string name="unitycolor_led_light_label">UnityColor (R) LED Light Control System</string>
     <string name="light_power_warning">Selected light drains circa %light_power% A\nSelected power supply handles: %psu_current% A\n\nDecrease the light intensity or set the power of PSU to higher on the Recertification Page.</string>
@@ -53,8 +50,8 @@ Donec semper sagittis tellus, id molestie quam suscipit sit amet. Aenean posuere
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="prg_sequence_hint_text">Press "ADD..." to add a step in sequence.\nPress short to add 5s.\nLong press to edit or remove step.</string>
-    <string name="torso_footer_address">Torso-Verlag e.K. Obere Grueben 8\nDE-97877 Wertheim Tel. +49(0)93242 933970</string>
-    <string name="about_app_info_static">UnityColor LED Control System\n\u00a9 Torso-Verlag 2020</string>
+    <string name="torso_footer_address">Torso-Verlag e.K. Obere Grueben 8\nDE-97877 Wertheim Tel. +49(0)9342 933970</string>
+    <string name="about_app_info_static">UnityColor\u00ae LED Control System\n\u00a9Torso-Verlag 2020</string>
     <string name="about_app_info_version_label">Hi-Tec-Support GmbH\nCopyright (R) 2018\nVersion " + sFormattedDate + "\nFirmware version: " + sFWverLcl);</string>
     <string name="about_app_info_FWversion_label">Firmware version:</string>
     <string name="about_app_info_hyperlink">www.unitycolor.com</string>
@@ -62,11 +59,13 @@ Donec semper sagittis tellus, id molestie quam suscipit sit amet. Aenean posuere
     <string name="maintenance_page_setting_1_label">TL84 Full</string>
     <string name="maintenance_page_setting_2_label">TL84 Dim</string>
     <string name="maintenance_page_setting_3_label">Max PSU (mA)</string>
+    <string name="maintenance_page_setting_4_label"> # of panels</string>
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
 
     <string name="overlay_no_connection_msg">Unable to communicate with the device. Check bluetooth connection.</string>
+    <string name="overlay_no_license_msg">This function is not licensed. Please call the supplier.</string>
 
 
 </resources>

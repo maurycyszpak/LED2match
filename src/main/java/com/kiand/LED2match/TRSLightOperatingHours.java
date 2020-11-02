@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -50,7 +52,7 @@ public class TRSLightOperatingHours extends Activity {
     boolean mBoundBT = false;
     final Context context = this;
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -66,7 +68,7 @@ public class TRSLightOperatingHours extends Activity {
         }
     };
 
-    private ServiceConnection btConnection = new ServiceConnection() {
+    private final ServiceConnection btConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -135,6 +137,8 @@ public class TRSLightOperatingHours extends Activity {
         String version_line = "FW Version: " + sFWVersion;
         tvInfoBox.setText(getString(R.string.system_footer) + "\n" + version_line);
         populateLampsState();
+
+        license_check();
     }
 
     @Override
@@ -198,9 +202,56 @@ public class TRSLightOperatingHours extends Activity {
         //populateButtonNames();
         repopulate_button_assignments();
         populate_button_timers_empty();
+        set_custom_address();
     }
 
+    public int get_tier() {
+        boolean connected = get_connection_status();
 
+        SharedPreferences prefs_config = getSharedPreferences(Constants.CONFIG_SETTINGS, 0);
+        int current_tier = prefs_config.getInt(Constants.LICENSE_TIER_TAG, 0);
+
+        Log.d(TAG, "get_tier_() - CONNECTED status: " + connected);
+        if (connected) {
+            String licensed_mac = prefs_config.getString(Constants.LICENSE_MAC_ADDR_TAG, "NO DATA");
+            SharedPreferences prefs_connection = getSharedPreferences(Constants.BT_CONNECTED_PREFS, 0);
+            String connected_mac = prefs_connection.getString(Constants.SESSION_CONNECTED_MAC_TAG, "NO DATA");
+            Log.d(TAG, "get_tier_() - Licensed MAC: " + licensed_mac);
+            Log.d(TAG, "get_tier_() - Connected MAC: " + connected_mac);
+            if (!licensed_mac.equalsIgnoreCase(connected_mac)) {
+                Log.d(TAG, "Detected connection to a non-licensed MAC address");
+                makeToast("Detected connection to a non-licensed MAC address");
+                current_tier = 0;
+            }
+        }
+        Log.d(TAG, "get_tier_() - returning TIER " + current_tier);
+        return current_tier;
+    }
+
+    public boolean get_connection_status() {
+        SharedPreferences prefs_config = getSharedPreferences(Constants.BT_CONNECTED_PREFS, 0);
+        boolean status= prefs_config.getBoolean("CONNECTED", false);
+
+        return status;
+    }
+
+    private void license_check() {
+        int current_tier = get_tier();
+
+        if (current_tier < Constants.LICENSE_TIER_OPERATING_HOURS_PAGE) {
+            Log.d(TAG, "Blocking page");
+            block_current_page();
+        } else {
+            Log.d(TAG, "Not blocking page");
+        }
+    }
+
+    private void block_current_page() {
+        Intent intent = new Intent(TRSLightOperatingHours.this, DisabledOverlayPage.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK) ;
+        startActivity(intent);
+
+    }
 
     public void populate_button_timers_empty() {
         Log.d(TAG, "Populating EMPTY button timers");
@@ -435,6 +486,48 @@ public class TRSLightOperatingHours extends Activity {
         }
 
     }
+    private String get_path_to_customer_datafile() {
+        PackageManager m = getPackageManager();
+        String s = getPackageName();
+        try {
+            PackageInfo p = m.getPackageInfo(s, 0);
+            s = p.applicationInfo.dataDir;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return s + "/" + Constants.CUSTOMER_DATA_FILENAME;
+    }
+
+    private String get_path_to_customer_logofile() {
+        PackageManager m = getPackageManager();
+        String s = getPackageName();
+        try {
+            PackageInfo p = m.getPackageInfo(s, 0);
+            s = p.applicationInfo.dataDir;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return s + "/" + Constants.CUSTOMER_LOGO_FILENAME;
+    }
+
+    public boolean display_custom_data() {
+        SharedPreferences prefs = getSharedPreferences(Constants.CONFIG_SETTINGS, Context.MODE_PRIVATE);
+        Boolean bl_custom_data = prefs.getBoolean(Constants.CUSTOMER_DATA_FLAG, false);
+        Log.d(TAG, "display_custom_data_(): USE CUSTOMER DATA = " + bl_custom_data);
+        return bl_custom_data;
+    }
+
+    private void set_custom_address() {
+        FileUtilities fileUtilities = new FileUtilities(get_path_to_customer_datafile(), get_path_to_customer_logofile());
+
+        if (display_custom_data()) {
+            String footer_address = fileUtilities.get_value_from_customer_data(Constants.CUSTOMER_DATA_ABOUT_PAGE_LINE_2_TAG);
+
+            footer_address = footer_address.replace("\\n", System.lineSeparator());
+            TextView text_footer_address = findViewById(R.id.text_customer_address);
+            text_footer_address.setText(footer_address);
+        }
+    }
 
     public void resetOperatingTime(View v) {
 
@@ -469,198 +562,6 @@ public class TRSLightOperatingHours extends Activity {
         AlertDialog alertD = alertDialogBuilder.create();
         alertD.show();
     }
-
-
-
-
-    /*public void btnClicked(View v) {
-
-        SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
-        String sPresetRGBValues = "0,0,0,0,0,0,0,0,0,0";
-        String sCommand = "";
-        JSON_analyst json_analyst = new JSON_analyst(spFile);
-
-        switch_all_off();
-
-        switch (v.getId()) {
-            case R.id.btnL1:
-
-                btn1Timer++;
-                blLamp1_ON = true;
-                btnL1.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_active));
-                btnL1.setTextColor(Color.BLACK);
-//                String sButtonCaption = btnL1.getTag().toString();
-//                sButtonCaption = sButtonCaption + sNewLine + btn1Timer*5 + " sec";
-//                btnL1.setText(sButtonCaption);
-
-                sPresetRGBValues = json_analyst.getJSONValue("preset1_rgbw");
-                String[] sRGB = sPresetRGBValues.split(",");
-                for (int i=0; i < sRGB.length; i++) {
-                    if (i < 9) {
-                        sCommand = "S0" + (i+1) + sRGB[i] + newLine;
-                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                    } else {
-                        sCommand = "S" + (i+1) + sRGB[i] + newLine;
-                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                    }
-                    //Toast.makeText(context, sCommand, Toast.LENGTH_LONG).show();
-                }
-
-                break;
-
-            case R.id.btnL2:
-
-                btn2Timer++;
-                blLamp2_ON = true;
-                btnL2.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_active));
-                btnL2.setTextColor(Color.BLACK);
-
-//                sButtonCaption = btnL2.getTag().toString();
-//                sButtonCaption = sButtonCaption + sNewLine + btn2Timer*5 + " sec";
-//                btnL2.setText(sButtonCaption);
-
-
-                sPresetRGBValues = json_analyst.getJSONValue("preset2_rgbw");
-                sRGB = sPresetRGBValues.split(",");
-                for (int i=0; i < sRGB.length; i++) {
-                    if (i < 9) {
-                        sCommand = "S0" + (i+1) + sRGB[i] + newLine;
-                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                    } else {
-                        sCommand = "S" + (i+1) + sRGB[i] + newLine;
-                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                    }
-                    //Toast.makeText(context, sCommand, Toast.LENGTH_LONG).show();
-                }
-
-                break;
-
-            case R.id.btnL3:
-
-                btn3Timer++;
-                blLamp3_ON = true;
-                btnL3.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_active));
-                btnL3.setTextColor(Color.BLACK);
-
-//                sButtonCaption = btnL3.getTag().toString();
-//                sButtonCaption = sButtonCaption + sNewLine + btn3Timer*5 + " sec";
-//                btnL3.setText(sButtonCaption);
-
-                sPresetRGBValues = json_analyst.getJSONValue("preset3_rgbw");
-                sRGB = sPresetRGBValues.split(",");
-                for (int i=0; i < sRGB.length; i++) {
-                    if (i < 9) {
-                        sCommand = "S0" + (i+1) + sRGB[i] + newLine;
-                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                    } else {
-                        sCommand = "S" + (i+1) + sRGB[i] + newLine;
-                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                    }
-                    //Toast.makeText(context, sCommand, Toast.LENGTH_LONG).show();
-                }
-
-                break;
-
-            case R.id.btnL4:
-
-                btn4Timer++;
-                blLamp4_ON = true;
-                btnL4.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_active));
-                btnL4.setTextColor(Color.BLACK);
-
-//                sButtonCaption = btnL4.getTag().toString();
-//                sButtonCaption = sButtonCaption + sNewLine + btn4Timer*5 + " sec";
-//                btnL4.setText(sButtonCaption);
-
-                sPresetRGBValues = json_analyst.getJSONValue("preset4_rgbw");
-                sRGB = sPresetRGBValues.split(",");
-                for (int i=0; i < sRGB.length; i++) {
-                    if (i < 9) {
-                        sCommand = "S0" + (i+1) + sRGB[i] + newLine;
-                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                    } else {
-                        sCommand = "S" + (i+1) + sRGB[i] + newLine;
-                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                    }
-                    //Toast.makeText(context, sCommand, Toast.LENGTH_LONG).show();
-                }
-
-                break;
-
-            case R.id.btnL5:
-
-                btn5Timer++;
-                blLamp5_ON = true;
-                btnL5.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_active));
-                btnL5.setTextColor(Color.BLACK);
-
-//                sButtonCaption = btnL5.getTag().toString();
-//                sButtonCaption = sButtonCaption + sNewLine + btn5Timer*5 + " sec";
-//                btnL5.setText(sButtonCaption);
-
-                sPresetRGBValues = json_analyst.getJSONValue("preset5_rgbw");
-                sRGB = sPresetRGBValues.split(",");
-                for (int i=0; i < sRGB.length; i++) {
-                    if (i < 9) {
-                        sCommand = "S0" + (i+1) + sRGB[i] + newLine;
-                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                    } else {
-                        sCommand = "S" + (i+1) + sRGB[i] + newLine;
-                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                    }
-                    //Toast.makeText(context, sCommand, Toast.LENGTH_LONG).show();
-                }
-
-                break;
-
-            case R.id.btnL6:
-
-                btn6Timer++;
-                blLamp6_ON = true;
-                btnL6.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_active));
-                btnL6.setTextColor(Color.BLACK);
-
-//                sButtonCaption = btnL6.getTag().toString();
-//                sButtonCaption = sButtonCaption + sNewLine + btn6Timer*5 + " sec";
-//                btnL6.setText(sButtonCaption);
-
-                sPresetRGBValues = json_analyst.getJSONValue("preset6_rgbw");
-                sRGB = sPresetRGBValues.split(",");
-                for (int i=0; i < sRGB.length; i++) {
-                    if (i < 9) {
-                        sCommand = "S0" + (i+1) + sRGB[i] + newLine;
-                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                    } else {
-                        sCommand = "S" + (i+1) + sRGB[i] + newLine;
-                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                    }
-                    //Toast.makeText(context, sCommand, Toast.LENGTH_LONG).show();
-                }
-
-                break;
-        }
-    }*/
-
-    /*public void switch_all_off() {
-        blLamp1_ON = false;
-        btnL1.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_main));
-        btnL1.setTextColor(Color.WHITE);
-        blLamp2_ON = false;
-        btnL2.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_main));
-        btnL2.setTextColor(Color.WHITE);
-        blLamp3_ON = false;
-        btnL3.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_main));
-        btnL3.setTextColor(Color.WHITE);
-        blLamp4_ON = false;
-        btnL4.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_main));
-        btnL4.setTextColor(Color.WHITE);
-        blLamp5_ON = false;
-        btnL5.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_main));
-        btnL5.setTextColor(Color.WHITE);
-        blLamp6_ON = false;
-        btnL6.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_main));
-        btnL6.setTextColor(Color.WHITE);
-    }*/
 
     public void populateLampsState() {
         SharedPreferences spsValues = getSharedPreferences(LightSettings.SHAREDPREFS_LAMP_STATE, MODE_PRIVATE);

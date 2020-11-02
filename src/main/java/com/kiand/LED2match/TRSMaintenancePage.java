@@ -41,13 +41,14 @@ public class TRSMaintenancePage extends Activity {
     public static final String prefs_psu_value_tag = "psu_current";
     public static final String newLine = System.getProperty("line.separator");
     public static final String NO_PRESET_TEXT = "#n/a";
-    public static final String TAG = "MORRIS-RECERT";
+    public static final String TAG = "MORRIS-MNTNC";
 
     boolean blLamp1_ON, blLamp2_ON, blLamp3_ON, blLamp4_ON, blLamp5_ON, blLamp6_ON;
     Button btnL1, btnL2, btnL3, btnL4, btnL5, btnL6;
     EditText edit_psu;
     EditText edit_tl84_dim;
     EditText edit_tl84_master_dim;
+    EditText edit_no_of_panels;
     Integer btn1Timer = 0;
     Integer btn2Timer = 0;
     Integer btn3Timer = 0;
@@ -65,7 +66,7 @@ public class TRSMaintenancePage extends Activity {
     final Context context = this;
 
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -82,7 +83,7 @@ public class TRSMaintenancePage extends Activity {
         }
     };
 
-    private ServiceConnection btConnection = new ServiceConnection() {
+    private final ServiceConnection btConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -127,8 +128,8 @@ public class TRSMaintenancePage extends Activity {
         } else {
             populateButtonNames();
         }
-
         populate_extended_lamps_switch_value();
+        license_check();
     }
 
     @Override
@@ -160,6 +161,7 @@ public class TRSMaintenancePage extends Activity {
         edit_psu = findViewById(R.id.edit_PSU_current);
         edit_tl84_dim = findViewById(R.id.edit_DACvalue);
         edit_tl84_master_dim = findViewById(R.id.edit_TL84_fullbright_value);
+        edit_no_of_panels = findViewById(R.id.edit_no_of_panels);
         lclHandler = new Handler();
 
         btnL1 = findViewById(R.id.btnL1);
@@ -267,11 +269,7 @@ public class TRSMaintenancePage extends Activity {
         SharedPreferences prefs = getSharedPreferences(Constants.CONFIG_SETTINGS, Context.MODE_PRIVATE);
         Boolean bl_extended_mode = prefs.getBoolean(Constants.EXTENDED_LAMPS_MODE_TAG, false);
 
-        if (bl_extended_mode) {
-            aSwitch.setChecked(true);
-        } else {
-            aSwitch.setChecked(false);
-        }
+        aSwitch.setChecked(bl_extended_mode);
     }
 
     public void factoryReset(View v) {
@@ -310,8 +308,56 @@ public class TRSMaintenancePage extends Activity {
             }
         });
         alertD.show();
+    }
+
+    public int get_tier() {
+        boolean connected = get_connection_status();
+
+        SharedPreferences prefs_config = getSharedPreferences(Constants.CONFIG_SETTINGS, 0);
+        int current_tier = prefs_config.getInt(Constants.LICENSE_TIER_TAG, 0);
+
+        Log.d(TAG, "get_tier_() - CONNECTED status: " + connected);
+        if (connected) {
+            String licensed_mac = prefs_config.getString(Constants.LICENSE_MAC_ADDR_TAG, "NO DATA");
+            SharedPreferences prefs_connection = getSharedPreferences(Constants.BT_CONNECTED_PREFS, 0);
+            String connected_mac = prefs_connection.getString(Constants.SESSION_CONNECTED_MAC_TAG, "NO DATA");
+            Log.d(TAG, "get_tier_() - Licensed MAC: " + licensed_mac);
+            Log.d(TAG, "get_tier_() - Connected MAC: " + connected_mac);
+            if (!licensed_mac.equalsIgnoreCase(connected_mac)) {
+                Log.d(TAG, "Detected connection to a non-licensed MAC address");
+                makeToast("Detected connection to a non-licensed MAC address");
+                current_tier = 0;
+            }
+        }
+        Log.d(TAG, "get_tier_() - returning TIER " + current_tier);
+        return current_tier;
+    }
+
+    public boolean get_connection_status() {
+        SharedPreferences prefs_config = getSharedPreferences(Constants.BT_CONNECTED_PREFS, 0);
+        boolean status= prefs_config.getBoolean("CONNECTED", false);
+
+        return status;
+    }
+
+    private void license_check() {
+        int current_tier = get_tier();
+
+        if (current_tier < Constants.LICENSE_TIER_MAINTENANCE_PAGE) {
+            Log.d(TAG, "Blocking page");
+            block_current_page();
+        } else {
+            Log.d(TAG, "Not blocking page");
+        }
+    }
+
+    private void block_current_page() {
+        Intent intent = new Intent(TRSMaintenancePage.this, DisabledOverlayPage.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK) ;
+        startActivity(intent);
 
     }
+
     private void send_via_bt(String command) {
         if (mBoundBT) {
             Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + command.replace("\n", "\\n").replace("\r", "\\r") + "'");
@@ -349,11 +395,13 @@ public class TRSMaintenancePage extends Activity {
         String ee_psucurrent_tag = "eeprom_PSU_current";
         String ee_tl84dim_tag = "eeprom_tl84_dim_value";
         String ee_tl84masterdim_tag = "eeprom_tl84_master_dim_value";
+        String ee_noofpanels_tag = "eeprom_no_of_panels";
 
         SharedPreferences spConfig = getSharedPreferences(CONFIG_SETTINGS, 0);
         String s_eeprom_PSU_current = spConfig.getString(ee_psucurrent_tag, "");
         String s_eeprom_tl84_dim_value = spConfig.getString(ee_tl84dim_tag, "");
         String s_eeprom_tl84_master_dim_value = spConfig.getString(ee_tl84masterdim_tag,"");
+        String s_eeprom_no_of_panels = spConfig.getString(ee_noofpanels_tag, "1");
 
         try {
             if (s_eeprom_PSU_current.length() > 0) {
@@ -379,6 +427,16 @@ public class TRSMaintenancePage extends Activity {
             if (s_eeprom_tl84_master_dim_value.length() > 0) {
                 if (Integer.valueOf(s_eeprom_tl84_master_dim_value) != 0) {
                     edit_tl84_master_dim.setText(s_eeprom_tl84_master_dim_value);
+                }
+            }
+        } catch (NullPointerException e) {
+            makeToast("Full brightness TL84 dim value not yet defined for this unit");
+        }
+
+        try {
+            if (s_eeprom_no_of_panels.length() > 0) {
+                if (Integer.parseInt(s_eeprom_no_of_panels) != 0) {
+                    edit_no_of_panels.setText(s_eeprom_no_of_panels);
                 }
             }
         } catch (NullPointerException e) {
@@ -545,6 +603,12 @@ public class TRSMaintenancePage extends Activity {
 
         if (!TextUtils.isEmpty(edit_psu.getText().toString())) {
             settings_value += string_int_to_hex_4(edit_psu.getText().toString());
+        } else {
+            settings_value += "0000";
+        }
+
+        if (!TextUtils.isEmpty(edit_no_of_panels.getText().toString())) {
+            settings_value += string_int_to_hex_4(edit_no_of_panels.getText().toString());
         } else {
             settings_value += "0000";
         }

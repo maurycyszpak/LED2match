@@ -12,13 +12,11 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18" />
 
     <application
         android:name=".MyApplication"
@@ -26,7 +24,10 @@
         android:label="LED2match"
         android:largeHeap="true"
         tools:ignore="GoogleAppIndexingWarning">
-
+        <activity
+            android:name=".LicenseClass"
+            android:label="License Page"
+            />
         <activity
             android:name=".TRSSequence"
             android:label="Sequence Programming (PRG)" />
@@ -48,10 +49,6 @@
             android:name=".SequenceProgramming"
             android:label="Lights Sequence page"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".DigitalPanelActivity"
-            android:label="digital panel"
-            android:screenOrientation="landscape" />
         <activity
             android:name=".TRSDigitalPanel"
             android:label="LED2match"
@@ -99,6 +96,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".OverlayPage"
+            android:theme="@android:style/Theme.Translucent" />
+        <activity
+            android:name=".DisabledOverlayPage"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".MyListAdapter"
