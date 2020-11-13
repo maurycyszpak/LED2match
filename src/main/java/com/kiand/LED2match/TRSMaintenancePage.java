@@ -33,6 +33,7 @@ import java.util.TreeMap;
 
 import static com.kiand.LED2match.Constants.CONFIG_SETTINGS;
 import static com.kiand.LED2match.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
+import static com.kiand.LED2match.Constants.sNewLine;
 
 public class TRSMaintenancePage extends Activity {
 
@@ -123,7 +124,7 @@ public class TRSMaintenancePage extends Activity {
         populate_unit_config();
         //readDACvalue();
         //readPSUpower();
-        if (shared_prefs_exists(Constants.SHAREDPREFS_LAMP_ASSIGNMENTS, "1")) {
+        if (shared_prefs_exists(Constants.NEW_SHAREDPREFS_LAMP_ASSIGNMENTS, "666")) {
             repopulate_button_assignments();
         } else {
             populateButtonNames();
@@ -263,6 +264,10 @@ public class TRSMaintenancePage extends Activity {
                         spEditor.apply();
                     }
                 });
+    }
+
+    public void button_click(View v) {
+        makeToast(v.getTag().toString());
     }
 
     private void populate_extended_lamps_switch_value() {
@@ -451,9 +456,6 @@ public class TRSMaintenancePage extends Activity {
     }
 
     public void repopulate_button_assignments() {
-        SharedPreferences myPrefs = this.getSharedPreferences(Constants.SHAREDPREFS_LAMP_ASSIGNMENTS, 0);
-        TreeMap<String, ?> keys = new TreeMap<String, Object>(myPrefs.getAll());
-
         btnL1.setText(NO_PRESET_TEXT);
         btnL1.setTag(NO_PRESET_TEXT);
         btnL2.setText(NO_PRESET_TEXT);
@@ -467,42 +469,59 @@ public class TRSMaintenancePage extends Activity {
         btnL6.setText(NO_PRESET_TEXT);
         btnL6.setTag(NO_PRESET_TEXT);
 
+        SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        JSON_analyst json_analyst = new JSON_analyst(spFile);
+
+        // now check which preset is currently mapped to a particular button
+        // e.g.: key--> 1, value --> preset3
+        SharedPreferences prefs = getSharedPreferences(Constants.NEW_SHAREDPREFS_LAMP_ASSIGNMENTS, MODE_PRIVATE);
+        TreeMap<String, ?> keys = new TreeMap<String, Object>(prefs.getAll());
 
         for (Map.Entry<String, ?> entry : keys.entrySet()) {
-
             switch (entry.getKey()) {
                 case "1":
+                    // preset8. Get name of this preset
+                    String preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
                     btnL1.setText(entry.getValue().toString());
+                    btnL1.setText(preset_name);
                     btnL1.setTag(entry.getValue().toString());
+                    //btnL1.setTag(preset_name);
                     break;
 
                 case "2":
+                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
                     btnL2.setText(entry.getValue().toString());
+                    btnL2.setText(preset_name);
                     btnL2.setTag(entry.getValue().toString());
                     break;
 
                 case "3":
+                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
                     btnL3.setText(entry.getValue().toString());
+                    btnL3.setText(preset_name);
                     btnL3.setTag(entry.getValue().toString());
                     break;
 
                 case "4":
+                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
                     btnL4.setText(entry.getValue().toString());
+                    btnL4.setText(preset_name);
                     btnL4.setTag(entry.getValue().toString());
                     break;
 
                 case "5":
+                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
                     btnL5.setText(entry.getValue().toString());
+                    btnL5.setText(preset_name);
                     btnL5.setTag(entry.getValue().toString());
                     break;
 
                 case "6":
+                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
                     btnL6.setText(entry.getValue().toString());
+                    btnL6.setText(preset_name);
                     btnL6.setTag(entry.getValue().toString());
                     break;
-
-                //Log.d(TAG, entry.getKey() + ":" + entry.getValue());
-                //some code
             }
         }
     }
@@ -512,14 +531,16 @@ public class TRSMaintenancePage extends Activity {
 
         //placeholder
         if (!v.getTag().toString().equalsIgnoreCase("#N/A")) {
-            openDialog(v, "You are about to the reset operating hours of the lamp.\n\nClick OK to continue.");
+            String msg = "You are about to the reset operating hours of the lamp.\n\nClick OK to continue.";
+            Button b = (Button) v;
+            openDialog(v, msg, v.getTag().toString(), b.getText().toString());
         } else {
             makeToast("No lamp assigned to this button");
         }
 
     }
 
-    public void openDialog(final View view, String message) {
+    public void openDialog(final View view, String message, String preset_indicator, String preset_name) {
 
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         View promptView = layoutInflater.inflate(R.layout.okcancel, null);
@@ -527,6 +548,7 @@ public class TRSMaintenancePage extends Activity {
 
         // set prompts.xml to be the layout file of the alertdialog builder
         alertDialogBuilder.setView(promptView);
+        String preset = preset_indicator.replaceAll("preset", "");
 
         // setup a dialog window
         alertDialogBuilder
@@ -534,8 +556,18 @@ public class TRSMaintenancePage extends Activity {
                 .setCancelable(true)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        makeToast("Clicked OK");
+                        makeToast("Resetting timer of preset: " + preset);
+                        String sCommand = "X" + preset + sNewLine;
+                        Log.d(TAG, "Resetting timer of preset " + preset + ": " + preset_name);
+                        if (mBoundBT) {
+                            Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
+                            lclBTServiceInstance.sendData(sCommand);
+                        } else {
+                            Log.d(TAG, "Service btService not connected when sending message: '" + sCommand + "'");
+                        }
+                        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
                     }
+
                 })
                 .setNegativeButton("Cancel",
                         new DialogInterface.OnClickListener() {

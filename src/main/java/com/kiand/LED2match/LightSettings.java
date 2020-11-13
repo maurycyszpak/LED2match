@@ -23,13 +23,14 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.TimerTask;
-import java.text.ParseException;
 import java.util.regex.PatternSyntaxException;
 
 import android.app.ActivityManager;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IBinder;
@@ -75,6 +76,7 @@ import org.json.JSONObject;
 import static com.kiand.LED2match.BtScannerActivity.BT_PREFS;
 import static com.kiand.LED2match.Constants.CONFIG_SETTINGS;
 import static com.kiand.LED2match.Constants.DEFAULT_PSU_POWER;
+import static com.kiand.LED2match.Constants.PRESETS_DEFINITION_JSONFILE;
 import static com.kiand.LED2match.TRSSettings.TL84_DELAY_KEY;
 
 public class LightSettings extends Activity implements ServiceConnection {
@@ -84,8 +86,8 @@ public class LightSettings extends Activity implements ServiceConnection {
 	public static final int TOAST_MESSAGE = 1000;
 	public static final int MSG_HIDE_PROGRESS_DIALOG = 1001;
 	public static final String MSG_SET_SEEKBAR_PROGRESS = "custom-event-name";
-    public static final String PRESETS_DEFINITION = "presets_definition"; //Mauricio
     public static final String SHAREDPREFS_UNITNAME = "unit_name";
+    private static final String ZERO_RGB = "000,000,000,000,000,000,000,000,000,000";
 	//public static final String TL84_TAG = "TL84";
 
     Button startButton, stopButton;
@@ -348,12 +350,33 @@ public class LightSettings extends Activity implements ServiceConnection {
 
     }*/
 
-	public void colorizeLayout214(String sPresetKey, String sFileName) {
-		SharedPreferences spsValues = getSharedPreferences(sFileName, 0);
-		String strRGB = spsValues.getString(sPresetKey, "1,0,0,0,0,0,0,0,0,0,0"); //214
-		//String strRGB = spsValues.getString(sPresetKey, "0,0,0,0");
+	public void colorizeLayout(String sPresetName, String sFileName) {
+		String strRGB = "1,0,0,0,0,0,0,0,0,0,0";
+		boolean blContinue = true;
+		try {
+			JSONObject jsonObject = new JSONObject(getBodyOfJSONfile());
+			Iterator<String> keysIterator = jsonObject.keys();
+			int i = 1;
+			while (keysIterator.hasNext() && blContinue) {
+				String key = keysIterator.next();
+				String value = jsonObject.getString(key);
+				if (key.contains("_name")) {
+					//Log.d(TAG, "i=" + i + ", key=" + key + ", value=" + value);
+					if (value.equalsIgnoreCase(sPresetName)) {
+						Log.d(TAG, "Preset '" + sPresetName + "' found on position: " + i);
+						key = "preset" + i + "_rgbw";
+						strRGB = jsonObject.getString(key);
+						blContinue = false;
+					}
+					i++;
+				}
+			}
 
-		Log.d(TAG, "File: " + sFileName + ", Key: " + sPresetKey + ", Value: " + strRGB);
+		} catch (JSONException je) {
+			je.printStackTrace();
+		}
+
+		Log.d(TAG, "File: " + sFileName + ", Key: " + sPresetName + ", Value: " + strRGB);
 		String[] arrColour = strRGB.split(",");
 
 		//int ll = Integer.parseInt(arrColour[0]); //214
@@ -628,7 +651,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 				Log.d (TAG, "Executing spinnerPresets onItemSelectedListener. spnPresetsArrayList: " + spnPresetsArrayList.size());
 
 				if (spnPresetsArrayList.size() > 0) {
-					colorizeLayout214(spinner_control_preset_list.getSelectedItem().toString() , PRESETS_DEFINITION);
+					colorizeLayout(spinner_control_preset_list.getSelectedItem().toString() , Constants.PRESETS_DEFINITION);
 				}
 			}
 
@@ -1164,7 +1187,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 			//copy APP_SHAREDPREFS_READ to _WRITE and add the new one on top
 			if (edtPresetName.getText().toString().length() >= MIN_PRESET_NAME_LEN && !(RESERVED_PRESET_NAMES_LIST.contains(edtPresetName.getText().toString()))) {
 
-				SharedPreferences prefs_presets = getSharedPreferences(PRESETS_DEFINITION, 0);
+				SharedPreferences prefs_presets = getSharedPreferences(Constants.PRESETS_DEFINITION, 0);
 				SharedPreferences spsValues_write = getSharedPreferences(APP_SHAREDPREFS_WRITE, 0);
 				SharedPreferences.Editor spsEditor_write = spsValues_write.edit();
 
@@ -1178,6 +1201,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 				}
 
 				int iCtr = Integer.valueOf(extractJSONvalue("", "preset_counter"));
+				iCtr = 5; // TO BE REMOVED
 				if (iCtr < NUM_PRESETS_MAX) {
 					//Cycle through spsEditor_read first and add key + value to _write
 					//For each pair of key-> value add item to the list
@@ -1192,6 +1216,13 @@ public class LightSettings extends Activity implements ServiceConnection {
 							edBlue.getText().toString() + "," + edLED395.getText().toString() + "," + edLED420.getText().toString();
 
 					//spinnerPresets.setEnabled(false);
+					//getEmptyPresetSlot();
+					int slot = getEmptyPresetSlot();
+					Log.d(TAG, "Will store new preset at slot: " + slot);
+
+					if (slot > 0) {
+						addNewPreset(slot, edtPresetName.getText().toString().toUpperCase(), strComaDel);
+					}
 
 					//Toast.makeText(getBaseContext(), edtPresetName.getText().toString().toUpperCase() + " preset saved.\nValues: " + strComaDel, Toast.LENGTH_SHORT).show();
 					spsEditor_write.putString(edtPresetName.getText().toString().toUpperCase(), strComaDel);
@@ -1234,20 +1265,12 @@ public class LightSettings extends Activity implements ServiceConnection {
 			}
 			sPrefsKeyToBeDeleted = spinner_control_preset_list.getSelectedItem().toString();
 
-			SharedPreferences prefs_presets = getSharedPreferences(PRESETS_DEFINITION, 0);
-			SharedPreferences spsValues_write = getSharedPreferences(APP_SHAREDPREFS_WRITE, 0);
-			SharedPreferences.Editor spsEditor_write = spsValues_write.edit();
-
-			spsEditor_write.clear();
-			spsEditor_write.apply();
-
-			Map<String,?> keys = prefs_presets.getAll();
-
-			for (Map.Entry<String,?> entry : keys.entrySet()) {
-				spsEditor_write.putString(entry.getKey(), entry.getValue().toString());
+			// find which position it is
+			int slot = findGivenPresetSlot(sPrefsKeyToBeDeleted);
+			if (slot > 0) {
+				Log.d(TAG, "Zeroing preset in position: " + slot);
+				addNewPreset(slot, "", ZERO_RGB);
 			}
-			spsEditor_write.remove(sPrefsKeyToBeDeleted);
-			spsEditor_write.commit();
 
 			show_splash_screen();
 
@@ -1271,18 +1294,18 @@ public class LightSettings extends Activity implements ServiceConnection {
 	}
 
 	private void show_splash_screen() {
-		Intent intent = new Intent(LightSettings.this, DisabledOverlayPage.class);
+		Intent intent = new Intent(LightSettings.this, OverlayPage.class);
 		startActivity(intent);
 	}
 
 	private void refresh_spinner_list() {
-		extractPresetsFromJson();
+		extractPresetsFromJSONfile();
 		spnPresetsAdapter.notifyDataSetChanged();
 		makeToast("Preset list refreshed on dropdopwn");
 	}
 
 	public void extractPresetsFromJson() {
-        SharedPreferences prefs_presets = getSharedPreferences(PRESETS_DEFINITION, 0);
+        SharedPreferences prefs_presets = getSharedPreferences(Constants.PRESETS_DEFINITION, 0);
 
 		spnPresetsArrayList.clear();
         Map<String,?> keys = prefs_presets.getAll();
@@ -1293,6 +1316,136 @@ public class LightSettings extends Activity implements ServiceConnection {
         }
 		Collections.sort(spnPresetsArrayList);
 		spnPresetsAdapter.notifyDataSetChanged();
+	}
+
+	private String getBodyOfJSONfile() {
+		String readString = "";
+		try {
+
+			PackageManager m = getPackageManager();
+			String s = getPackageName();
+			try {
+				PackageInfo p = m.getPackageInfo(s, 0);
+				s = p.applicationInfo.dataDir;
+			} catch (PackageManager.NameNotFoundException e) {
+				e.printStackTrace();
+			}
+			//Log.d(TAG, "PATH: " + s);
+			File file = new File(s + "/files/" + Constants.PRESETS_DEFINITION_JSONFILE);
+			FileInputStream fin = new FileInputStream(file);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(fin));
+			StringBuilder sb = new StringBuilder();
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line).append(System.lineSeparator());
+			}
+			readString = new String(sb);
+			reader.close();
+			fin.close();
+
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+		return readString;
+	}
+
+	public void extractPresetsFromJSONfile() {
+
+		try {
+			Log.d(TAG, "inside costam");
+
+			spnPresetsArrayList.clear();
+			JSONObject jsonObject = new JSONObject(getBodyOfJSONfile());
+			Iterator<String> keysIterator = jsonObject.keys();
+			while (keysIterator.hasNext()) {
+				String key = keysIterator.next();
+				String value = jsonObject.getString(key);
+				if (key.contains("_name") && value.length() > 0) {
+					spnPresetsArrayList.add(value);
+					Log.d(TAG, "key: " + key + ", value: " + value + "(" + value.length() + ")");
+				}
+				if (key.contains("_rgbw")) {
+					Log.d(TAG, "key: " + key + ", value: " + value);
+				}
+			}
+		} catch (JSONException ioe) {
+			ioe.printStackTrace();
+		}
+		//Collections.sort(spnPresetsArrayList);
+		spnPresetsAdapter.notifyDataSetChanged();
+	}
+	public int getEmptyPresetSlot() {
+		int i = -1;
+		try {
+			JSONObject jsonObject = new JSONObject(getBodyOfJSONfile());
+			Iterator<String> keysIterator = jsonObject.keys();
+			int j =0;
+			while (keysIterator.hasNext()) {
+				String key = keysIterator.next();
+				String value = jsonObject.getString(key);
+
+				if (key.contains("_name")) {
+					j++;
+					if (value.length() == 0) {
+						return j;
+					}
+				}
+			}
+		} catch (JSONException ioe) {
+			ioe.printStackTrace();
+		}
+		return i;
+	}
+
+	public int findGivenPresetSlot(String presetName) {
+		int i = -1;
+		try {
+			JSONObject jsonObject = new JSONObject(getBodyOfJSONfile());
+			Iterator<String> keysIterator = jsonObject.keys();
+			int j =0;
+			while (keysIterator.hasNext()) {
+				String key = keysIterator.next();
+				String value = jsonObject.getString(key);
+
+				if (key.contains("_name")) {
+					j++;
+					if (value.equalsIgnoreCase(presetName)) {
+						return j;
+					}
+				}
+			}
+		} catch (JSONException ioe) {
+			ioe.printStackTrace();
+		}
+		return i;
+	}
+
+	private void addNewPreset(int slot, String preset_name, String rgbw) {
+		Log.d(TAG, "addNewPreset_() - adding preset '" + preset_name + "' in slot: " + slot);
+		try {
+			JSONObject jsonPresets = new JSONObject(getBodyOfJSONfile());
+			String key1 = "preset" + slot + "_name";
+			String key2 = "preset" + slot + "_rgbw";
+			jsonPresets.put(key1, preset_name);
+			jsonPresets.put(key2, rgbw);
+			store_presets_file(jsonPresets.toString());
+		} catch (JSONException je) {
+			je.printStackTrace();
+		}
+	}
+
+	private void store_presets_file(String content) {
+		try {
+			FileOutputStream fOut = openFileOutput(Constants.PRESETS_DEFINITION_JSONFILE, MODE_PRIVATE);
+			OutputStreamWriter osw = new OutputStreamWriter(fOut);
+			osw.write(content);
+
+			osw.flush();
+			osw.close();
+			Log.d(TAG, "File '" + PRESETS_DEFINITION_JSONFILE + "' saved.");
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
 	}
 
 	public void logIncomingData(String sBuffer) {
@@ -1410,7 +1563,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 
 				//sTemp = sTemp.substring(0, sTemp.lastIndexOf(","));
 				try {
-					sTemp = sTemp.replaceAll(";\\}", "\\}");
+					sTemp = sTemp.replaceAll(";}", "\\}");
 				} catch ( PatternSyntaxException e) {
 					makeToast("Unable to find ';}' in string: " + sTemp);
 				}
@@ -1641,7 +1794,7 @@ public class LightSettings extends Activity implements ServiceConnection {
     public String getRGBValues(String sPresetName) {
         String sPresetRGB = "";
 
-        SharedPreferences spsValues = getSharedPreferences(PRESETS_DEFINITION, 0);
+        SharedPreferences spsValues = getSharedPreferences(Constants.PRESETS_DEFINITION, 0);
         Map<String, ?> allEntries = spsValues.getAll();
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
             String sVal = entry.getKey();
@@ -1963,7 +2116,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 			h.postDelayed(runnable, delay);
 		}, delay);
 
-		extractPresetsFromJson();
+		//extractPresetsFromJson();
 		getUnitName();
 		super.onResume();
         setFilters();  // Start listening notifications from UsbService
@@ -1979,6 +2132,9 @@ public class LightSettings extends Activity implements ServiceConnection {
             SystemClock.sleep(100);
             mBoundBT = true;
         }
+
+        Log.d(TAG, "Executing costam");
+		extractPresetsFromJSONfile();
 	}
 
 	private final BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
@@ -2286,7 +2442,25 @@ public class LightSettings extends Activity implements ServiceConnection {
 		AlertDialog dlg = new AlertDialog.Builder(this).create();
 		String sFWver = extractJSONvalue("", "firmware_version");
 		dlg.setTitle("FW v" + sFWver + " (" + sJSONbody.length() + " bytes)\n" + formattedDate);
-		dlg.setMessage(sJSONbody);
+		String jsonContent = "";
+
+		try {
+			Log.d(TAG, "firmware iteration");
+
+			JSONObject jsonObject = new JSONObject(sJSONbody);
+			Iterator<String> keysIterator = jsonObject.keys();
+			while (keysIterator.hasNext()) {
+				String key = keysIterator.next();
+				String value = jsonObject.getString(key);
+				jsonContent = jsonContent.concat(key).concat(":").concat(value).concat(sNewLine);
+			}
+		} catch (JSONException ioe) {
+			ioe.printStackTrace();
+			Log.d(TAG, "openJSONReport_() - JSON exception");
+		}
+
+		//dlg.setMessage(sJSONbody);
+		dlg.setMessage(jsonContent);
 		dlg.setIcon(R.drawable.icon_main);
 		dlg.show();
 	}
@@ -2506,7 +2680,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 		return output;
 	}
 
-	private void sendPresetsOverBT () {
+	private void sendPresetsOverBT_old () {
 		SharedPreferences spsValues = getSharedPreferences(APP_SHAREDPREFS_WRITE, 0);
 		//SharedPreferences spsValues = getSharedPreferences(PRESETS_DEFINITION, 0);
 		String sVal;
@@ -2543,6 +2717,56 @@ public class LightSettings extends Activity implements ServiceConnection {
 			sSize =  "0" + encodedPresetNames.size();
 		} else {
 			sSize = String.valueOf(encodedPresetNames.size());
+		}
+
+		String sCommand = "Q" + sSize + TextUtils.join("", encodedPresetRGBs) + TextUtils.join(",", encodedPresetNames) + "$\n";
+		Log.d(TAG, sCommand);
+		if (lclBTServiceInstance.connected) {
+			Log.d(TAG, "New way to send the presets: '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
+			lclBTServiceInstance.sendData(sCommand);
+		} else {
+			Log.d(TAG, "Service btService not connected!");
+		}
+	}
+
+	private void sendPresetsOverBT () {
+		int iTotal = 0;
+		String sVal;
+		String sKey;
+		ArrayList<String> encodedPresetNames = new ArrayList<>();
+		ArrayList<String> encodedPresetRGBs = new ArrayList<>();
+		try {
+			JSONObject jsonObject = new JSONObject(getBodyOfJSONfile());
+			for (int i=1; i<11; i++) {
+				sKey = jsonObject.getString("preset" + i + "_name");
+				encodedPresetNames.add(sKey);
+				if (sKey.length() > 0) {
+					iTotal++;
+				}
+				Log.d(TAG, "Preset index: " + i + ", name: " + sKey + ", preset counter: " + iTotal);
+				sVal = convertRGBwithCommasToHexString(jsonObject.getString("preset" + i + "_rgbw"));
+				encodedPresetRGBs.add(sVal);
+			}
+		} catch (JSONException je) {
+			je.printStackTrace();
+		}
+
+		Log.d(TAG, "BT Sending: O - to clear all presets on Controller\n");
+
+		if (lclBTServiceInstance.connected) {
+			String string = "O" + sNewLine;
+			Log.d(TAG, "Service btService connected. Calling lclBTServiceInstance.sendData with message '" + string.replace("\n", "\\n").replace("\r", "\\r") + "'");
+			lclBTServiceInstance.sendData(string);
+		} else {
+			Log.d(TAG, "Service btService not connected!");
+		}
+		SystemClock.sleep(50);
+
+		String sSize; //FIXDIS
+		if (iTotal < 10) {
+			sSize =  "0" + iTotal;
+		} else {
+			sSize = String.valueOf(iTotal);
 		}
 
 		String sCommand = "Q" + sSize + TextUtils.join("", encodedPresetRGBs) + TextUtils.join(",", encodedPresetNames) + "$\n";

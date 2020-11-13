@@ -55,6 +55,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -187,6 +188,10 @@ public class TRSDigitalPanel extends Activity {
             lclBTServiceInstance = ((BtCOMMsService.MyBinder) arg1).getService();
             lclBTServiceInstance.setHandler(mHandler);
             mBoundBT = true;
+            if (mBound) {
+                String sCommand = "F" + Constants.sNewLine;
+                lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+            }
         }
 
         @Override
@@ -475,10 +480,6 @@ public class TRSDigitalPanel extends Activity {
             //Toast.makeText(this.getBaseContext(),"Service bound (onResume)", Toast.LENGTH_SHORT).show();
 
             SystemClock.sleep(50);
-            if (mBound) {
-                String sCommand = "F" + Constants.sNewLine;
-                lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-            }
             mBound = true;
         }
 
@@ -505,7 +506,7 @@ public class TRSDigitalPanel extends Activity {
                     }
                     SystemClock.sleep(500);
                 }
-                if (bluetooth_connected()) {
+                /*if (bluetooth_connected()) {
                     try {
                         String sSequence = "J";
                         sSequence = sSequence.concat(System.lineSeparator());
@@ -513,7 +514,7 @@ public class TRSDigitalPanel extends Activity {
                     } catch (NullPointerException e) {
                         Log.e(TAG, "NullPointerException when sending command via Bluetooth");
                     }
-                }
+                }*/
             }
         }
 
@@ -619,6 +620,8 @@ public class TRSDigitalPanel extends Activity {
         btnReassign = findViewById(R.id.btnReassign); //reassign
         usb_conn_indicator = findViewById(R.id.usb_connection_image);
         bt_conn_indicator = findViewById(R.id.bt_connection_image);
+
+
 
         populateButtonNames();
         setFiltersBT();
@@ -886,7 +889,6 @@ public class TRSDigitalPanel extends Activity {
         intentLampAssignment.putExtra("tags", sTags);
         intentLampAssignment.putExtra("counter", iCtr);
         startActivity(intentLampAssignment);
-
     }
 
     private void refresh_unit_config() {
@@ -1450,157 +1452,65 @@ public class TRSDigitalPanel extends Activity {
         }
     }
 
-    public void btnClicked2(View v) {
-        SharedPreferences spLampDefinitions = getSharedPreferences(Constants.SHAREDPREFS_LAMP_DEFINITIONS, 0);
-        String sPresetRGBValues;
-        String sCommand;
+    private String getBodyOfJSONPresetsfile() {
+        String readString = "";
+        try {
 
-        String buttonCaption = v.getTag().toString();
-        if (!TextUtils.isEmpty(buttonCaption)) {
-            if (!buttonCaption.equalsIgnoreCase("LOW") && !buttonCaption.equalsIgnoreCase("UV")) {
-                logme(TAG, "switching off all lamps");
-                mark_all_buttons_off_on_mobile(false);
+            PackageManager m = getPackageManager();
+            String s = getPackageName();
+            try {
+                PackageInfo p = m.getPackageInfo(s, 0);
+                s = p.applicationInfo.dataDir;
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
             }
+            Log.d(TAG, "PATH: " + s);
+            File file = new File(s + "/files/" + Constants.PRESETS_DEFINITION_JSONFILE);
+            FileInputStream fin = new FileInputStream(file);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fin));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append(System.lineSeparator());
+            }
+            readString = new String(sb);
+            reader.close();
+            fin.close();
+
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
         }
-
-        int buttonID = v.getId();
-        Button button = findViewById(buttonID);
-
-        /* scenarios:
-        1. "clean" execution - switch on lamp
-        2. "clean" execution - special lamp - UV
-        3. "clean" execution - special lamp - TL84
-        4. "clean" execution - special lamp - LOW
-        5. a lamp is already on - special lamp - UV
-        6. a lamp is already on - special lamp - TL84
-        7. a lamp is already on - special lamp - LOW on
-        8. a lamp is already on - special lamp - LOW off
-         */
-
-
-        if (spLampDefinitions.contains(button.getText().toString())) {
-            sPresetRGBValues = spLampDefinitions.getString(button.getText().toString(), null);
-
-            if (!power_drain_check(sPresetRGBValues)) {
-                return;
-            }
-            logme(TAG, "sending " + sPresetRGBValues + " to controller");
-            if (sPresetRGBValues != null) {
-
-                if (button.getText().toString().equalsIgnoreCase("UV")) {
-                    //complementary light - keep current on and add UV definition for non-zeros - when switching ON UV mode. Otherwise switch off additional lamps
-                    sCommand = "P" + convertRGB2complementaryLight(sPresetRGBValues, (!BL_UV_MODE));
-                    sCommand += "$" + sNewLine;
-                    send_via_bt(sCommand);
-                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-
-                    sCommand = "B," + button.getTag().toString() + (BL_UV_MODE ? 0 : 1) + "$" + sNewLine;
-                    logme(TAG, "sendviabt ** B command with tag: "+ button.getTag().toString() + " text: " + button.getText());
-                    send_via_bt(sCommand);
-                    lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-
-                    BL_UV_MODE = !BL_UV_MODE;
-                    String s = (BL_UV_MODE ? "active" : "inactive");
-                    logme(TAG, "UV mode - " + s);
-                    if (BL_UV_MODE) {
-                        button.setBackgroundResource(R.drawable.buttonselector_active);
-                        button.setTextColor(Color.BLACK);
-                    } else {
-                        button.setBackgroundResource(R.drawable.buttonselector_main);
-                        button.setTextColor(Color.WHITE);
-                    }
-
-
-                } else {
-                    if (!BL_LOW_MODE) {
-                        logme(TAG, "I'm not in LOW mode");
-
-                        if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
-                            get_tl84_delay();
-                            sCommand = "S11100" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + sNewLine;
-                            logme(TAG, " *** NEW TL84 command (ON): " + sCommand);
-                            send_via_bt(sCommand);
-                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                            BL_TL84_ON = true;
-                        } else {
-                            //sCommand = "S11000$" + sNewLine; //actually we want to send a S11000^ffffffff(...)
-                            sCommand  = "S11000" + convertRGBwithCommasToHexString(sPresetRGBValues) + "$" + sNewLine;
-                            BL_TL84_ON = false;
-                            send_via_bt(sCommand);
-
-                            BL_COMMAND_SENT = true;
-                            if (!BL_COMMAND_SENT) {
-                                sCommand = "S" + convertRGBwithCommasToHexString(sPresetRGBValues);
-                                sCommand += "$" + sNewLine;
-                                logme(TAG, " *** NEW TL84 command (OFF): " + sCommand);
-                                send_via_bt(sCommand);
-                                lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                            }
-                            sCommand = "B," + button.getTag().toString() + "1$" + sNewLine;
-                            send_via_bt(sCommand);
-                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                        }
-                    } else {
-                        //LOW MODE!
-                        /*SharedPreferences prefsLamps = getSharedPreferences(SHAREDPREFS_CURRENT_LAMPS, 0);
-                        Map<String, ?> keys = prefsLamps.getAll(); */
-                        Log.d (TAG, "LOW mode! Changing " + sPresetRGBValues + " to LOW values.");
-
-
-                        if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
-                            sCommand = "S11050" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + sNewLine;
-                            logme(TAG, " *** NEW TL84 command (LOW): " + sCommand);
-                            send_via_bt(sCommand);
-                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                            BL_TL84_ON = true;
-                        } else {
-                            sCommand = "S11000$" + sNewLine;
-                            BL_TL84_ON = false;
-                            logme(TAG, " *** NEW TL84 command (OFF): " + sCommand);
-                            send_via_bt(sCommand);
-                            String[] sRGB_in = sPresetRGBValues.split(",");
-                            String[] sRGB_out = sRGB_in;
-                            for (int i = 0; i < sRGB_in.length; i++) {
-                                int iRGB = Integer.valueOf(sRGB_in[i]);
-                                iRGB /= (BL_LOW_MODE ? 2 : 1);
-                                sRGB_out[i] = String.valueOf(iRGB);
-                            }
-                            String concatValues = TextUtils.join(",", sRGB_out);
-                            String sHex = convertRGBwithCommasToHexString(concatValues);
-                            sCommand = "S" + sHex + "$" + sNewLine;
-                            send_via_bt(sCommand);
-                            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-                            logme(TAG, "I'm in LOW mode");
-                            logme(TAG, "Illuminating lamps with: " + sCommand);
-                        }
-                    }
-
-                    button.setBackgroundResource(R.drawable.buttonselector_active);
-                    button.setTextColor(Color.BLACK);
-                }
-                if (buttonID == R.id.btnL1) {
-                    blLamp1_ON = true;
-                } else if (buttonID == R.id.btnL2) {
-                    blLamp2_ON = true;
-                } else if (buttonID == R.id.btnL3) {
-                    blLamp3_ON = true;
-                } else if (buttonID == R.id.btnL4) {
-                    blLamp4_ON = true;
-                } else if (buttonID == R.id.btnL5) {
-                    blLamp5_ON = true;
-                } else if (buttonID == R.id.btnL6) {
-                    blLamp6_ON = true;
-                }
-                updateLampValue(sPresetRGBValues);
-            }
-        } else {
-            makeToast("No lamp preset assigned to this button!");
-        }
+        return readString;
     }
 
+    public int findGivenPresetSlot(String presetName, String jsonString) {
+        int i = -1;
+        try {
+            JSONObject jsonObject = new JSONObject(jsonString);
+            Iterator<String> keysIterator = jsonObject.keys();
+            int j =0;
+            while (keysIterator.hasNext()) {
+                String key = keysIterator.next();
+                String value = jsonObject.getString(key);
+
+                if (key.contains("_name")) {
+                    j++;
+                    if (value.equalsIgnoreCase(presetName)) {
+                        return j;
+                    }
+                }
+            }
+        } catch (JSONException ioe) {
+            ioe.printStackTrace();
+        }
+        return i;
+    }
+
+
     public void btnClicked_UV_normal(View v) {
-        SharedPreferences spLampDefinitions = getSharedPreferences(Constants.SHAREDPREFS_LAMP_DEFINITIONS, 0);
-        String sPresetRGBValues;
+        //SharedPreferences spLampDefinitions = getSharedPreferences(Constants.SHAREDPREFS_LAMP_DEFINITIONS, 0);
+        String sPresetDefinitions = getBodyOfJSONPresetsfile();
+        String sPresetRGBValues = null;
         String sCommand;
 
         String buttonCaption = v.getTag().toString();
@@ -1624,8 +1534,24 @@ public class TRSDigitalPanel extends Activity {
          */
 
 
-        if (spLampDefinitions.contains(button.getText().toString())) {
-            sPresetRGBValues = spLampDefinitions.getString(button.getText().toString(), null);
+        if (sPresetDefinitions.contains(button.getText().toString())) {
+            JSONObject jsonPresets = null;
+            try {
+                jsonPresets = new JSONObject(sPresetDefinitions);
+
+            } catch (JSONException je) {
+                je.printStackTrace();
+            }
+            try {
+                int slot = findGivenPresetSlot(button.getText().toString(), sPresetDefinitions);
+                sPresetRGBValues = jsonPresets.getString("preset" + slot + "_rgbw");
+                Log.d(TAG, "btnClicked_UV_normal_() - Found RGB values of preset'" + button.getText().toString() + "': " + sPresetRGBValues);
+            } catch (NullPointerException | JSONException npe) {
+                npe.printStackTrace();
+                makeToast("ERROR: Unable to build JSON object with presets definition. Does the correct file exist in the correct path?");
+                Log.e(TAG, "JSON Object of presets definition is null or JSON exception encountered.");
+            }
+
 
             if (!power_drain_check(sPresetRGBValues)) {
                 return;
@@ -1731,6 +1657,7 @@ public class TRSDigitalPanel extends Activity {
             updateLampValue(sPresetRGBValues);
 
         } else {
+            Log.d(TAG, "No lamp preset found for '" + button.getText().toString());
             makeToast("No lamp preset assigned to this button!");
         }
     }
@@ -2126,6 +2053,9 @@ public class TRSDigitalPanel extends Activity {
         menu.add(Menu.NONE, 8, 8, "About").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));
 
+        /*menu.add(Menu.NONE, 9, 9, "TEST PRESETS").setIcon(
+                getResources().getDrawable(R.drawable.icon_information));*/
+
         getMenuInflater().inflate(R.menu.menu, menu);
         MenuItem item = menu.findItem(R.id.menu_color_picker);
 
@@ -2145,10 +2075,6 @@ public class TRSDigitalPanel extends Activity {
         super.onOptionsItemSelected(item);
 
         switch (item.getItemId()) {
-            case 0:
-                Intent intent0 = new Intent(TRSDigitalPanel.this, LightSettings.class);
-                startActivity(intent0);
-                break;
 
             case 1:
                 Intent intent4 = new Intent(TRSDigitalPanel.this, TRSDigitalPanel.class);
@@ -2190,6 +2116,10 @@ public class TRSDigitalPanel extends Activity {
                 openAboutDialog();
                 break;
 
+            case 9:
+                Intent intent_test = new Intent(TRSDigitalPanel.this, LightSettings.class);
+                startActivity(intent_test);
+                break;
             /*case 99:
                 Intent intent99 = new Intent(TRSDigitalPanel.this, TstVrly.class);
                 startActivity(intent99);

@@ -23,6 +23,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
@@ -46,7 +48,7 @@ public class TRSLightOperatingHours extends Activity {
 
     private Handler lclHandler;
     private UsbCOMMsService lclUsbServiceInstance;
-    public BtCOMMsService lclBTServiceInstance;
+    private BtCOMMsService lclBTServiceInstance;
 
     boolean mBound = false;
     boolean mBoundBT = false;
@@ -75,7 +77,9 @@ public class TRSLightOperatingHours extends Activity {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             BtCOMMsService.MyBinder binder = (BtCOMMsService.MyBinder) service;
             lclBTServiceInstance = binder.getService();
+            Log.d(TAG, "onServiceConnected_() - we should be bound now. BTServiceInstance null? " + (lclBTServiceInstance == null));
             mBoundBT = true;
+            onClickTimers(null);
         }
 
         @Override
@@ -106,28 +110,16 @@ public class TRSLightOperatingHours extends Activity {
             Intent intent = new Intent(this, UsbCOMMsService.class);
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
             //Toast.makeText(this.getBaseContext(),"Service bound (onResume)", Toast.LENGTH_SHORT).show();
-            mBound = true;
         }
         if (!mBoundBT) {
             Intent intentBT = new Intent(this, BtCOMMsService.class);
             bindService(intentBT, btConnection, Context.BIND_AUTO_CREATE);
-            //Toast.makeText(this.getBaseContext(),"Service bound (onResume)", Toast.LENGTH_SHORT).show();
-            mBoundBT = true;
-            Log.d(TAG, "BT service bound");
+            SystemClock.sleep(100);
         }
 
         if (mBoundBT) {
-            try {
-                String sSequence = "J";
-                sSequence = sSequence.concat(sNewLine);
-                lclBTServiceInstance.sendData(sSequence);
-                Log.d(TAG, "Requesting timers via commmand J");
-            } catch (NullPointerException e) {
-                Log.e(TAG, "NullPointerException when sending command via Bluetooth");
-                //Log.e(TAG, Log.getStackTraceString(e));
-            }
+            onClickTimers(null);
         }
-        SystemClock.sleep(1500);
         populate_button_timers();
 
         SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
@@ -137,7 +129,6 @@ public class TRSLightOperatingHours extends Activity {
         String version_line = "FW Version: " + sFWVersion;
         tvInfoBox.setText(getString(R.string.system_footer) + "\n" + version_line);
         populateLampsState();
-
         license_check();
     }
 
@@ -148,9 +139,7 @@ public class TRSLightOperatingHours extends Activity {
         //Toast.makeText(this.getBaseContext(),"Activity started", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, UsbCOMMsService.class);
         bindService (intent, mConnection, Context.BIND_AUTO_CREATE);
-        //Toast.makeText(this.getBaseContext(),"Service bound (onStart)", Toast.LENGTH_SHORT).show();
-        /*String sCommand = "J" + LightAdjustments.sNewLine; */
-
+        show_splash_screen();
     }
 
     @Override
@@ -283,64 +272,73 @@ public class TRSLightOperatingHours extends Activity {
     public void populate_button_timers() {
 
         Log.d(TAG, "Populating button timers");
-        SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_LED_TIMERS, 0);
-        String sCounters = spFile.getString("currTimers", "");
-        if (sCounters.length() > 0) {
-            String[] sArray = sCounters.split("\\|");
-            for (String sPiece: sArray) {
-                if (sPiece.contains(",")) {
-                    String[] sTimers = sPiece.split(",");
+        SharedPreferences prefs = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        JSON_analyst json_analyst = new JSON_analyst(prefs);
+        String preset_name = "";
+        String preset_timer = "";
 
-                    try {
-                        Log.d(TAG, "Button1 tag: " + btnL1.getTag().toString());
-                        Log.d(TAG, "Button1 timer: " + convert_secs_to_hhmm(sTimers[0]));
+        //Log.d(TAG, "Checking time elapsed for preset: " + btnL1.getTag().toString());
+        //String time_elapsed = json_analyst.getJSONValue(btnL1.getTag().toString() + "_time_elapsed");
 
+        Log.d(TAG, "Pulling name of preset: " + btnL1.getTag().toString() + "_name");
+        if (!btnL1.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
+            Log.d(TAG, "button1 tag = " + btnL1.getTag().toString());
+            preset_name = json_analyst.getJSONValue(btnL1.getTag().toString() + "_name");
+            preset_timer = json_analyst.getJSONValue(btnL1.getTag().toString() + "_time_elapsed");
+            btnL1.setText(preset_name + sNewLine + convert_secs_to_hhmm(preset_timer));
+        }
 
-                        if (!btnL1.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-                            btnL1.setText(btnL1.getTag().toString() + sNewLine + convert_secs_to_hhmm(sTimers[0]));
-                        }
+        if (!btnL2.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
+            Log.d(TAG, "button2 tag = " + btnL2.getTag().toString());
+            preset_name = json_analyst.getJSONValue(btnL2.getTag().toString() + "_name");
+            preset_timer = json_analyst.getJSONValue(btnL2.getTag().toString() + "_time_elapsed");
+            btnL2.setText(preset_name + sNewLine + convert_secs_to_hhmm(preset_timer));
+        }
 
-                        if (!btnL2.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-                            btnL2.setText(btnL2.getTag().toString() + sNewLine + convert_secs_to_hhmm(sTimers[1]));
-                        }
+        if (!btnL3.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
+            Log.d(TAG, "button3 tag = " + btnL3.getTag().toString());
+            preset_name = json_analyst.getJSONValue(btnL3.getTag().toString() + "_name");
+            preset_timer = json_analyst.getJSONValue(btnL3.getTag().toString() + "_time_elapsed");
+            btnL3.setText(preset_name + sNewLine + convert_secs_to_hhmm(preset_timer));
+        }
 
-                        if (!btnL3.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-                            btnL3.setText(btnL3.getTag().toString() + sNewLine + convert_secs_to_hhmm(sTimers[2]));
-                        }
+        if (!btnL4.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
+            preset_name = json_analyst.getJSONValue(btnL4.getTag().toString() + "_name");
+            preset_timer = json_analyst.getJSONValue(btnL4.getTag().toString() + "_time_elapsed");
+            btnL4.setText(preset_name + sNewLine + convert_secs_to_hhmm(preset_timer));
+        }
 
-                        if (!btnL4.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-                            btnL4.setText(btnL4.getTag().toString() + sNewLine + convert_secs_to_hhmm(sTimers[3]));
-                        }
+        if (!btnL5.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
+            preset_name = json_analyst.getJSONValue(btnL5.getTag().toString() + "_name");
+            preset_timer = json_analyst.getJSONValue(btnL5.getTag().toString() + "_time_elapsed");
+            btnL5.setText(preset_name + sNewLine + convert_secs_to_hhmm(preset_timer));
+        }
 
-                        if (!btnL5.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-                            btnL5.setText(btnL5.getTag().toString() + sNewLine + convert_secs_to_hhmm(sTimers[4]));
-                        }
-
-                        if (!btnL6.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-                            btnL6.setText(btnL6.getTag().toString() + sNewLine + convert_secs_to_hhmm(sTimers[5]));
-                        }
-                    } catch (ArrayIndexOutOfBoundsException e) {
-                        makeToast("Unable to read the LED timers from file");
-                        Log.d(TAG, "Unable to split by comma: '" + sPiece + "'.");
-                    }
-                }
-            }
-        } else {
-            Log.d(TAG, "No timers found in the shared prefs file");
+        if (!btnL6.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
+            preset_name = json_analyst.getJSONValue(btnL6.getTag().toString() + "_name");
+            preset_timer = json_analyst.getJSONValue(btnL6.getTag().toString() + "_time_elapsed");
+            btnL6.setText(preset_name + sNewLine + convert_secs_to_hhmm(preset_timer));
         }
     }
     private String convert_secs_to_hhmm (String sSeconds) {
-        Long lSecs = Long.valueOf(sSeconds);
-        Integer iHours = lSecs.intValue()/60/60;
-        Integer iMinutes = (lSecs.intValue() - iHours*60*60)/60;
+        if (sSeconds.length() > 0) {
+            Long lSecs = Long.valueOf(sSeconds);
+            Integer iHours = lSecs.intValue()/60/60;
+            Integer iMinutes = (lSecs.intValue() - iHours*60*60)/60;
 
-        return String.format("%02d", iHours) + ":" + String.format("%02d", iMinutes);
+            return String.format("%02d", iHours) + ":" + String.format("%02d", iMinutes);
+        } else {
+            return "N/A";
+        }
+
+    }
+
+    private void show_splash_screen() {
+        Intent intent = new Intent(TRSLightOperatingHours.this, OverlayPage.class);
+        startActivity(intent);
     }
 
     public void repopulate_button_assignments() {
-        SharedPreferences myPrefs = this.getSharedPreferences(SHAREDPREFS_LAMP_ASSIGNMENTS, 0);
-        TreeMap<String, ?> keys = new TreeMap<String, Object>(myPrefs.getAll());
-
         btnL1.setText(NO_PRESET_TEXT);
         btnL1.setTag(NO_PRESET_TEXT);
         btnL2.setText(NO_PRESET_TEXT);
@@ -354,48 +352,77 @@ public class TRSLightOperatingHours extends Activity {
         btnL6.setText(NO_PRESET_TEXT);
         btnL6.setTag(NO_PRESET_TEXT);
 
+        SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        JSON_analyst json_analyst = new JSON_analyst(spFile);
+
+        // now check which preset is currently mapped to a particular button
+        // e.g.: key--> 1, value --> preset3
+        SharedPreferences prefs = getSharedPreferences(Constants.NEW_SHAREDPREFS_LAMP_ASSIGNMENTS, MODE_PRIVATE);
+        TreeMap<String, ?> keys = new TreeMap<String, Object>(prefs.getAll());
 
         for (Map.Entry<String, ?> entry : keys.entrySet()) {
-
             switch (entry.getKey()) {
                 case "1":
+                    // preset8. Get name of this preset
+                    String preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
                     btnL1.setText(entry.getValue().toString());
+                    btnL1.setText(preset_name);
                     btnL1.setTag(entry.getValue().toString());
+                    //btnL1.setTag(preset_name);
                     break;
 
                 case "2":
+                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
                     btnL2.setText(entry.getValue().toString());
+                    btnL2.setText(preset_name);
                     btnL2.setTag(entry.getValue().toString());
                     break;
 
                 case "3":
+                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
                     btnL3.setText(entry.getValue().toString());
+                    btnL3.setText(preset_name);
                     btnL3.setTag(entry.getValue().toString());
                     break;
 
                 case "4":
+                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
                     btnL4.setText(entry.getValue().toString());
+                    btnL4.setText(preset_name);
                     btnL4.setTag(entry.getValue().toString());
                     break;
 
                 case "5":
+                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
                     btnL5.setText(entry.getValue().toString());
+                    btnL5.setText(preset_name);
                     btnL5.setTag(entry.getValue().toString());
                     break;
 
                 case "6":
+                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
                     btnL6.setText(entry.getValue().toString());
+                    btnL6.setText(preset_name);
                     btnL6.setTag(entry.getValue().toString());
                     break;
-
-                //Log.d(TAG, entry.getKey() + ":" + entry.getValue());
-                //some code
             }
         }
     }
 
     public void onClickBack (View v) {
         finish();
+    }
+
+    public void onClickTimers (View v) {
+        String sSequence = "F";
+        try {
+            sSequence = sSequence.concat(sNewLine);
+            lclBTServiceInstance.sendData(sSequence);
+            Log.d(TAG, "onClickTimers_() - Requesting timers via commmand '" + sSequence.replace(sNewLine, "") + "'.");
+        } catch (NullPointerException e) {
+            Log.d(TAG, "onClickTimers_() - NullPointerException when sending command '" + sSequence.replace(sNewLine, "") + "' via Bluetooth");
+            //Log.e(TAG, Log.getStackTraceString(e));
+        }
     }
 
 
@@ -410,12 +437,12 @@ public class TRSLightOperatingHours extends Activity {
         JSON_analyst json_analyst = new JSON_analyst(spFile);
 
         //Log.d(TAG, "bluetoothAskReply(V1)");
-        final String sLamp1Counter = json_analyst.getJSONValue("counter1");
-        final String sLamp2Counter = json_analyst.getJSONValue("counter2");
-        final String sLamp3Counter = json_analyst.getJSONValue("counter3");
-        final String sLamp4Counter = json_analyst.getJSONValue("counter4");
-        final String sLamp5Counter = json_analyst.getJSONValue("counter5");
-        final String sLamp6Counter = json_analyst.getJSONValue("counter6");
+        final String sLamp1Counter = json_analyst.getJSONValue("preset1_time_elapsed");
+        final String sLamp2Counter = json_analyst.getJSONValue("preset2_time_elapsed");
+        final String sLamp3Counter = json_analyst.getJSONValue("preset3_time_elapsed");
+        final String sLamp4Counter = json_analyst.getJSONValue("preset4_time_elapsed");
+        final String sLamp5Counter = json_analyst.getJSONValue("preset5_time_elapsed");
+        final String sLamp6Counter = json_analyst.getJSONValue("preset6_time_elapsed");
 
         final String sLamp1Name = json_analyst.getJSONValue("preset1_name");
         final String sLamp2Name = json_analyst.getJSONValue("preset2_name");

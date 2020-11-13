@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import android.os.IBinder;
@@ -25,12 +27,20 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -38,6 +48,7 @@ import java.util.TreeMap;
 
 import static com.kiand.LED2match.Constants.CONFIG_SETTINGS;
 import static com.kiand.LED2match.Constants.PRESETS_DEFINITION;
+import static com.kiand.LED2match.Constants.SHAREDPREFS_LAMP_DEFINITIONS;
 import static com.kiand.LED2match.Constants.SP_LAMP_TIMERS;
 import static com.kiand.LED2match.Constants.SP_SEQUENCE_COMMAND_GENERATE;
 import static com.kiand.LED2match.TRSDigitalPanel.SP_SEQUENCE_COMMAND_EXECUTED;
@@ -55,6 +66,7 @@ public class TRSSequence extends ListActivity {
     private BtCOMMsService lclBTServiceInstance;
     boolean mBound = false;
     boolean mBoundBT = false;
+    public ArrayList<String> spnPresetsArrayList = new ArrayList<>(); // Mauricio
     public static final String TAG = "MORRIS-SQNC";
 
     private final ServiceConnection mConnection = new ServiceConnection() {
@@ -314,7 +326,7 @@ public class TRSSequence extends ListActivity {
                 .setNegativeButton("Cancel",
                         (dialog, id) -> dialog.cancel());
 
-        ArrayList<String> spnPresetsArrayList = extractPresetsFromJson();
+        extractPresetsFromJSONfile();
         if (spnPresetsArrayList.size() > 0) {
 
             String[] delays = {"5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60"};
@@ -383,7 +395,7 @@ public class TRSSequence extends ListActivity {
             .setNegativeButton("Cancel",
                     (dialog, id) -> dialog.cancel());
 
-        ArrayList<String> spnPresetsArrayList = extractPresetsFromJson();
+        extractPresetsFromJSONfile();
         if (spnPresetsArrayList.size() > 0) {
 
             String[] delays = {"5", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60"};
@@ -409,32 +421,137 @@ public class TRSSequence extends ListActivity {
         alertD.show();
     }
 
-    public ArrayList<String> extractPresetsFromJson() {
-        SharedPreferences prefs_presets = getSharedPreferences(PRESETS_DEFINITION, 0);
-        ArrayList<String> spnPresetsArrayList = new ArrayList<>();
-        spnPresetsArrayList.clear();
-        Map<String,?> keys = prefs_presets.getAll();
-        for(Map.Entry<String,?> entry : keys.entrySet()){
-            spnPresetsArrayList.add(entry.getKey());
-        }
-        Collections.sort(spnPresetsArrayList);
+    public void extractPresetsFromJSONfile() {
 
-        return spnPresetsArrayList;
+        try {
+            Log.d(TAG, "inside costam");
+
+            spnPresetsArrayList.clear();
+            JSONObject jsonObject = new JSONObject(getBodyOfJSONfile());
+            Iterator<String> keysIterator = jsonObject.keys();
+            while (keysIterator.hasNext()) {
+                String key = keysIterator.next();
+                String value = jsonObject.getString(key);
+                if (key.contains("_name") && value.length() > 0) {
+                    spnPresetsArrayList.add(value);
+                    Log.d(TAG, "key: " + key + ", value: " + value + "(" + value.length() + ")");
+                }
+                if (key.contains("_rgbw")) {
+                    Log.d(TAG, "key: " + key + ", value: " + value);
+                }
+            }
+        } catch (JSONException ioe) {
+            ioe.printStackTrace();
+        }
+        //Collections.sort(spnPresetsArrayList);
+        adapter.notifyDataSetChanged();
+    }
+
+    private String getBodyOfJSONfile() {
+        String readString = "";
+        try {
+
+            PackageManager m = getPackageManager();
+            String s = getPackageName();
+            try {
+                PackageInfo p = m.getPackageInfo(s, 0);
+                s = p.applicationInfo.dataDir;
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            //Log.d(TAG, "PATH: " + s);
+            File file = new File(s + "/files/" + Constants.PRESETS_DEFINITION_JSONFILE);
+            FileInputStream fin = new FileInputStream(file);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fin));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append(System.lineSeparator());
+            }
+            readString = new String(sb);
+            reader.close();
+            fin.close();
+
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+        return readString;
     }
 
     public String getRGBValues(String sPresetName) {
         String sPresetRGB = "";
+        String sPresetDefinitions = getBodyOfJSONPresetsfile();
+        String sPresetRGBValues = null;
+        JSONObject jsonPresets = null;
+        Log.d(TAG, "getRGBValues_() - fetching RGB of preset name '" + sPresetName + "'.");
 
-        SharedPreferences spsValues = getSharedPreferences(PRESETS_DEFINITION, 0);
-        Map<String, ?> allEntries = spsValues.getAll();
-        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-            String sVal = entry.getKey();
-            if (sVal.equalsIgnoreCase(sPresetName)) {
-                String sValue = entry.getValue().toString();
-                sPresetRGB = convertRGBwithCommasToHexString(sValue);
-            }
+        try {
+            int slot = findGivenPresetSlot(sPresetName, sPresetDefinitions);
+            jsonPresets = new JSONObject(sPresetDefinitions);
+            sPresetRGBValues = jsonPresets.getString("preset" + slot + "_rgbw");
+            Log.d(TAG, "btnClicked_UV_normal_() - Found RGB values of preset'" + sPresetName + "': " + sPresetRGBValues);
+            sPresetRGB = convertRGBwithCommasToHexString(sPresetRGBValues);
+        } catch (NullPointerException | JSONException npe) {
+            npe.printStackTrace();
+            makeToast("ERROR: Unable to build JSON object with presets definition. Does the correct file exist in the correct path?");
+            Log.e(TAG, "JSON Object of presets definition is null or JSON exception encountered.");
         }
+
         return sPresetRGB;
+    }
+
+    private String getBodyOfJSONPresetsfile() {
+        String readString = "";
+        try {
+
+            PackageManager m = getPackageManager();
+            String s = getPackageName();
+            try {
+                PackageInfo p = m.getPackageInfo(s, 0);
+                s = p.applicationInfo.dataDir;
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            Log.d(TAG, "PATH: " + s);
+            File file = new File(s + "/files/" + Constants.PRESETS_DEFINITION_JSONFILE);
+            FileInputStream fin = new FileInputStream(file);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fin));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append(System.lineSeparator());
+            }
+            readString = new String(sb);
+            reader.close();
+            fin.close();
+
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+        return readString;
+    }
+
+    public int findGivenPresetSlot(String presetName, String jsonString) {
+        int i = -1;
+        try {
+            JSONObject jsonObject = new JSONObject(jsonString);
+            Iterator<String> keysIterator = jsonObject.keys();
+            int j =0;
+            while (keysIterator.hasNext()) {
+                String key = keysIterator.next();
+                String value = jsonObject.getString(key);
+
+                if (key.contains("_name")) {
+                    j++;
+                    if (value.equalsIgnoreCase(presetName)) {
+                        return j;
+                    }
+                }
+            }
+        } catch (JSONException ioe) {
+            ioe.printStackTrace();
+        }
+        return i;
     }
 
     public void generateSequenceCommand(View v) {
@@ -471,7 +588,7 @@ public class TRSSequence extends ListActivity {
                 sPresetName = seq_step_entry.substring(seq_step_entry.indexOf(".") + 2, seq_step_entry.indexOf(":"));
                 if (sPresetName.length() > 0) {
                     String seq_step_timer = seq_step_entry.substring(seq_step_entry.indexOf(":") + 2, seq_step_entry.length() - 1);
-                    //makeToast("Processing preset '" + sPresetName + "' with timer '" + seq_step_timer + "'");
+                    Log.d(TAG, "Processing preset '" + sPresetName + "' with timer '" + seq_step_timer + "'");
                     writeSequenceToFile(sPresetName, Integer.valueOf(seq_step_timer), String.valueOf(++iCounter));
 
                     String sHEX = getRGBValues(sPresetName);

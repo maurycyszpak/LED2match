@@ -16,15 +16,22 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -34,10 +41,12 @@ import java.util.UUID;
 import java.util.regex.PatternSyntaxException;
 
 import static com.kiand.LED2match.Constants.BT_CONNECTED_PREFS;
+import static com.kiand.LED2match.Constants.PRESETS_DEFINITION_JSONFILE;
 import static com.kiand.LED2match.LightSettings.SHAREDPREFS_LAMP_STATE;
 import static com.kiand.LED2match.LightSettings.SHAREDPREFS_LED_TIMERS;
 import static com.kiand.LED2match.TRSDigitalPanel.SHAREDPREFS_LAMP_ASSIGNMENTS;
 import static com.kiand.LED2match.Constants.sNewLine;
+import static com.kiand.LED2match.Constants.PRESETS_DEFINITION;
 
 public class BtCOMMsService extends Service {
 
@@ -49,7 +58,7 @@ public class BtCOMMsService extends Service {
     public boolean connected = false;
 
     public static final String BT_PREFS = "bluetooth_status";
-    public static final String SHAREDPREFS_PRESETS = "presets_definition";
+
     public static final String SHAREDPREFS_UNITNAME = "unit_name";
     public static final String BT_COMMS_LOG = "bluetooth_controller-communication-log"; //Mauricio
     private ConnectingThread mConnectingThread;
@@ -263,30 +272,39 @@ public class BtCOMMsService extends Service {
                 makeToast("Data from controller refreshed.\nTimestamp: " + sdf.format(timestamp));
                 SystemClock.sleep(100);
 
-                SharedPreferences spsPresetFile = getSharedPreferences(SHAREDPREFS_PRESETS, 0);
+                SharedPreferences spsPresetFile = getSharedPreferences(PRESETS_DEFINITION, 0);
                 SharedPreferences.Editor spEditorPresets = spsPresetFile.edit();
                 spEditorPresets.clear();
                 spEditorPresets.apply();
 
                 JSON_analyst json_analyst = new JSON_analyst(spsControllerData);
                 String sPresets = json_analyst.populatePresetsFromFILE();
-
-                //Log.d(TAG, "JSON_analyst object returns presets: " + sPresets);
                 if (sPresets.length() > 0)  {
-                    List<String> presetLines = new ArrayList<String>(Arrays.asList(sPresets.split(";")));
-                    if (presetLines.size() > 0) {
-                        //Log.d(TAG, "presetLines size = " + presetLines.size() + ". Iterating.");
-                        for (String sPreset: presetLines) {
-                            String[] sTempArray = sPreset.split(":", 2);
-                            //Log.d(TAG , "sTempArray length: " + sTempArray.length);
-                            if (sTempArray.length == 2) {
-                                spEditorPresets.putString(sTempArray[0], sTempArray[1]);
-                            }
+                    //wez jeden dżejson i zrob drugi
+                    JSONObject jsonObject = null;
+                    try {
+                        jsonObject = new JSONObject(sTemp);
+                        JSONObject jsonPresets = new JSONObject();
+                        for (int i=1; i<11; i++) {
+                            String iterKey1 = "preset" + i + "_name";
+                            String iterKey2 = "preset" + i + "_rgbw";
+                            jsonPresets.put(iterKey1, jsonObject.getString(iterKey1));
+                            jsonPresets.put(iterKey2, jsonObject.getString(iterKey2));
                         }
+                        //Log.d(TAG, "Formatted JSON object will present: " + jsonPresets.toString());
+                        store_presets_file(jsonPresets.toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
+
+                    /*jsonObject.put("DUPPA", "000,123,123,000,005,123,123,005,000,010");
+                    Iterator<String> keysIterator = jsonObject.keys();
+                    while (keysIterator.hasNext()) {
+                        String key = keysIterator.next();
+                        Log.d(TAG, "key: " + key + ", value: " + jsonObject.getString(key));
+                    }*/
+
                 }
-                spEditorPresets.apply();
-                Log.d (TAG, SHAREDPREFS_PRESETS +" file populated");
                 Intent intent = new Intent("controller_data_refreshed_event");
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
@@ -313,6 +331,8 @@ public class BtCOMMsService extends Service {
                 long lMillisEpoch = timestamp.getTime();
                 spsEditor.putString("currTimers", sValues + "|" + lMillisEpoch );
                 spsEditor.apply();
+                Intent intent = new Intent("timers_received_event");
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
             } else if ((sDataArray[0]).equals("BUTTON")) {
                 //this means we should check which button has a TAG equal to the returned value and illuminate it
@@ -379,6 +399,20 @@ public class BtCOMMsService extends Service {
         //PopupAsyncTask asyncTask = new PopupAsyncTask(context, "");
         //asyncTask.execute();
         //arrReply.add(i, sLamps[i]);
+    }
+
+    private void store_presets_file(String content) {
+        try {
+            FileOutputStream fOut = openFileOutput(Constants.PRESETS_DEFINITION_JSONFILE, MODE_PRIVATE);
+            OutputStreamWriter osw = new OutputStreamWriter(fOut);
+            osw.write(content);
+
+            osw.flush();
+            osw.close();
+            Log.d(TAG, "File '" + PRESETS_DEFINITION_JSONFILE + "' saved.");
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
     }
 
     private void request_preset_intent(String sCounter) {

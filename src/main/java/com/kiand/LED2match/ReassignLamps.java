@@ -5,13 +5,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 
@@ -19,6 +24,7 @@ public class ReassignLamps extends Activity {
 
     final Context context = this;
     public static final String SHAREDPREFS_LAMP_ASSIGNMENTS = "lamp_button_assignments";
+    public static final String TAG = "MORRIS_RSSGN";
 
     Spinner spinner1, spinner2, spinner3, spinner4, spinner5, spinner6, spinner7, spinner8, spinner9;
     ArrayAdapter arrayAdapterLampNames;
@@ -51,12 +57,12 @@ public class ReassignLamps extends Activity {
         JSON_analyst json_analyst = new JSON_analyst(spFile);
         arrayListLampNames.clear();
 
-        for (int i=1; i<=iCounter; i++) {
+        for (int i=1; i<=Constants.MAX_PRESET_NUM; i++) {
             String sKey = "preset" + i + "_name";
             if (json_analyst.getJSONValue(sKey).length() > 0) {
                 arrayListLampNames.add(json_analyst.getJSONValue(sKey));
             } else {
-                //arrayListLampNames.add("BUTTON " + i);
+
             }
         }
         arrayListLampNames.add("");
@@ -168,18 +174,77 @@ public class ReassignLamps extends Activity {
 
     }
 
+    public int findGivenPresetSlot(String presetName) {
+        int i = -1;
+        SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        String json = spFile.getString("JSON", "");
+        json = json.replaceAll(";", ",");
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            Iterator<String> keysIterator = jsonObject.keys();
+            int j =0;
+            while (keysIterator.hasNext()) {
+                String key = keysIterator.next();
+                String value = jsonObject.getString(key);
+                if (key.contains("_name") && key.contains("preset")) {
+                    j++;
+                    if (value.equalsIgnoreCase(presetName)) {
+                        return j;
+                    }
+                }
+            }
+        } catch (JSONException ioe) {
+            ioe.printStackTrace();
+            Log.e(TAG, "Unable to process JSON: " + json);
+        }
+        return i;
+    }
+
     public void store_assignment (View v) {
         if (validate_assignments()) {
             makeToast("Lamp presets assigned successfully.");
 
             SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_LAMP_ASSIGNMENTS, 0);
+            SharedPreferences prefs = getSharedPreferences(Constants.NEW_SHAREDPREFS_LAMP_ASSIGNMENTS, 0);
             SharedPreferences.Editor edit = spFile.edit();
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.clear();
+            editor.apply();
             edit.clear();
-            edit.commit();
+            edit.apply();
 
 
             //makeToast("Spinner1 text size: " + spinner1.getSelectedItem().toString().length());
             //SystemClock.sleep(15000);
+
+            int slot1 = findGivenPresetSlot(spinner1.getSelectedItem().toString());
+            if (spinner1.getSelectedItem().toString().length() > 0) { editor.putString("1", "preset" + slot1); }
+
+            int slot2 = findGivenPresetSlot(spinner2.getSelectedItem().toString());
+            if (spinner2.getSelectedItem().toString().length() > 0) { editor.putString("2", "preset" + slot2); }
+
+            int slot3 = findGivenPresetSlot(spinner3.getSelectedItem().toString());
+            if (spinner3.getSelectedItem().toString().length() > 0) { editor.putString("3", "preset" + slot3); }
+
+            int slot4 = findGivenPresetSlot(spinner4.getSelectedItem().toString());
+            if (spinner4.getSelectedItem().toString().length() > 0) { editor.putString("4", "preset" + slot4); }
+
+            int slot5 = findGivenPresetSlot(spinner5.getSelectedItem().toString());
+            if (spinner5.getSelectedItem().toString().length() > 0) { editor.putString("5", "preset" + slot5); }
+
+            int slot6 = findGivenPresetSlot(spinner6.getSelectedItem().toString());
+            if (spinner6.getSelectedItem().toString().length() > 0) { editor.putString("6", "preset" + slot6); }
+
+            int slot7 = findGivenPresetSlot(spinner7.getSelectedItem().toString());
+            if (spinner7.getSelectedItem().toString().length() > 0) { editor.putString("7", "preset" + slot7); }
+
+            int slot8 = findGivenPresetSlot(spinner8.getSelectedItem().toString());
+            if (spinner8.getSelectedItem().toString().length() > 0) { editor.putString("8", "preset" + slot8); }
+
+            int slot9 = findGivenPresetSlot(spinner9.getSelectedItem().toString());
+            if (spinner9.getSelectedItem().toString().length() > 0) { editor.putString("9", "preset" + slot9); }
+
+
             if (spinner1.getSelectedItem().toString().length() > 0) { edit.putString("1", spinner1.getSelectedItem().toString()); }
             if (spinner2.getSelectedItem().toString().length() > 0) { edit.putString("2", spinner2.getSelectedItem().toString()); }
             if (spinner3.getSelectedItem().toString().length() > 0) { edit.putString("3", spinner3.getSelectedItem().toString()); }
@@ -190,7 +255,9 @@ public class ReassignLamps extends Activity {
             if (spinner8.getSelectedItem().toString().length() > 0) { edit.putString("22", spinner8.getSelectedItem().toString()); }
             if (spinner9.getSelectedItem().toString().length() > 0) { edit.putString("23", spinner9.getSelectedItem().toString()); }
             edit.putString("666", String.valueOf(System.currentTimeMillis()));
-            edit.commit();
+            editor.putString("666", String.valueOf(System.currentTimeMillis()));
+            edit.apply();
+            editor.apply();
 
             finish();
         }

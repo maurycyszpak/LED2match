@@ -49,7 +49,8 @@
                     android:scaleType="fitCenter"
                     android:tag="D65"
                     android:text="D65\n1540"
-                    android:textSize="@dimen/button_text_size" />
+                    android:textSize="@dimen/button_text_size"
+                    android:onClick="button_click"/>
 
                 <Button
                     android:id="@+id/btnL2"

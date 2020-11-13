@@ -111,10 +111,11 @@ public class OverlayPage extends Activity {
         IntentFilter filter = new IntentFilter();
         filter.addAction("controller_data_refreshed_event");
         filter.addAction("request_preset_event");
+        filter.addAction("timers_received_event");
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, filter);
     }
 
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             // Extract data included in the Intent
@@ -127,7 +128,11 @@ public class OverlayPage extends Activity {
             } else if (intent.getAction().equals("controller_data_refreshed_event")) {
                 Log.d(TAG, "controller data refreshed - intent received. Closing page.");
                 handler.removeCallbacks(my_runnable);
-                makeToast("TEST");
+                finish();
+
+            } else if (intent.getAction().equals("timers_received_event")) {
+                Log.d(TAG, "Timers refreshed - intent received. Closing page.");
+                handler.removeCallbacks(my_runnable);
                 finish();
             }
 
