@@ -4,6 +4,7 @@ class Constants {
 
     public static final int MAX_PRESET_NUM = 10;
     public static final String TL84_TAG = "TL84";
+    public static final String BLANK_LAMP_DEFINITION = "000,000,000,000,000,000,000,000,000,000";
     public static final String SHAREDPREFS_CURRENT_LAMPS= "lamps_current_values"; //Mauricio
     public static final String SHAREDPREFS_LAMP_DEFINITIONS = "presets_definition"; //Mauricio
     public static final String SHAREDPREFS_DIAGNOSTIC_DATA = "LED2match.debug.txt"; //Mauricio

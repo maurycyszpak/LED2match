@@ -2447,7 +2447,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 		try {
 			Log.d(TAG, "firmware iteration");
 
-			JSONObject jsonObject = new JSONObject(sJSONbody);
+			JSONObject jsonObject = new JSONObject(sJSONbody );
 			Iterator<String> keysIterator = jsonObject.keys();
 			while (keysIterator.hasNext()) {
 				String key = keysIterator.next();

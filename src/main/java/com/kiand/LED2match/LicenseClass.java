@@ -1,11 +1,18 @@
 package com.kiand.LED2match;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -15,13 +22,17 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.kiand.LED2match.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
+
 public class LicenseClass extends Activity {
 
     public static final String TAG = "morris-License";
     EditText editLicense;
-    public static final int MAGIC_KEY = 0x0295;
-    public static final int MAGIC_KEY2 = 0x06F1;
+    public static final int MAGIC_KEY = 0x1F;
+    public static final int MAGIC_KEY2 = 0x65;
     TextView textCurrentTier;
+    private BtCOMMsService lclBTServiceInstance;
+    boolean mBoundBT = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +47,34 @@ public class LicenseClass extends Activity {
     @Override
         protected void onResume() {
         super.onResume();
-        read_license_data();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("controller_data_refreshed_event");
+
+        if (!mBoundBT) {
+            Intent intent = new Intent(this, BtCOMMsService.class);
+            bindService(intent, btConnection, Context.BIND_AUTO_CREATE);
+        }
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, filter);
     }
+
+    private final ServiceConnection btConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            BtCOMMsService.MyBinder binder = (BtCOMMsService.MyBinder) service;
+            lclBTServiceInstance = binder.getService();
+            mBoundBT = true;
+
+            request_license_data();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBoundBT = false;
+        }
+    };
 
 
     public void validateLicense(View v) {
@@ -45,6 +82,12 @@ public class LicenseClass extends Activity {
             makeToast("No value provided in License Code field");
         } else {
             Log.d(TAG, "License code is not null");
+            String license_code = "";
+            String mac = mackme().replaceAll(":", "");
+            Log.d(TAG, "MAC: " + mac);
+            String sCommand = "L";
+            sCommand += mac;
+
             String value = editLicense.getText().toString().trim();
             if (check_BT_connected()) {
                 if (value.length() == 0) {
@@ -56,12 +99,23 @@ public class LicenseClass extends Activity {
                         makeToast("Invalid license code");
                     } else {
                         //Validated
+                        show_splash_screen();
                         makeToast("License code correct - current tier: " + (int) ret);
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd hh:mm");
+                        SimpleDateFormat dateserial = new SimpleDateFormat("yyyyMMdd");
                         String currentDate = sdf.format(new Date());
-                        save_license_data(currentDate, (int)ret, mackme());
+                        long lDate = Long.parseLong(dateserial.format(new Date()));
+                        sCommand += Long.toHexString(lDate);
+                        int digits = value.replaceAll("-", "").replaceAll("[Ff]", "").length();
+                        sCommand += digits;
+                        sCommand += Integer.parseInt(value.replaceAll("-", "").replaceAll("[Ff]", ""));
+                        sCommand += (int)ret; //tier
+                        sCommand = sCommand.concat("$").concat(System.lineSeparator());
+                        Log.d(TAG, "Will send code: " + sCommand);
+                        lclBTServiceInstance.sendData(sCommand);
+                        //save_license_data(currentDate, (int)ret, mackme());
 
-                        read_license_data();
+                        request_license_data();
                     }
                 }
             } else {
@@ -80,18 +134,42 @@ public class LicenseClass extends Activity {
         editor.apply();
     }
 
-    private void read_license_data() {
-        SharedPreferences prefs = getSharedPreferences(Constants.CONFIG_SETTINGS, MODE_PRIVATE);
-        String licensed_date = prefs.getString(Constants.LICENSE_DATE_TAG, "NO DATA");
-        int licensed_tier = prefs.getInt(Constants.LICENSE_TIER_TAG, 0);
-        String licensed_MAC = prefs.getString(Constants.LICENSE_MAC_ADDR_TAG, "NO DATA");
+    private void request_license_data() {
+        show_splash_screen();
+        makeToast("Please wait - communicating with the controller.");
+        String sCommand = "F";
+        sCommand = sCommand.concat(System.lineSeparator());
+        Log.d(TAG, "requesting: " + sCommand);
+        lclBTServiceInstance.sendData(sCommand);
+    }
 
-        TextView tv_date = findViewById(R.id.textLicensedDate);
-        tv_date.setText(licensed_date);
+    private final BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Extract data included in the Intent
+            if (intent == null) {
+                return;
+            }
 
-        TextView tv_tier = findViewById(R.id.textLicensedTier);
-        tv_tier.setText(String.valueOf(licensed_tier));
+            if (intent.getAction().equals("controller_data_refreshed_event")) {
+                SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+                JSON_analyst json_analyst = new JSON_analyst(spFile);
+                String licensed_date = json_analyst.getJSONValue("date_license_activated");
 
+                TextView tv_date = findViewById(R.id.textLicensedDate);
+                tv_date.setText(licensed_date);
+
+                String licensed_tier = json_analyst.getJSONValue("tier");
+                TextView tv_tier = findViewById(R.id.textLicensedTier);
+                tv_tier.setText(String.valueOf(licensed_tier));
+                Log.d(TAG, "Completed populating license data");
+            }
+        }
+    };
+
+    private void show_splash_screen() {
+        Intent intent = new Intent(LicenseClass.this, OverlayPage.class);
+        startActivity(intent);
     }
 
     private String convert_to_hex(long value) {
@@ -109,28 +187,36 @@ public class LicenseClass extends Activity {
     }
 
 
-    private double parse_validation_string(String value) {
+    private double parse_validation_string(String license_code) {
         String MAC_ADDR = mackme();
-        long temp = 0;
+        double temp1 = 0.0;
+        double temp2;
         MAC_ADDR = MAC_ADDR.replaceAll(":", "");
         Log.d(TAG, "parse_validation_string_() - " + MAC_ADDR + ", Length: " + MAC_ADDR.length());
         for (int i = 1; i <= MAC_ADDR.length() / 2; i++) {
             String ret = MAC_ADDR.substring(i*2-2, i*2);
             Integer val = Integer.parseInt(ret, 16);
-            temp += (val *MAGIC_KEY);
+            temp1 += (val *MAGIC_KEY);
             //Log.d(TAG, "parse_validation_string_() - token = " + ret + ", int = " + val + ", growing: " + temp);
         }
-        //Log.d(TAG, temp + " * " + MAGIC_KEY + " = " + temp * MAGIC_KEY);
-        temp *= MAGIC_KEY;
-
-        value = value.replaceAll("[Ff]", "").replaceAll("-", "").replaceAll(" ", "");
-        long value2 = Long.parseLong(value) - MAGIC_KEY2;
-        long result = value2 - temp;
-        result = result / MAGIC_KEY2;
-        double tier = customLog(MAGIC_KEY, result);
-        Log.d(TAG, "Decoding license key to: " + result);
-        Log.d(TAG, "Decoded tier: " + tier);
-
+        temp2 = temp1*MAGIC_KEY2;
+        temp1 *= MAGIC_KEY;
+        //Log.d(TAG, "CALC_STEP_1: " + temp1);
+        //Log.d(TAG, "CALC_STEP_2: " + temp2);
+        double temp = temp1+temp2;
+        //Log.d(TAG, "CALC_STEP_SUM: " + temp);
+        license_code = license_code.replaceAll("[Ff]", "").replaceAll("-", "").replaceAll(" ", "");
+        double tier = 0.0;
+        try {
+            long value2 = Long.parseLong(license_code);
+            //Log.d(TAG, "comparing " + value2 + " with " +temp);
+            tier = value2 / temp;
+            //Log.d(TAG, "Decoded tier: " + tier);
+        } catch (NumberFormatException nfe) {
+            Log.d(TAG, "Number format exception: " + license_code);
+            tier = 0;
+            nfe.printStackTrace();
+        }
         return tier;
     }
 

@@ -188,10 +188,8 @@ public class TRSDigitalPanel extends Activity {
             lclBTServiceInstance = ((BtCOMMsService.MyBinder) arg1).getService();
             lclBTServiceInstance.setHandler(mHandler);
             mBoundBT = true;
-            if (mBound) {
-                String sCommand = "F" + Constants.sNewLine;
-                lclUsbServiceInstance.sendBytes(sCommand.getBytes());
-            }
+            String sCommand = "F" + Constants.sNewLine;
+            lclBTServiceInstance.sendData(sCommand);
         }
 
         @Override
@@ -484,17 +482,15 @@ public class TRSDigitalPanel extends Activity {
         }
 
         logme(TAG, "starting Bluetooth connection service");
-
+        Log.d(TAG, "mBoundBT = " + mBoundBT);
         if (!mBoundBT) {
+            Log.d(TAG, "localBTservice null? = " + (lclBTServiceInstance == null));
             Intent intent = new Intent(this, BtCOMMsService.class);
-            //startService(intent);
             bindService(intent, btConnection, Context.BIND_AUTO_CREATE);
-            //Toast.makeText(this.getBaseContext(),"Service bound (onResume)", Toast.LENGTH_SHORT).show();
 
             SystemClock.sleep(50);
-            mBoundBT = true;
 
-            if (mBoundBT) {
+            /*if (mBoundBT) {
                 if (bluetooth_connected()) {
                     try {
                         String sSequence = "F";
@@ -506,16 +502,7 @@ public class TRSDigitalPanel extends Activity {
                     }
                     SystemClock.sleep(500);
                 }
-                /*if (bluetooth_connected()) {
-                    try {
-                        String sSequence = "J";
-                        sSequence = sSequence.concat(System.lineSeparator());
-                        lclBTServiceInstance.sendData(sSequence);
-                    } catch (NullPointerException e) {
-                        Log.e(TAG, "NullPointerException when sending command via Bluetooth");
-                    }
-                }*/
-            }
+            }*/
         }
 
 
@@ -523,9 +510,9 @@ public class TRSDigitalPanel extends Activity {
 
         if (shared_prefs_exists(SHAREDPREFS_LAMP_ASSIGNMENTS, "666")) {
             repopulate_button_assignments();
-            logme(TAG, "Repopulating button captions");
+            logme(TAG, "Using repopulate_button to get captions");
         } else {
-            logme(TAG, "Key 666 not found. Populating button names from JSON");
+            logme(TAG, "Key 666 not found. Using populate_button from JSON");
             populateButtonNames();
         }
 
@@ -533,7 +520,7 @@ public class TRSDigitalPanel extends Activity {
         populate_bluetooth_indicator();
         populateLampsState();
         setUnitName();
-        //makeToast("onresume");
+        //makeToast("onResume");
     }
 
     @Override
@@ -544,7 +531,7 @@ public class TRSDigitalPanel extends Activity {
         Intent intent = new Intent(this, UsbCOMMsService.class);
         bindService (intent, mConnection, Context.BIND_AUTO_CREATE);
 
-        //Toast.makeText(this.getBaseContext(),"Service bound (onStart)", Toast.LENGTH_SHORT).show();
+        //makeToast("onStart");
         /*String sCommand = "J" + LightAdjustments.sNewLine; */
     }
 
@@ -1504,6 +1491,54 @@ public class TRSDigitalPanel extends Activity {
             ioe.printStackTrace();
         }
         return i;
+    }
+
+    public boolean get_connection_status() {
+        SharedPreferences prefs_config = getSharedPreferences(Constants.BT_CONNECTED_PREFS, 0);
+        boolean status= prefs_config.getBoolean("CONNECTED", false);
+
+        return status;
+    }
+
+    public void btnClicked(View v) {
+        boolean connected = get_connection_status();
+        if (connected) {
+            //check license
+            if (!licensed()) {
+                //v.setEnabled(false);
+                makeToast("No license detected - unable to switch on lamp");
+            } else {
+                //v.setEnabled(true);
+                btnClicked_UV_normal(v);
+            }
+        }
+    }
+
+    public boolean licensed() {
+        int current_tier = get_tier();
+
+        if (current_tier == 0) {
+            Log.d(TAG, "licensed_() - unlicensed copy - disabling buttons");
+            return false;
+        } else {
+            Log.d(TAG, "licensed_() - licensed copy. Buttons active");
+            return true;
+        }
+    }
+
+    public int get_tier() {
+        int current_tier = 0;
+        SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        JSON_analyst json_analyst = new JSON_analyst(spFile);
+        try {
+            current_tier = Integer.parseInt(json_analyst.getJSONValue("tier"));
+            Log.d(TAG, "get_tier_() - returning TIER " + current_tier);
+            return current_tier;
+        } catch (NumberFormatException nfe) {
+            nfe.printStackTrace();
+            Log.w(TAG, "Unable to parse tier '" + json_analyst.getJSONValue("tier") + "' as a number");
+            return 0;
+        }
     }
 
 
@@ -2517,7 +2552,7 @@ public class TRSDigitalPanel extends Activity {
         SharedPreferences spLampDefinitions = getSharedPreferences(Constants.SHAREDPREFS_LAMP_DEFINITIONS, 0);
         if (BL_TL84_ON) {
             logme(TAG, "TL84 flag is on");
-            String sPresetRGBValues = spLampDefinitions.getString(Constants.TL84_TAG, null);
+            String sPresetRGBValues = spLampDefinitions.getString(Constants.TL84_TAG, Constants.BLANK_LAMP_DEFINITION);
             if (!BL_LOW_MODE) {
 
                 String sCommand = "S11050" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + sNewLine;
