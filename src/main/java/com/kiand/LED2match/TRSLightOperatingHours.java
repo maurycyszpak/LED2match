@@ -103,6 +103,7 @@ public class TRSLightOperatingHours extends Activity {
             repopulate_button_assignments();
             Log.d(TAG, "Repopulating button captions");
         } else {
+            Log.d(TAG, "key 666 not found. Populating button captions from JSON");
             populateButtonNames();
         }
         //Toast.makeText(this.getBaseContext(),"mBound = " + mBound, Toast.LENGTH_SHORT).show();
@@ -129,7 +130,11 @@ public class TRSLightOperatingHours extends Activity {
         String version_line = "FW Version: " + sFWVersion;
         tvInfoBox.setText(getString(R.string.system_footer) + "\n" + version_line);
         populateLampsState();
-        license_check();
+        Log.d(TAG, "Executing license check");
+        boolean connected = get_connection_status();
+        if (connected) {
+            license_check();
+        }
     }
 
     @Override
@@ -195,26 +200,18 @@ public class TRSLightOperatingHours extends Activity {
     }
 
     public int get_tier() {
-        boolean connected = get_connection_status();
-
-        SharedPreferences prefs_config = getSharedPreferences(Constants.CONFIG_SETTINGS, 0);
-        int current_tier = prefs_config.getInt(Constants.LICENSE_TIER_TAG, 0);
-
-        Log.d(TAG, "get_tier_() - CONNECTED status: " + connected);
-        if (connected) {
-            String licensed_mac = prefs_config.getString(Constants.LICENSE_MAC_ADDR_TAG, "NO DATA");
-            SharedPreferences prefs_connection = getSharedPreferences(Constants.BT_CONNECTED_PREFS, 0);
-            String connected_mac = prefs_connection.getString(Constants.SESSION_CONNECTED_MAC_TAG, "NO DATA");
-            Log.d(TAG, "get_tier_() - Licensed MAC: " + licensed_mac);
-            Log.d(TAG, "get_tier_() - Connected MAC: " + connected_mac);
-            if (!licensed_mac.equalsIgnoreCase(connected_mac)) {
-                Log.d(TAG, "Detected connection to a non-licensed MAC address");
-                makeToast("Detected connection to a non-licensed MAC address");
-                current_tier = 0;
-            }
+        int current_tier = 0;
+        SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        JSON_analyst json_analyst = new JSON_analyst(spFile);
+        try {
+            current_tier = Integer.parseInt(json_analyst.getJSONValue("tier"));
+            Log.d(TAG, "get_tier_() - returning TIER " + current_tier);
+            return current_tier;
+        } catch (NumberFormatException nfe) {
+            nfe.printStackTrace();
+            Log.w(TAG, "Unable to parse tier '" + json_analyst.getJSONValue("tier") + "' as a number");
+            return 0;
         }
-        Log.d(TAG, "get_tier_() - returning TIER " + current_tier);
-        return current_tier;
     }
 
     public boolean get_connection_status() {
@@ -368,7 +365,6 @@ public class TRSLightOperatingHours extends Activity {
                     btnL1.setText(entry.getValue().toString());
                     btnL1.setText(preset_name);
                     btnL1.setTag(entry.getValue().toString());
-                    //btnL1.setTag(preset_name);
                     break;
 
                 case "2":
@@ -462,10 +458,11 @@ public class TRSLightOperatingHours extends Activity {
     }
 
     public void setLampName(int i, String sLampName, String sCounter) {
+        Log.d(TAG, "setLampName_() - setting lamp name '" + sLampName + "' for button " + i);
         if (i == 1) {
             if (sLampName.length() > 0) {
                 btnL1.setText(sLampName + sNewLine + sCounter);
-                btnL1.setTag(sLampName);
+                btnL1.setTag("preset1");
             } else {
                 btnL1.setText(NO_PRESET_TEXT);
                 btnL1.setTag(NO_PRESET_TEXT);
@@ -473,7 +470,7 @@ public class TRSLightOperatingHours extends Activity {
         } else if (i == 2) {
             if (sLampName.length() > 0) {
                 btnL2.setText(sLampName + sNewLine + sCounter);
-                btnL2.setTag(sLampName);
+                btnL2.setTag("preset2");
             } else {
                 btnL2.setText(NO_PRESET_TEXT);
                 btnL2.setTag(NO_PRESET_TEXT);
@@ -481,7 +478,7 @@ public class TRSLightOperatingHours extends Activity {
         } else if (i == 3) {
             if (sLampName.length() > 0) {
                 btnL3.setText(sLampName + sNewLine + sCounter);
-                btnL3.setTag(sLampName);
+                btnL3.setTag("preset3");
             } else {
                 btnL3.setText(NO_PRESET_TEXT);
                 btnL3.setTag(NO_PRESET_TEXT);
@@ -489,7 +486,7 @@ public class TRSLightOperatingHours extends Activity {
         } else if (i == 4) {
             if (sLampName.length() > 0) {
                 btnL4.setText(sLampName + sNewLine + sCounter);
-                btnL4.setTag(sLampName);
+                btnL4.setTag("preset4");
             } else {
                 btnL4.setText(NO_PRESET_TEXT);
                 btnL4.setTag(NO_PRESET_TEXT);
@@ -497,7 +494,7 @@ public class TRSLightOperatingHours extends Activity {
         } else if (i == 5) {
             if (sLampName.length() > 0) {
                 btnL5.setText(sLampName + sNewLine + sCounter);
-                btnL5.setTag(sLampName);
+                btnL5.setTag("preset5");
             } else {
                 btnL5.setText(NO_PRESET_TEXT);
                 btnL5.setTag(NO_PRESET_TEXT);
@@ -505,7 +502,7 @@ public class TRSLightOperatingHours extends Activity {
         } else if (i == 6) {
             if (sLampName.length() > 0) {
                 btnL6.setText(sLampName + sNewLine + sCounter);
-                btnL6.setTag(sLampName);
+                btnL6.setTag("preset6");
             } else {
                 btnL6.setText(NO_PRESET_TEXT);
                 btnL6.setTag(NO_PRESET_TEXT);

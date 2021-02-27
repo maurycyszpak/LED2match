@@ -118,7 +118,10 @@ public class TRSSequence extends ListActivity {
         }
 
         Log.d(TAG, "Executing license check");
-        license_check();
+        boolean connected = get_connection_status();
+        if (connected) {
+            license_check();
+        }
     }
 
     @Override
@@ -188,26 +191,18 @@ public class TRSSequence extends ListActivity {
     }
 
     public int get_tier() {
-        boolean connected = get_connection_status();
-
-        SharedPreferences prefs_config = getSharedPreferences(Constants.CONFIG_SETTINGS, 0);
-        int current_tier = prefs_config.getInt(Constants.LICENSE_TIER_TAG, 0);
-
-        Log.d(TAG, "get_tier_() - CONNECTED status: " + connected);
-        if (connected) {
-            String licensed_mac = prefs_config.getString(Constants.LICENSE_MAC_ADDR_TAG, "NO DATA");
-            SharedPreferences prefs_connection = getSharedPreferences(Constants.BT_CONNECTED_PREFS, 0);
-            String connected_mac = prefs_connection.getString(Constants.SESSION_CONNECTED_MAC_TAG, "NO DATA");
-            Log.d(TAG, "get_tier_() - Licensed MAC: " + licensed_mac);
-            Log.d(TAG, "get_tier_() - Connected MAC: " + connected_mac);
-            if (!licensed_mac.equalsIgnoreCase(connected_mac)) {
-                Log.d(TAG, "Detected connection to a non-licensed MAC address");
-                makeToast("Detected connection to a non-licensed MAC address");
-                current_tier = 0;
-            }
+        int current_tier = 0;
+        SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        JSON_analyst json_analyst = new JSON_analyst(spFile);
+        try {
+            current_tier = Integer.parseInt(json_analyst.getJSONValue("tier"));
+            Log.d(TAG, "get_tier_() - returning TIER " + current_tier);
+            return current_tier;
+        } catch (NumberFormatException nfe) {
+            nfe.printStackTrace();
+            Log.w(TAG, "Unable to parse tier '" + json_analyst.getJSONValue("tier") + "' as a number");
+            return 0;
         }
-        Log.d(TAG, "get_tier_() - returning TIER " + current_tier);
-        return current_tier;
     }
 
     public boolean get_connection_status() {

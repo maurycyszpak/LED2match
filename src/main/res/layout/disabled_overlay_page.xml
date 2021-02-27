@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:background="#af0000ff"
     android:orientation="vertical"
-    tools:context=".OverlayPage">
+    tools:context=".OverlayPage"
+    >
 
 
     <TextView
