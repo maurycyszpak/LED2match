@@ -448,6 +448,7 @@ public class TRSDigitalPanel extends Activity {
     {
         super.onResume();
 
+        //makeToast("onResume");
         usb_conn_indicator.getLayoutParams().height= ICON_HEIGHT;
         usb_conn_indicator.requestLayout();
 
@@ -520,7 +521,7 @@ public class TRSDigitalPanel extends Activity {
         populate_bluetooth_indicator();
         populateLampsState();
         setUnitName();
-        //makeToast("onResume");
+
     }
 
     @Override
@@ -569,9 +570,12 @@ public class TRSDigitalPanel extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //Toast.makeText(this.getBaseContext(),"Main activity destroyed", Toast.LENGTH_SHORT).show();
-        toggle_bt_icon_OFF();
-        mark_BT_disconnected();
+        Toast.makeText(this.getBaseContext(),"Main activity destroyed", Toast.LENGTH_SHORT).show();
+        if (lclBTServiceInstance == null) {
+            toggle_bt_icon_OFF();
+            mark_BT_disconnected();
+        }
+
         //mark_customer_data_use_in_config(false);
         //mark_customer_logo_use_in_config(false);
         super.onDestroy();
@@ -959,6 +963,7 @@ public class TRSDigitalPanel extends Activity {
     }
 
     public void populate_bluetooth_indicator() {
+
         if (bluetooth_connected()) {
             toggle_bt_icon_ON();
         } else {
