@@ -693,6 +693,7 @@ public class BtCOMMsService extends Service {
         }*/
 
         if (mConnectedThread != null) {
+            Log.d (TAG, "Sending string in mConnectedThread");
             mConnectedThread.write(data + newline);
         } else {
             Log.d (TAG, "NEW ERROR: UNABLE to get mConnectedThread");
