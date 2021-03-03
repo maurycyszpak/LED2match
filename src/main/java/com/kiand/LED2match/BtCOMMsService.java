@@ -674,11 +674,13 @@ public class BtCOMMsService extends Service {
 
     public void sendData(String str) {
         byte[] buffer = str.getBytes();
-        write(buffer);
+        //write(buffer);
+        write(str);
     }
 
-    private void write(byte[] data) {
-        if (mConnectingThread != null) {
+    private void write(String data) {
+    //    private void write(byte[] data) {
+        /*if (mConnectingThread != null) {
             try {
                 mConnectingThread.mmSocket.getOutputStream().write(data);
             } catch (IOException e) {
@@ -688,6 +690,12 @@ public class BtCOMMsService extends Service {
             }
         } else {
             Log.d (TAG, "UNABLE to get mConnectingThread");
+        }*/
+
+        if (mConnectedThread != null) {
+            mConnectedThread.write(data + newline);
+        } else {
+            Log.d (TAG, "NEW ERROR: UNABLE to get mConnectedThread");
 
         }
     }
