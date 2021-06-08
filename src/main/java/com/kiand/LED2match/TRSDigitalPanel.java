@@ -540,6 +540,7 @@ public class TRSDigitalPanel extends Activity {
     protected void onPause() {
         super.onPause();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        //unregisterReceiver(btReceiverBTdevice);
     }
 
     @Override
@@ -570,7 +571,7 @@ public class TRSDigitalPanel extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Toast.makeText(this.getBaseContext(),"Main activity destroyed", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this.getBaseContext(),"Main activity destroyed", Toast.LENGTH_SHORT).show();
         if (lclBTServiceInstance == null) {
             toggle_bt_icon_OFF();
             mark_BT_disconnected();
@@ -1341,6 +1342,7 @@ public class TRSDigitalPanel extends Activity {
         final String sLamp4Name = json_analyst.getJSONValue("preset4_name");
         final String sLamp5Name = json_analyst.getJSONValue("preset5_name");
         final String sLamp6Name = json_analyst.getJSONValue("preset6_name");
+        Log.d(TAG, "Populating Lamp1Name = " + sLamp1Name);
         //final String sLamp4Name = extractJSONvalue("", "lamp4_name");
 
         setLampName(1, sLamp1Name);
@@ -1536,12 +1538,12 @@ public class TRSDigitalPanel extends Activity {
         SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
         JSON_analyst json_analyst = new JSON_analyst(spFile);
         try {
-            current_tier = Integer.parseInt(json_analyst.getJSONValue("tier"));
+            current_tier = Integer.parseInt(json_analyst.getJSONValue("license_tier"));
             Log.d(TAG, "get_tier_() - returning TIER " + current_tier);
             return current_tier;
         } catch (NumberFormatException nfe) {
             nfe.printStackTrace();
-            Log.w(TAG, "Unable to parse tier '" + json_analyst.getJSONValue("tier") + "' as a number");
+            Log.w(TAG, "Unable to parse tier '" + json_analyst.getJSONValue("license_tier") + "' as a number");
             return 0;
         }
     }
@@ -1585,7 +1587,7 @@ public class TRSDigitalPanel extends Activity {
             try {
                 int slot = findGivenPresetSlot(button.getText().toString(), sPresetDefinitions);
                 sPresetRGBValues = jsonPresets.getString("preset" + slot + "_rgbw");
-                Log.d(TAG, "btnClicked_UV_normal_() - Found RGB values of preset'" + button.getText().toString() + "': " + sPresetRGBValues);
+                Log.d(TAG, "btnClicked_UV_normal_() - Found RGB values of preset '" + button.getText().toString() + "': " + sPresetRGBValues);
             } catch (NullPointerException | JSONException npe) {
                 npe.printStackTrace();
                 makeToast("ERROR: Unable to build JSON object with presets definition. Does the correct file exist in the correct path?");

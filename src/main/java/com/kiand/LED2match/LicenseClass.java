@@ -162,7 +162,7 @@ public class LicenseClass extends Activity {
                 TextView tv_date = findViewById(R.id.textLicensedDate);
                 tv_date.setText(licensed_date);
 
-                String licensed_tier = json_analyst.getJSONValue("tier");
+                String licensed_tier = json_analyst.getJSONValue("license_tier");
                 TextView tv_tier = findViewById(R.id.textLicensedTier);
                 tv_tier.setText(String.valueOf(licensed_tier));
                 Log.d(TAG, "Completed populating license data");

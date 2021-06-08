@@ -28,6 +28,7 @@
     <dimen name="operating_hours_button_height">60dp</dimen>
     <dimen name="button_backsave_height">35dp</dimen>
     <dimen name="button_margin">10dp</dimen>
+    <dimen name="double_button_margin">20dp</dimen>
     <dimen name="button_margin_10dp">10dp</dimen>
     <dimen name="button_margin_3dp">3dp</dimen>
 
@@ -44,6 +45,12 @@
     <dimen name="textview_default_top_margin">10dp</dimen>
     <dimen name="spinner_items_vert_margin">5dp</dimen>
     <dimen name="license_msg_txt_size">40sp</dimen>
+
+    <dimen name="settings_pg_masterslave_label_width">0.28</dimen>
+    <dimen name="settings_pg_masterslave_value_width">0.18</dimen>
+    <dimen name="settings_pg_masterslave_header_label_width">0.36</dimen>
+    <dimen name="settings_pg_masterslave_row_top_margin">8dp</dimen>
+    <dimen name="settings_pg_masterslave_header_textsize">14sp</dimen>
 
 
 </resources>

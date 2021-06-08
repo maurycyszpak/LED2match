@@ -169,6 +169,7 @@ public class TRSSettings extends Activity {
     {
         super.onResume();
         populate_unit_config();
+        populate_multiplier_values();
         Log.d(TAG, "mBound = " + mBound + ", mBoundBT = " + mBoundBT);
         Log.d(TAG, "Executing license check");
         boolean connected = get_connection_status();
@@ -182,12 +183,12 @@ public class TRSSettings extends Activity {
         SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
         JSON_analyst json_analyst = new JSON_analyst(spFile);
         try {
-            current_tier = Integer.parseInt(json_analyst.getJSONValue("tier"));
+            current_tier = Integer.parseInt(json_analyst.getJSONValue("license_tier"));
             Log.d(TAG, "get_tier_() - returning TIER " + current_tier);
             return current_tier;
         } catch (NumberFormatException nfe) {
             nfe.printStackTrace();
-            Log.w(TAG, "Unable to parse tier '" + json_analyst.getJSONValue("tier") + "' as a number");
+            Log.w(TAG, "Unable to parse tier '" + json_analyst.getJSONValue("license_tier") + "' as a number");
             return 0;
         }
     }
@@ -207,6 +208,7 @@ public class TRSSettings extends Activity {
             block_current_page();
         } else {
             Log.d(TAG, "Not blocking page");
+            unblock_slave_controls();
         }
     }
 
@@ -214,6 +216,45 @@ public class TRSSettings extends Activity {
         Intent intent = new Intent(TRSSettings.this, DisabledOverlayPage.class);
         //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK) ;
         startActivity(intent);
+
+    }
+    public void check_for_edits(View v) {
+        if (!v.isFocusableInTouchMode()) {
+            makeToast("To edit value please make sure you are connected to the controller via BT and have appropriate license tier");
+        }
+
+
+    }
+
+    private void unblock_slave_controls() {
+        EditText et;
+        et = findViewById(R.id.edit_group1_LED_full);
+        et.setFocusableInTouchMode(true);
+        et = findViewById(R.id.edit_group1_LED_dim);
+        et.setFocusableInTouchMode(true);
+        et = findViewById(R.id.edit_group1_TL84_full);
+        et.setFocusableInTouchMode(true);
+        et = findViewById(R.id.edit_group1_TL84_dim);
+        et.setFocusableInTouchMode(true);
+
+        et = findViewById(R.id.edit_group2_LED_full);
+        et.setFocusableInTouchMode(true);
+        et = findViewById(R.id.edit_group2_LED_dim);
+        et.setFocusableInTouchMode(true);
+        et = findViewById(R.id.edit_group2_TL84_full);
+        et.setFocusableInTouchMode(true);
+        et = findViewById(R.id.edit_group2_TL84_dim);
+        et.setFocusableInTouchMode(true);
+
+        et = findViewById(R.id.edit_group3_LED_full);
+        et.setFocusableInTouchMode(true);
+        et = findViewById(R.id.edit_group3_LED_dim);
+        et.setFocusableInTouchMode(true);
+        et = findViewById(R.id.edit_group3_TL84_full);
+        et.setFocusableInTouchMode(true);
+        et = findViewById(R.id.edit_group3_TL84_dim);
+        et.setFocusableInTouchMode(true);
+
 
     }
 
@@ -284,6 +325,154 @@ public class TRSSettings extends Activity {
             }
         } catch (NullPointerException e) {
             makeToast("TL84 dim value not yet defined for this unit");
+        }
+    }
+
+    private void populate_multiplier_values() {
+        Log.d(TAG, "Populating page with multipliers");
+        SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        JSON_analyst json = new JSON_analyst(spFile);
+
+        String ee_autoshutoff_tag = "eeprom_auto_shutoff";
+        String ee_tl84delay_tag = "eeprom_tl84_delay";
+        String ee_psucurrent_tag = "eeprom_PSU_current";
+        String ee_tl84dim_tag = "eeprom_tl84_dim_value";
+        String ee_tl84masterdim_tag = "eeprom_tl84_master_dim_value";
+        EditText ed;
+
+        //Group 1
+        try {
+            String s_value = json.getJSONValue("slave_group1_led_full");
+            if (s_value.length() > 0) {
+                ed = findViewById(R.id.edit_group1_LED_full);
+                int value = (int)s_value.charAt(0);
+                ed.setText(String.valueOf(value));
+            }
+        } catch (NullPointerException e) {
+            //makeToast("TL84 delay not yet defined for this unit");
+        }
+
+        try {
+            String s_value = json.getJSONValue("slave_group1_led_dim");
+            if (s_value.length() > 0) {
+                ed = findViewById(R.id.edit_group1_LED_dim);
+                int value = (int)s_value.charAt(0);
+                ed.setText(String.valueOf(value));
+            }
+        } catch (NullPointerException e) {
+            //makeToast("TL84 delay not yet defined for this unit");
+        }
+
+        try {
+            String s_value = json.getJSONValue("slave_group1_tl84_full");
+            if (s_value.length() > 0) {
+                ed = findViewById(R.id.edit_group1_TL84_full);
+                int value = (int)s_value.charAt(0);
+                ed.setText(String.valueOf(value));
+            }
+        } catch (NullPointerException e) {
+            //makeToast("TL84 delay not yet defined for this unit");
+        }
+
+        try {
+            String s_value = json.getJSONValue("slave_group1_tl84_dim");
+            if (s_value.length() > 0) {
+                ed = findViewById(R.id.edit_group1_TL84_dim);
+                int value = (int)s_value.charAt(0);
+                ed.setText(String.valueOf(value));
+            }
+        } catch (NullPointerException e) {
+            //makeToast("TL84 delay not yet defined for this unit");
+        }
+
+        //Group 2
+        try {
+            String s_value = json.getJSONValue("slave_group2_led_full");
+            if (s_value.length() > 0) {
+                ed = findViewById(R.id.edit_group2_LED_full);
+                int value = (int)s_value.charAt(0);
+                ed.setText(String.valueOf(value));
+            }
+        } catch (NullPointerException e) {
+            //makeToast("TL84 delay not yet defined for this unit");
+        }
+
+        try {
+            String s_value = json.getJSONValue("slave_group2_led_dim");
+            if (s_value.length() > 0) {
+                ed = findViewById(R.id.edit_group2_LED_dim);
+                int value = (int)s_value.charAt(0);
+                ed.setText(String.valueOf(value));
+            }
+        } catch (NullPointerException e) {
+            //makeToast("TL84 delay not yet defined for this unit");
+        }
+
+        try {
+            String s_value = json.getJSONValue("slave_group2_tl84_full");
+            if (s_value.length() > 0) {
+                ed = findViewById(R.id.edit_group2_TL84_full);
+                int value = (int)s_value.charAt(0);
+                ed.setText(String.valueOf(value));
+            }
+        } catch (NullPointerException e) {
+            //makeToast("TL84 delay not yet defined for this unit");
+        }
+
+        try {
+            String s_value = json.getJSONValue("slave_group2_tl84_dim");
+            if (s_value.length() > 0) {
+                ed = findViewById(R.id.edit_group2_TL84_dim);
+                int value = (int)s_value.charAt(0);
+                ed.setText(String.valueOf(value));
+            }
+        } catch (NullPointerException e) {
+            //makeToast("TL84 delay not yet defined for this unit");
+        }
+
+        //Group 3
+        try {
+            String s_value = json.getJSONValue("slave_group3_led_full");
+            if (s_value.length() > 0) {
+                ed = findViewById(R.id.edit_group3_LED_full);
+                int value = (int)s_value.charAt(0);
+                ed.setText(String.valueOf(value));
+            }
+        } catch (NullPointerException e) {
+            //makeToast("TL84 delay not yet defined for this unit");
+        }
+
+        try {
+            String s_value = json.getJSONValue("slave_group3_led_dim");
+            if (s_value.length() > 0) {
+                ed = findViewById(R.id.edit_group3_LED_dim);
+                int value = (int)s_value.charAt(0);
+                ed.setText(String.valueOf(value));
+            }
+        } catch (NullPointerException e) {
+            //makeToast("TL84 delay not yet defined for this unit");
+        }
+
+        try {
+            String s_value = json.getJSONValue("slave_group3_tl84_full");
+            if (s_value.length() > 0) {
+                ed = findViewById(R.id.edit_group3_TL84_full);
+                int value = (int)s_value.charAt(0);
+                ed.setText(String.valueOf(value));
+            }
+        } catch (NullPointerException e) {
+            //makeToast("TL84 delay not yet defined for this unit");
+        }
+
+        try {
+            String s_value = json.getJSONValue("slave_group3_tl84_dim");
+            if (s_value.length() > 0) {
+                ed = findViewById(R.id.edit_group3_TL84_dim);
+                int value = (int)s_value.charAt(0);
+                ed.setText(String.valueOf(value));
+            }
+        } catch (NullPointerException e) {
+            //makeToast("TL84 delay not yet defined for this unit");
         }
     }
 
@@ -747,6 +936,120 @@ public class TRSSettings extends Activity {
         }
     }
 
+    public void saveMultipliers(View v) {
+        //We need to store the DAC Value if present
+        boolean bl_valid_DAC_value;
+        boolean bl_valid_psu_power = false;
+
+
+        String settings_value = "";
+        EditText ed;
+
+        //group 1
+        ed = findViewById(R.id.edit_group1_LED_full);
+        if (!TextUtils.isEmpty(ed.getText().toString())) {
+            settings_value += string_int_to_hex_2(ed.getText().toString());
+        } else {
+            settings_value += "00";
+        }
+
+        ed = findViewById(R.id.edit_group1_LED_dim);
+        if (!TextUtils.isEmpty(ed.getText().toString())) {
+            settings_value += string_int_to_hex_2(ed.getText().toString());
+        } else {
+            settings_value += "00";
+        }
+
+        ed = findViewById(R.id.edit_group1_TL84_full);
+        if (!TextUtils.isEmpty(ed.getText().toString())) {
+            settings_value += string_int_to_hex_2(ed.getText().toString());
+        } else {
+            settings_value += "00";
+        }
+
+        ed = findViewById(R.id.edit_group1_TL84_dim);
+        if (!TextUtils.isEmpty(ed.getText().toString())) {
+            settings_value += string_int_to_hex_2(ed.getText().toString());
+        } else {
+            settings_value += "00";
+        }
+
+        //group 2
+        ed = findViewById(R.id.edit_group2_LED_full);
+        if (!TextUtils.isEmpty(ed.getText().toString())) {
+            settings_value += string_int_to_hex_2(ed.getText().toString());
+        } else {
+            settings_value += "00";
+        }
+
+        ed = findViewById(R.id.edit_group2_LED_dim);
+        if (!TextUtils.isEmpty(ed.getText().toString())) {
+            settings_value += string_int_to_hex_2(ed.getText().toString());
+        } else {
+            settings_value += "00";
+        }
+
+        ed = findViewById(R.id.edit_group2_TL84_full);
+        if (!TextUtils.isEmpty(ed.getText().toString())) {
+            settings_value += string_int_to_hex_2(ed.getText().toString());
+        } else {
+            settings_value += "00";
+        }
+
+        ed = findViewById(R.id.edit_group2_TL84_dim);
+        if (!TextUtils.isEmpty(ed.getText().toString())) {
+            settings_value += string_int_to_hex_2(ed.getText().toString());
+        } else {
+            settings_value += "00";
+        }
+
+        //group 3
+        ed = findViewById(R.id.edit_group3_LED_full);
+        if (!TextUtils.isEmpty(ed.getText().toString())) {
+            settings_value += string_int_to_hex_2(ed.getText().toString());
+        } else {
+            settings_value += "00";
+        }
+
+        ed = findViewById(R.id.edit_group3_LED_dim);
+        if (!TextUtils.isEmpty(ed.getText().toString())) {
+            settings_value += string_int_to_hex_2(ed.getText().toString());
+        } else {
+            settings_value += "00";
+        }
+
+        ed = findViewById(R.id.edit_group3_TL84_full);
+        if (!TextUtils.isEmpty(ed.getText().toString())) {
+            settings_value += string_int_to_hex_2(ed.getText().toString());
+        } else {
+            settings_value += "00";
+        }
+
+        ed = findViewById(R.id.edit_group3_TL84_dim);
+        if (!TextUtils.isEmpty(ed.getText().toString())) {
+            settings_value += string_int_to_hex_2(ed.getText().toString());
+        } else {
+            settings_value += "00";
+        }
+
+        Log.d(TAG, "Sending unit config string: " + settings_value);
+
+        /*Log.d(TAG, "DAC value of '" + value + "' stored in prefs file");
+        makeToast( "DAC value of '" + value + "' successfully stored.");*/
+
+        String sCommand = "M2" + settings_value + "$" + newLine;
+        if (mBoundBT) {
+            Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
+            lclBTServiceInstance.sendData(sCommand);
+        } else {
+            Log.d(TAG, "Service btService not connected when sending message: '" + sCommand + "'");
+        }
+        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+
+        makeToast( "Saving multiplier data on Controller.");
+
+    }
+
     public void allOFF() {
         String sCommand = "S00000000000000000000";
         sCommand += "$" + newLine;
@@ -774,6 +1077,16 @@ public class TRSSettings extends Activity {
 
         int iValue = Integer.parseInt(s);
         sValue += String.format("%04X", iValue);
+
+        sValue = sValue.toUpperCase();
+        return sValue;
+    }
+
+    public String string_int_to_hex_2(String s) {
+        String sValue = "";
+
+        int iValue = Integer.parseInt(s);
+        sValue += String.format("%02X", iValue);
 
         sValue = sValue.toUpperCase();
         return sValue;

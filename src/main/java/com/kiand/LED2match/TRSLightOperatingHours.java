@@ -204,12 +204,12 @@ public class TRSLightOperatingHours extends Activity {
         SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
         JSON_analyst json_analyst = new JSON_analyst(spFile);
         try {
-            current_tier = Integer.parseInt(json_analyst.getJSONValue("tier"));
+            current_tier = Integer.parseInt(json_analyst.getJSONValue("license_tier"));
             Log.d(TAG, "get_tier_() - returning TIER " + current_tier);
             return current_tier;
         } catch (NumberFormatException nfe) {
             nfe.printStackTrace();
-            Log.w(TAG, "Unable to parse tier '" + json_analyst.getJSONValue("tier") + "' as a number");
+            Log.w(TAG, "Unable to parse tier '" + json_analyst.getJSONValue("license_tier") + "' as a number");
             return 0;
         }
     }

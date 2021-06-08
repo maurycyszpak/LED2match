@@ -323,12 +323,12 @@ public class TRSMaintenancePage extends Activity {
         SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
         JSON_analyst json_analyst = new JSON_analyst(spFile);
         try {
-            current_tier = Integer.parseInt(json_analyst.getJSONValue("tier"));
+            current_tier = Integer.parseInt(json_analyst.getJSONValue("license_tier"));
             Log.d(TAG, "get_tier_() - returning TIER " + current_tier);
             return current_tier;
         } catch (NumberFormatException nfe) {
             nfe.printStackTrace();
-            Log.w(TAG, "Unable to parse tier '" + json_analyst.getJSONValue("tier") + "' as a number");
+            Log.w(TAG, "Unable to parse tier '" + json_analyst.getJSONValue("license_tier") + "' as a number");
             return 0;
         }
     }
@@ -651,7 +651,8 @@ public class TRSMaintenancePage extends Activity {
 
         /*Log.d(TAG, "DAC value of '" + value + "' stored in prefs file");
         makeToast( "DAC value of '" + value + "' successfully stored.");*/
-        String sCommand = "M" + settings_value + "$" + newLine;
+
+        String sCommand = "M1" + settings_value + "$" + newLine;
         if (mBoundBT) {
             Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
             lclBTServiceInstance.sendData(sCommand);
