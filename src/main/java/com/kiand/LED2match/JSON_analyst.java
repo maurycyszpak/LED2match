@@ -12,8 +12,8 @@ import java.util.Iterator;
 
 
 public class JSON_analyst {
-    private String TAG = "MORRIS-JSON-ANALYST";
-    private SharedPreferences spsFile;
+    private final String TAG = "MORRIS-JSON-ANALYST";
+    private final SharedPreferences spsFile;
 
     public JSON_analyst(SharedPreferences spsJsonFile) {
 
@@ -26,6 +26,7 @@ public class JSON_analyst {
         //Log.d(TAG, "Contents of sJSONbody: " + sJSONbody);
 
         if (sJSONbody.length() == 0) {
+            Log.d(TAG, "JSON content in SP file has length: 0. I would be concerned if I were you.");
             return sReturn;
         }
 
@@ -43,11 +44,12 @@ public class JSON_analyst {
                         //Log.d(TAG, "Checking key = " + sKey + " for \"" + sKeyScanned + "\"");
                     }
                 } catch (JSONException e) {
+                    Log.w(TAG, "JSONException when fetching JSON value: " + e.getMessage());
                     // Something went wrong!
                 }
             }
         } catch (JSONException j) {
-            //makeToast("Unable to parse string to JSON object");
+            Log.w(TAG, "Unable to parse string to JSON object");
         }
         return sReturn;
     }

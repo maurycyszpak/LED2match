@@ -1,4 +1,4 @@
-package com.kiand.LED2match;
+    package com.kiand.LED2match;
 
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
@@ -247,6 +247,7 @@ public class BtCOMMsService extends Service {
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm.ss", Locale.US);
 
                 String sTemp = sDataPart;
+                Log.d(TAG, "FILE json contents received: " + sDataPart);
                 //makeToast("Filesize: " + sTemp.length());
                 if (sTemp.length() < 10) {
                     //factoryReset(); TBC
@@ -255,6 +256,9 @@ public class BtCOMMsService extends Service {
 
                 try {
                     sTemp = sTemp.replaceAll(";\\}", "\\}");
+                    sTemp = sTemp.replace("\\", "\\\\");
+                    //sTemp = sTemp.replaceAll("\";\"", "\",\"");
+                    //Log.d(TAG, "Replacing semicolons to commas?");
                 } catch ( PatternSyntaxException e) {
                     makeToast("Unable to find ';}' in string: " + sTemp);
                 }
@@ -279,6 +283,7 @@ public class BtCOMMsService extends Service {
 
                 JSON_analyst json_analyst = new JSON_analyst(spsControllerData);
                 String sPresets = json_analyst.populatePresetsFromFILE();
+                Log.d(TAG, "received presets. Will execute loop if " + sPresets.length() + " > 0");
                 if (sPresets.length() > 0)  {
                     //wez jeden dżejson i zrob drugi
                     JSONObject jsonObject = null;
@@ -291,9 +296,10 @@ public class BtCOMMsService extends Service {
                             jsonPresets.put(iterKey1, jsonObject.getString(iterKey1));
                             jsonPresets.put(iterKey2, jsonObject.getString(iterKey2));
                         }
-                        //Log.d(TAG, "Formatted JSON object will present: " + jsonPresets.toString());
+                        Log.d(TAG, "Formatted JSON object will present: " + jsonPresets.toString());
                         store_presets_file(jsonPresets.toString());
                     } catch (JSONException e) {
+                        Log.d(TAG, "JSON exception when trying to iterate over presets definition");
                         e.printStackTrace();
                     }
 
@@ -675,9 +681,11 @@ public class BtCOMMsService extends Service {
     public void sendData(String str) {
         byte[] buffer = str.getBytes();
         write(buffer);
+        //write(str);
     }
 
-    private void write(byte[] data) {
+    //private void write(String data) {
+        private void write(byte[] data) {
         if (mConnectingThread != null) {
             try {
                 mConnectingThread.mmSocket.getOutputStream().write(data);
@@ -688,8 +696,15 @@ public class BtCOMMsService extends Service {
             }
         } else {
             Log.d (TAG, "UNABLE to get mConnectingThread");
-
         }
+
+        /*if (mConnectedThread != null) {
+            Log.d (TAG, "Sending string in mConnectedThread");
+            mConnectedThread.write(data + newline);
+        } else {
+            Log.d (TAG, "NEW ERROR: UNABLE to get mConnectedThread");
+
+        }*/
     }
 
     // New Class for Connected Thread

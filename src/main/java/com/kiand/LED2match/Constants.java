@@ -46,6 +46,7 @@ class Constants {
     public static final int LICENSE_TIER_LICENSE_PAGE  = 0;
     public static final int LICENSE_TIER_SEQUENCE_SETTINGS_PAGE  = 1;
     public static final int LICENSE_TIER_SETTINGS_PAGE  = 1;
+    public static final int LICENSE_TIER_SETTINGS_PAGE_MULTIPLIERS  = 2;
     public static final int LICENSE_TIER_MAINTENANCE_PAGE = 2;
     public static final int LICENSE_TIER_LIGHT_SETTINGS_PAGE  = 2;
 

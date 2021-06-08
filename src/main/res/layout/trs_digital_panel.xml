@@ -205,6 +205,21 @@
                 >
 
                 <Button
+                    android:id="@+id/btnLOW"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/digital_panel_button_height"
+                    android:gravity="center"
+                    android:text="LOW"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:onClick="btnLOW"
+                    android:layout_weight="4"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:textSize="@dimen/button_text_size"
+
+                    />
+
+                <Button
                     android:id="@+id/btnL7"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/digital_panel_button_height"
@@ -219,20 +234,7 @@
                     />
 
 
-                <Button
-                    android:id="@+id/btnLOW"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/digital_panel_button_height"
-                    android:gravity="center"
-                    android:text="LOW"
-                    android:layout_marginEnd="@dimen/button_margin"
-                    android:onClick="btnLOW"
-                    android:layout_weight="4"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitCenter"
-                    android:textSize="@dimen/button_text_size"
 
-                    />
 
                 <Button
                     android:id="@+id/btnL9"

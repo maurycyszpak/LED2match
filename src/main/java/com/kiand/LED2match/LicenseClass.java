@@ -32,6 +32,7 @@ public class LicenseClass extends Activity {
     public static final int MAGIC_KEY2 = 0x65;
     TextView textCurrentTier;
     private BtCOMMsService lclBTServiceInstance;
+    private LightSettings.MyHandler mHandler;
     boolean mBoundBT = false;
 
     @Override
@@ -50,7 +51,7 @@ public class LicenseClass extends Activity {
 
         IntentFilter filter = new IntentFilter();
         filter.addAction("controller_data_refreshed_event");
-
+        Log.d(TAG, "mBoundBT = " + mBoundBT);
         if (!mBoundBT) {
             Intent intent = new Intent(this, BtCOMMsService.class);
             bindService(intent, btConnection, Context.BIND_AUTO_CREATE);
@@ -65,13 +66,15 @@ public class LicenseClass extends Activity {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             BtCOMMsService.MyBinder binder = (BtCOMMsService.MyBinder) service;
             lclBTServiceInstance = binder.getService();
+            lclBTServiceInstance.setHandler(mHandler);
             mBoundBT = true;
-
+            Log.d(TAG, "Connected to BT service instance, requesting firmware file (F)");
             request_license_data();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
+            lclBTServiceInstance = null;
             mBoundBT = false;
         }
     };
@@ -159,7 +162,7 @@ public class LicenseClass extends Activity {
                 TextView tv_date = findViewById(R.id.textLicensedDate);
                 tv_date.setText(licensed_date);
 
-                String licensed_tier = json_analyst.getJSONValue("tier");
+                String licensed_tier = json_analyst.getJSONValue("license_tier");
                 TextView tv_tier = findViewById(R.id.textLicensedTier);
                 tv_tier.setText(String.valueOf(licensed_tier));
                 Log.d(TAG, "Completed populating license data");

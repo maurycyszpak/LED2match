@@ -56,14 +56,68 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/lLayout1"
+                android:id="@+id/lLayout_masterslave_header1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_marginTop="20dp"
-                android:baselineAligned="false"
                 android:layout_below="@id/lTopLayout_row1"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginTop="18dp"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:baselineAligned="false">
+
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="@dimen/settings_pg_masterslave_label_width"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:text=""
+                    android:textColor="@color/dark_gray" />
+
+                <TextView
+                    android:id="@+id/text_LEDs_header"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_masterslave_label_width"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="LEDs %"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/dark_gray"
+                    android:textSize="@dimen/settings_pg_masterslave_header_textsize"
+                    android:textStyle="bold"
+                    android:gravity="center_horizontal"
+                    android:theme="@style/EditTextGrayUnderline" />
+
+                <TextView
+                    android:id="@+id/text_TL84s_header"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_masterslave_header_label_width"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="TL84 %"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/dark_gray"
+                    android:textSize="@dimen/settings_pg_masterslave_header_textsize"
+                    android:textStyle="bold"
+                    android:gravity="center_horizontal"
+                    android:theme="@style/EditTextGrayUnderline" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lLayout_masterslave_header2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_marginTop="@dimen/settings_pg_masterslave_row_top_margin"
+                android:baselineAligned="false"
+                android:layout_below="@id/lLayout_masterslave_header1"
                 >
 
 
@@ -71,102 +125,381 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:layout_weight="@dimen/settings_pg_label_width"
+                    android:layout_weight="@dimen/settings_pg_masterslave_label_width"
                     android:gravity="center_vertical"
-                    android:text="Blower on (° C)"
+                    android:text=""
                     android:textColor="@color/dark_gray"
                     />
 
-                <EditText
+                <TextView
+                    android:id="@+id/text_LED_full_header"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="45"
+                    android:text="Full"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:layout_weight="@dimen/settings_pg_value_width"
+                    android:layout_weight="@dimen/settings_pg_masterslave_value_width"
                     android:maxLines="1"
                     android:singleLine="true"
                     android:textColor="@color/black"
-                    android:textSize="13sp"
+                    android:textSize="@dimen/settings_pg_masterslave_header_textsize"
                     android:theme="@style/EditTextGrayUnderline"
                     android:textColorHint="@color/dark_gray"
+                    android:textStyle="bold"
+                    />
+                <TextView
+                    android:id="@+id/text_LED_dim_header"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="DIM"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_masterslave_value_width"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/settings_pg_masterslave_header_textsize"
+                    android:theme="@style/EditTextGrayUnderline"
+                    android:textColorHint="@color/dark_gray"
+                    android:textStyle="bold"
+                    />
+                <TextView
+                    android:id="@+id/text_TL84_full_header"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Full"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_masterslave_value_width"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/settings_pg_masterslave_header_textsize"
+                    android:theme="@style/EditTextGrayUnderline"
+                    android:textColorHint="@color/dark_gray"
+                    android:textStyle="bold"
+                    />
+                <TextView
+                    android:id="@+id/text_TL84_DIM_header"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="DIM"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_masterslave_value_width"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/settings_pg_masterslave_header_textsize"
+                    android:theme="@style/EditTextGrayUnderline"
+                    android:textColorHint="@color/dark_gray"
+                    android:textStyle="bold"
                     />
 
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/lLayout2"
+                android:id="@+id/lLayout_masterslave_row1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_below="@+id/lLayout1"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="@dimen/settings_pg_masterslave_row_top_margin"
                 android:baselineAligned="false"
+                android:layout_below="@id/lLayout_masterslave_header2"
                 >
+
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:layout_weight="@dimen/settings_pg_label_width"
+                    android:layout_weight="@dimen/settings_pg_masterslave_label_width"
                     android:gravity="center_vertical"
-                    android:text="Blower off (° C)"
+                    android:text="Group1"
                     android:textColor="@color/dark_gray"
                     />
 
                 <EditText
+                    android:id="@+id/edit_group1_LED_full"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="42"
+                    android:text="95"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:layout_weight="@dimen/settings_pg_value_width"
+                    android:layout_weight="@dimen/settings_pg_masterslave_value_width"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:textSize="13sp"
                     android:textColor="@color/black"
+                    android:textSize="13sp"
                     android:theme="@style/EditTextGrayUnderline"
                     android:textColorHint="@color/dark_gray"
+                    android:focusableInTouchMode="false"
+                    android:onClick="check_for_edits"
+                    android:inputType="number"
+                    />
+                <EditText
+                    android:id="@+id/edit_group1_LED_dim"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="98"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_masterslave_value_width"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    android:theme="@style/EditTextGrayUnderline"
+                    android:textColorHint="@color/dark_gray"
+                    android:focusableInTouchMode="false"
+                    android:onClick="check_for_edits"
+                    android:inputType="number"
+                    />
+                <EditText
+                    android:id="@+id/edit_group1_TL84_full"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="97"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_masterslave_value_width"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    android:theme="@style/EditTextGrayUnderline"
+                    android:textColorHint="@color/dark_gray"
+                    android:focusableInTouchMode="false"
+                    android:onClick="check_for_edits"
+                    android:inputType="number"
+                    />
+                <EditText
+                    android:id="@+id/edit_group1_TL84_dim"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="96"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_masterslave_value_width"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    android:theme="@style/EditTextGrayUnderline"
+                    android:textColorHint="@color/dark_gray"
+                    android:focusableInTouchMode="false"
+                    android:onClick="check_for_edits"
+                    android:inputType="number"
                     />
 
 
             </LinearLayout>
-
             <LinearLayout
-                android:id="@+id/lLayoutMID"
+                android:id="@+id/lLayout_masterslave_row2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_below="@+id/lLayout2"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="@dimen/settings_pg_masterslave_row_top_margin"
                 android:baselineAligned="false"
+                android:layout_below="@id/lLayout_masterslave_row1"
                 >
+
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:layout_weight="@dimen/settings_pg_label_width"
+                    android:layout_weight="@dimen/settings_pg_masterslave_label_width"
                     android:gravity="center_vertical"
-                    android:text="Blower NOT installed"
+                    android:text="Group2"
                     android:textColor="@color/dark_gray"
                     />
 
+                <EditText
+                    android:id="@+id/edit_group2_LED_full"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="100"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_masterslave_value_width"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    android:theme="@style/EditTextGrayUnderline"
+                    android:textColorHint="@color/dark_gray"
+                    android:focusableInTouchMode="false"
+                    android:onClick="check_for_edits"
+                    android:inputType="number"
+                    />
+                <EditText
+                    android:id="@+id/edit_group2_LED_dim"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="100"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_masterslave_value_width"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    android:theme="@style/EditTextGrayUnderline"
+                    android:textColorHint="@color/dark_gray"
+                    android:focusableInTouchMode="false"
+                    android:onClick="check_for_edits"
+                    android:inputType="number"
+                    />
+                <EditText
+                    android:id="@+id/edit_group2_TL84_full"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="100"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_masterslave_value_width"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    android:theme="@style/EditTextGrayUnderline"
+                    android:textColorHint="@color/dark_gray"
+                    android:focusableInTouchMode="false"
+                    android:onClick="check_for_edits"
+                    android:inputType="number"
+                    />
+                <EditText
+                    android:id="@+id/edit_group2_TL84_dim"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="100"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_masterslave_value_width"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    android:theme="@style/EditTextGrayUnderline"
+                    android:textColorHint="@color/dark_gray"
+                    android:focusableInTouchMode="false"
+                    android:onClick="check_for_edits"
+                    android:inputType="number"
+                    />
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/lLayout_masterslave_row3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_marginTop="@dimen/settings_pg_masterslave_row_top_margin"
+                android:baselineAligned="false"
+                android:layout_below="@id/lLayout_masterslave_row2"
+                >
+
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="@dimen/button_margin"
-                    android:layout_weight="@dimen/settings_pg_value_width"
-                    android:text="NO"
-                    android:textSize="13sp"
-                    android:visibility="invisible"
+                    android:layout_weight="@dimen/settings_pg_masterslave_label_width"
+                    android:gravity="center_vertical"
+                    android:text="Group3"
+                    android:textColor="@color/dark_gray"
                     />
 
+                <EditText
+                    android:id="@+id/edit_group3_LED_full"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="94"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_masterslave_value_width"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    android:theme="@style/EditTextGrayUnderline"
+                    android:textColorHint="@color/dark_gray"
+                    android:focusableInTouchMode="false"
+                    android:onClick="check_for_edits"
+                    android:inputType="number"
+                    />
+                <EditText
+                    android:id="@+id/edit_group3_LED_dim"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="92"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_masterslave_value_width"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    android:theme="@style/EditTextGrayUnderline"
+                    android:textColorHint="@color/dark_gray"
+                    android:focusableInTouchMode="false"
+                    android:onClick="check_for_edits"
+                    android:inputType="number"
+                    />
+                <EditText
+                    android:id="@+id/edit_group3_TL84_full"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="80"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_masterslave_value_width"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    android:theme="@style/EditTextGrayUnderline"
+                    android:textColorHint="@color/dark_gray"
+                    android:focusableInTouchMode="false"
+                    android:onClick="check_for_edits"
+                    android:inputType="number"
+                    />
+                <EditText
+                    android:id="@+id/edit_group3_TL84_dim"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="80"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_masterslave_value_width"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="13sp"
+                    android:theme="@style/EditTextGrayUnderline"
+                    android:textColorHint="@color/dark_gray"
+                    android:focusableInTouchMode="false"
+                    android:onClick="check_for_edits"
+                    android:inputType="number"
+                    />
 
-
-
+m
             </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/lLayout_masterslave_row4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_marginTop="@dimen/settings_pg_masterslave_row_top_margin"
+                android:layout_below="@id/lLayout_masterslave_row3"
+
+                >
+
+            <Button
+                android:id="@+id/btnSaveMultipliers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/button_margin"
+                android:baselineAligned="false"
+                android:text="Save multipliers"
+                android:onClick="saveMultipliers"
+                android:textSize="@dimen/button_text_size"
+                android:background="@color/torso_blue_main"
+                android:textColor="@color/white"
+                android:layout_alignParentEnd="true"
+                />
+            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/lLayout3"
@@ -174,7 +507,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
-                android:layout_below="@+id/lLayoutMID"
+                android:layout_below="@+id/lLayout_masterslave_row4"
                 android:layout_marginTop="30dp"
                 android:baselineAligned="false"
                 >
@@ -346,15 +679,15 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
-                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@color/torso_blue_main"
                     android:baselineAligned="false"
                     android:gravity="center"
-                    android:text="SAVE"
                     android:onClick="saveSettings"
-                    android:textSize="@dimen/button_text_size"
-                    android:background="@color/torso_blue_main"
+                    android:text="SAVE"
                     android:textColor="@color/white"
-                    />
+                    android:textSize="@dimen/button_text_size" />
 
             </RelativeLayout>
 
