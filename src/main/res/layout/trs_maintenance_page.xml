@@ -348,7 +348,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="milli Amps"
-                    android:nextFocusForward="@+id/btnSave"
+                    android:nextFocusForward="@+id/edit_no_of_panels"
                     android:singleLine="true"
                     android:textSize="13sp"
                     android:textColor="@color/black"
@@ -383,7 +383,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="# of panels"
-                    android:nextFocusForward="@+id/btnSave"
+                    android:nextFocusForward="@+id/edit_temp_multiplier"
                     android:singleLine="true"
                     android:textSize="13sp"
                     android:textColor="@color/black"
@@ -392,6 +392,40 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/lLayout10"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/lLayout9"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:id="@+id/temp_reading_multiplier"
+                    android:layout_width="@dimen/maintenance_page_config_label_width"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:text="@string/maintenance_page_setting_5_label"
+                    android:textColor="@color/dark_gray"
+                    />
+
+
+                <EditText
+                    android:id="@+id/edit_temp_corr_factor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="1.00 to 7.20"
+                    android:nextFocusForward="@+id/btnSave"
+                    android:singleLine="true"
+                    android:textSize="13sp"
+                    android:textColor="@color/black"
+                    />
+
+
+            </LinearLayout>
 
 
             <LinearLayout
