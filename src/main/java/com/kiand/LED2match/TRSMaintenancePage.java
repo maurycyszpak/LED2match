@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static com.kiand.LED2match.Constants.CONFIG_SETTINGS;
-import static com.kiand.LED2match.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 import static com.kiand.LED2match.Constants.sNewLine;
 
 public class TRSMaintenancePage extends Activity {
@@ -50,6 +49,7 @@ public class TRSMaintenancePage extends Activity {
     EditText edit_tl84_dim;
     EditText edit_tl84_master_dim;
     EditText edit_no_of_panels;
+    EditText edit_temp_corr_factor;
     Integer btn1Timer = 0;
     Integer btn2Timer = 0;
     Integer btn3Timer = 0;
@@ -166,6 +166,7 @@ public class TRSMaintenancePage extends Activity {
         edit_tl84_dim = findViewById(R.id.edit_DACvalue);
         edit_tl84_master_dim = findViewById(R.id.edit_TL84_fullbright_value);
         edit_no_of_panels = findViewById(R.id.edit_no_of_panels);
+        edit_temp_corr_factor = findViewById(R.id.edit_temp_corr_factor);
         lclHandler = new Handler();
 
         btnL1 = findViewById(R.id.btnL1);
@@ -613,6 +614,9 @@ public class TRSMaintenancePage extends Activity {
         //We need to store the DAC Value if present
         boolean bl_valid_DAC_value;
         boolean bl_valid_psu_power = false;
+        boolean bl_valid_temp_corr = false;
+        float temp_corr_factor = 0.0f;
+
 
 
         String settings_value = "";
@@ -636,6 +640,17 @@ public class TRSMaintenancePage extends Activity {
 
         if (!TextUtils.isEmpty(edit_no_of_panels.getText().toString())) {
             settings_value += string_int_to_hex_4(edit_no_of_panels.getText().toString());
+        } else {
+            settings_value += "0000";
+        }
+
+        if (!TextUtils.isEmpty(edit_temp_corr_factor.getText().toString())) {
+            String strFactor = edit_temp_corr_factor.getText().toString();
+            float i = Float.parseFloat(strFactor);
+            double d = (double) Math.round(i *100)/100;
+            d *= 100;
+            settings_value += string_int_to_hex_4(String.valueOf((int)d));
+            Log.d(TAG, "Passing '" + i + "' to int_to_hex function");
         } else {
             settings_value += "0000";
         }
@@ -679,6 +694,15 @@ public class TRSMaintenancePage extends Activity {
             }
         }
 
+        //validate temp correction
+        try {
+            temp_corr_factor = Float.parseFloat(edit_temp_corr_factor.getText().toString());
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            Log.d(TAG, "Unable to read number as float");
+        }
+        bl_valid_temp_corr = validate_temp_corr_factor(temp_corr_factor);
+
         if (bl_valid_psu_power) {
             SharedPreferences spFile = getSharedPreferences(Constants.PREFS_PSU_CURRENT, 0);
             SharedPreferences.Editor editor = spFile.edit();
@@ -688,9 +712,23 @@ public class TRSMaintenancePage extends Activity {
             editor.apply();
             Log.d(TAG, "PSU current of '" + milliAmpValue + "' stored in prefs file");
             //int value = spFile.getInt("dac_value", 0);
+
+            if (bl_valid_temp_corr) {
+                Log.d(TAG, "Temp correction factor of '" + temp_corr_factor + "' is a valid number");
+            }
         }
         makeToast( "Saving configuration data on Controller.");
 
+    }
+
+    private boolean validate_temp_corr_factor(float factor) {
+
+        if (factor >= 1 && factor <= 7.20) {
+            makeToast("A valid temp correction factor");
+            return true;
+        }
+        makeToast("Invalid temp correction factor");
+        return false;
     }
 
     public String string_int_to_hex_4(String s) {

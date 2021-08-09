@@ -60,6 +60,7 @@
     <string name="maintenance_page_setting_2_label">TL84 Dim</string>
     <string name="maintenance_page_setting_3_label">Max PSU (mA)</string>
     <string name="maintenance_page_setting_4_label"> # of panels</string>
+    <string name="maintenance_page_setting_5_label">Temp correction</string>
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
