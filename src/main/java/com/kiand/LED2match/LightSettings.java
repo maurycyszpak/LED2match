@@ -480,7 +480,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 		barLED395.setProgress(0);
 		barLED660.setProgress(0);
 
-        String sCommand = "S00000000000000000000";
+        String sCommand = "S000000000000000000000000000000";
         sCommand += "$" + sNewLine;
         //if (btService.connected) {
         if (mBoundBT) {
@@ -1863,6 +1863,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 		sColour += String.format("%02X", Integer.valueOf(edBlue.getText().toString()));
 		sColour += String.format("%02X", Integer.valueOf(edLED395.getText().toString()));
 		sColour += String.format("%02X", Integer.valueOf(edLED420.getText().toString()));
+		sColour += "0000000000";
 		sCommand += sColour + "$" + sNewLine;
 
 		if (!power_drain_check(sColour)) {

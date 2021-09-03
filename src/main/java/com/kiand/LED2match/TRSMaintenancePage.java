@@ -397,12 +397,15 @@ public class TRSMaintenancePage extends Activity {
         String ee_tl84dim_tag = "eeprom_tl84_dim_value";
         String ee_tl84masterdim_tag = "eeprom_tl84_master_dim_value";
         String ee_noofpanels_tag = "eeprom_no_of_panels";
+        String ee_tempcorrfactor_tag = "eeprom_temp_corr_factor";
 
         SharedPreferences spConfig = getSharedPreferences(CONFIG_SETTINGS, 0);
         String s_eeprom_PSU_current = spConfig.getString(ee_psucurrent_tag, "");
         String s_eeprom_tl84_dim_value = spConfig.getString(ee_tl84dim_tag, "");
         String s_eeprom_tl84_master_dim_value = spConfig.getString(ee_tl84masterdim_tag,"");
         String s_eeprom_no_of_panels = spConfig.getString(ee_noofpanels_tag, "1");
+        String s_eeprom_temp_corr_factor = spConfig.getString(ee_tempcorrfactor_tag, "1");
+
 
         try {
             if (s_eeprom_PSU_current.length() > 0) {
@@ -442,6 +445,17 @@ public class TRSMaintenancePage extends Activity {
             }
         } catch (NullPointerException e) {
             makeToast("Full brightness TL84 dim value not yet defined for this unit");
+        }
+
+        try {
+            if (s_eeprom_temp_corr_factor.length() > 0) {
+                if (Integer.parseInt(s_eeprom_temp_corr_factor) != 0) {
+                    float f_factor = Integer.parseInt(s_eeprom_temp_corr_factor);
+                    edit_temp_corr_factor.setText(Float.toString(f_factor / 100));
+                }
+            }
+        } catch (NullPointerException e) {
+            makeToast("Temperature correction factor not yet defined for this unit");
         }
 
     }
@@ -667,14 +681,29 @@ public class TRSMaintenancePage extends Activity {
         /*Log.d(TAG, "DAC value of '" + value + "' stored in prefs file");
         makeToast( "DAC value of '" + value + "' successfully stored.");*/
 
-        String sCommand = "M1" + settings_value + "$" + newLine;
-        if (mBoundBT) {
-            Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-            lclBTServiceInstance.sendData(sCommand);
-        } else {
-            Log.d(TAG, "Service btService not connected when sending message: '" + sCommand + "'");
+        //validate temp correction
+        try {
+            temp_corr_factor = Float.parseFloat(edit_temp_corr_factor.getText().toString());
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            Log.d(TAG, "Unable to read number as float");
         }
-        lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+        bl_valid_temp_corr = validate_temp_corr_factor(temp_corr_factor);
+
+        if (bl_valid_temp_corr) {
+            String sCommand = "M1" + settings_value + "$" + newLine;
+            if (mBoundBT) {
+                Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
+                lclBTServiceInstance.sendData(sCommand);
+            } else {
+                Log.d(TAG, "Service btService not connected when sending message: '" + sCommand + "'");
+            }
+            lclUsbServiceInstance.sendBytes(sCommand.getBytes());
+        } else {
+            makeToast("Configuration settings not sent to controller. Please provide valid values");
+        }
+
+
 
         Float ampValue = 0.0f;
         int milliAmpValue = 0;
@@ -694,14 +723,7 @@ public class TRSMaintenancePage extends Activity {
             }
         }
 
-        //validate temp correction
-        try {
-            temp_corr_factor = Float.parseFloat(edit_temp_corr_factor.getText().toString());
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            Log.d(TAG, "Unable to read number as float");
-        }
-        bl_valid_temp_corr = validate_temp_corr_factor(temp_corr_factor);
+
 
         if (bl_valid_psu_power) {
             SharedPreferences spFile = getSharedPreferences(Constants.PREFS_PSU_CURRENT, 0);
@@ -712,10 +734,6 @@ public class TRSMaintenancePage extends Activity {
             editor.apply();
             Log.d(TAG, "PSU current of '" + milliAmpValue + "' stored in prefs file");
             //int value = spFile.getInt("dac_value", 0);
-
-            if (bl_valid_temp_corr) {
-                Log.d(TAG, "Temp correction factor of '" + temp_corr_factor + "' is a valid number");
-            }
         }
         makeToast( "Saving configuration data on Controller.");
 
@@ -723,11 +741,12 @@ public class TRSMaintenancePage extends Activity {
 
     private boolean validate_temp_corr_factor(float factor) {
 
-        if (factor >= 1 && factor <= 7.20) {
-            makeToast("A valid temp correction factor");
+        if (factor >= 0.1 && factor <= 10.0) {
+            //makeToast("A valid temp correction factor");
+
             return true;
         }
-        makeToast("Invalid temp correction factor");
+        makeToast("Invalid temp correction factor. Value should be between 1 and 7.20");
         return false;
     }
 

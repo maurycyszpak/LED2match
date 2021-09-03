@@ -893,6 +893,7 @@ public class TRSDigitalPanel extends Activity {
         String ee_tl84dim_tag = "eeprom_tl84_dim_value";
         String ee_tl84masterdim_tag = "eeprom_tl84_master_dim_value";
         String ee_noofpanels_tag = "eeprom_no_of_panels";
+        String ee_temp_corr_factor_tag = "eeprom_temp_corr_factor";
 
         //logme(TAG, "bluetoothAskReply(V1)");
         String s_eeprom_auto_shutoff = json_analyst.getJSONValue(ee_autoshutoff_tag);
@@ -901,6 +902,7 @@ public class TRSDigitalPanel extends Activity {
         String s_eeprom_tl84_dim_value = json_analyst.getJSONValue(ee_tl84dim_tag);
         String s_eeprom_tl84_master_dim_value = json_analyst.getJSONValue(ee_tl84masterdim_tag);
         String s_eeprom_no_of_panels = json_analyst.getJSONValue(ee_noofpanels_tag);
+        String s_eeprom_temp_corr_factor = json_analyst.getJSONValue(ee_temp_corr_factor_tag);
 
         SharedPreferences spConfig = getSharedPreferences(CONFIG_SETTINGS, 0);
         SharedPreferences.Editor spConfigEditor = spConfig.edit();
@@ -910,6 +912,7 @@ public class TRSDigitalPanel extends Activity {
         spConfigEditor.putString(ee_tl84dim_tag, s_eeprom_tl84_dim_value);
         spConfigEditor.putString(ee_tl84masterdim_tag, s_eeprom_tl84_master_dim_value);
         spConfigEditor.putString(ee_noofpanels_tag, s_eeprom_no_of_panels);
+        spConfigEditor.putString(ee_temp_corr_factor_tag, s_eeprom_temp_corr_factor);
         spConfigEditor.apply();
 
     }
