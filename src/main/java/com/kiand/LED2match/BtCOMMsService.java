@@ -166,7 +166,7 @@ public class BtCOMMsService extends Service {
 
     public void decodeBTResponse(String sDecodedReply) {
         //makeToast("Entering decodeBTResponse: '" + sReply + "'");
-        //Log.d(TAG, "decodeBTResponse() - sDecodedReply = " + sDecodedReply);
+        Log.d(TAG, "decodeBTResponse() - sDecodedReply = " + sDecodedReply);
 
         //String sDecodedReply = sReply;
         //logIncomingData(sDecodedReply);
@@ -183,6 +183,7 @@ public class BtCOMMsService extends Service {
             makeToast("Unable to find ',' in string: " + sDecodedReply);
         }
         String sDataPart = sDecodedReply.substring(sDecodedReply.indexOf(",")+1); // expecting eg "J,255,0,234,123,..."
+        Log.d(TAG, "Data part of the payload: " + sDataPart + ", prefix: " + sPrefix + ", sPrefix = RGBW: " + sPrefix.equals("RGBW"));
 
         if (sPrefix.equals("RGBW")) {
             //Log.d(TAG, "Decoding response, 'RGBW' found");
@@ -355,6 +356,7 @@ public class BtCOMMsService extends Service {
                         Log.d(TAG, "Sending intent to highlight PRG in APP");
                         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                     } else {
+                        Log.d(TAG, "*** NEW debug info - 0:" + sDataArray[0] + ",1:" + sDataArray[1]);
                         if (sDataArray[1].indexOf("^") > 0) {
                             Log.d(TAG, "Found '^' in the name of button to be highlighted!");
                             sDataArray[1] = sDataArray[1].replace("^","");

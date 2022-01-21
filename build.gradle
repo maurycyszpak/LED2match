@@ -22,7 +22,7 @@ android {
         multiDexEnabled true
         compileSdkVersion 28
         versionCode 100
-        versionName "4.10"
+        versionName "5.00"
     }
 
     flavorDimensions "api"
@@ -37,7 +37,7 @@ android {
             // the highest compatible API level, assign version codes in increasing
             // value with API level. To learn more about assigning version codes to
             // support app updates and uploading to Google Play, read Multiple APK Support
-            versionCode 4000 + android.defaultConfig.versionCode
+            versionCode 5000 + android.defaultConfig.versionCode
             versionNameSuffix "-minApi19"
 
         }
@@ -50,7 +50,7 @@ android {
             // the highest compatible API level, assign version codes in increasing
             // value with API level. To learn more about assigning version codes to
             // support app updates and uploading to Google Play, read Multiple APK Support
-            versionCode 3000 + android.defaultConfig.versionCode
+            versionCode 5000 + android.defaultConfig.versionCode
             versionNameSuffix "-minApi14"
 
         }

@@ -274,7 +274,7 @@
                     android:background="@android:color/transparent"
                     android:scaleType="fitCenter"
                     android:textSize="@dimen/button_text_size"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     android:textColor="@color/black"
                     android:padding="@dimen/button_margin_10dp"
                     />

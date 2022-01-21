@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static com.kiand.LED2match.Constants.CONFIG_SETTINGS;
+import static com.kiand.LED2match.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 import static com.kiand.LED2match.Constants.sNewLine;
 
 public class TRSMaintenancePage extends Activity {
@@ -541,9 +542,11 @@ public class TRSMaintenancePage extends Activity {
 
         //placeholder
         if (!v.getTag().toString().equalsIgnoreCase("#N/A")) {
-            String msg = "You are about to the reset operating hours of the lamp.\n\nClick OK to continue.";
             Button b = (Button) v;
-            openDialog(v, msg, v.getTag().toString(), b.getText().toString());
+            String tag = v.getTag().toString();
+            String button_text = b.getText().toString();
+            String msg = "You are about to the reset operating hours of the lamp: '" + button_text + "'.\n\nClick OK to continue.";
+            openDialog(v, msg, v.getTag().toString(), button_text);
         } else {
             makeToast("No lamp assigned to this button");
         }
@@ -566,9 +569,9 @@ public class TRSMaintenancePage extends Activity {
                 .setCancelable(true)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        makeToast("Resetting timer of preset: " + preset);
-                        String sCommand = "X" + preset + sNewLine;
-                        Log.d(TAG, "Resetting timer of preset " + preset + ": " + preset_name);
+                        makeToast("Resetting timer of preset: " + preset_name);
+                        String sCommand = "X," + preset_name + "$" + sNewLine;
+                        Log.d(TAG, "Resetting timer of preset: " + preset_name);
                         if (mBoundBT) {
                             Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
                             lclBTServiceInstance.sendData(sCommand);
@@ -599,6 +602,32 @@ public class TRSMaintenancePage extends Activity {
         Intent intent = new Intent(TRSMaintenancePage.this, LightSettings.class);
         startActivity(intent);
 
+    }
+
+    public void onClickReassign(View v) {
+
+        String sTags = "";
+        if (!btnL1.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL1.getText().toString() + ","; } else { sTags = sTags + ","; }
+        if (!btnL2.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL2.getText().toString() + ","; } else { sTags = sTags + ","; }
+        if (!btnL3.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL3.getText().toString() + ","; } else { sTags = sTags + ","; }
+        if (!btnL4.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL4.getText().toString() + ","; } else { sTags = sTags + ","; }
+        if (!btnL5.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL5.getText().toString() + ","; } else { sTags = sTags + ","; }
+        if (!btnL6.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL6.getText().toString() + ","; } else { sTags = sTags + ","; }
+        //if (!btnL10.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL10.getText().toString() + ","; } else { sTags = sTags + ","; }
+        //if (!btnL11.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL11.getText().toString() + ","; } else { sTags = sTags + ","; }
+        //if (!btnL12.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL12.getText().toString() + ","; } else { sTags = sTags + ","; }
+
+
+        SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        JSON_analyst json_analyst = new JSON_analyst(spFile);
+        String sPresetCounter = json_analyst.getJSONValue("preset_counter");
+
+        int iCtr = ((!sPresetCounter.trim().equals("") ? Integer.valueOf(sPresetCounter) : 0));
+
+        Intent intentLampAssignment = new Intent(TRSMaintenancePage.this, ReassignLamps.class);
+        intentLampAssignment.putExtra("tags", sTags);
+        intentLampAssignment.putExtra("counter", iCtr);
+        startActivity(intentLampAssignment);
     }
 
     public void populateButtonNames() {
@@ -741,12 +770,12 @@ public class TRSMaintenancePage extends Activity {
 
     private boolean validate_temp_corr_factor(float factor) {
 
-        if (factor >= 0.1 && factor <= 10.0) {
+        if (factor >= 0.1 && factor <= 2.0) {
             //makeToast("A valid temp correction factor");
 
             return true;
         }
-        makeToast("Invalid temp correction factor. Value should be between 1 and 7.20");
+        makeToast("Invalid temp correction factor. Value should be between 0.1 and 2.00");
         return false;
     }
 
