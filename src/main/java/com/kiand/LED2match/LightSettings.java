@@ -317,7 +317,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 	};
 
 	public void getJSONFile() {
-		String sCommand = "F" + sNewLine;
+		String sCommand = Constants.FIRMWARE_REQUEST_COMMAND + sNewLine;
 		lclBTServiceInstance.sendData(sCommand);
 		sendDataOverSerial(sCommand);
 		SystemClock.sleep(200);
@@ -480,8 +480,20 @@ public class LightSettings extends Activity implements ServiceConnection {
 		barLED395.setProgress(0);
 		barLED660.setProgress(0);
 
-        String sCommand = "S000000000000000000000000000000";
-        sCommand += "$" + sNewLine;
+		//switch off TL84
+		String sCommand = "X101,TL84,0$" + sNewLine;
+		//if (btService.connected) {
+		if (mBoundBT) {
+			Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
+			lclBTServiceInstance.sendData(sCommand);
+		} else {
+			Log.d(TAG, "Service btService not connected!");
+		}
+		usbService.write(sCommand.getBytes());
+		SystemClock.sleep(50);
+        sCommand = "X102,00000000000000000000";
+		sCommand += ":1$" + sNewLine;
+
         //if (btService.connected) {
         if (mBoundBT) {
             Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
@@ -491,16 +503,7 @@ public class LightSettings extends Activity implements ServiceConnection {
         }
         usbService.write(sCommand.getBytes());
 
-        //switch off TL84
-		sCommand = "S11000";
-		//if (btService.connected) {
-		if (mBoundBT) {
-			Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-			lclBTServiceInstance.sendData(sCommand);
-		} else {
-			Log.d(TAG, "Service btService not connected!");
-		}
-		usbService.write(sCommand.getBytes());
+
 
     }
 
@@ -1852,7 +1855,8 @@ public class LightSettings extends Activity implements ServiceConnection {
 
 	public void onClickSend(View view) {
 		Log.d (TAG, "CLICKSENDING");
-		String sCommand = "S";
+		//String sCommand = "S";
+		String sCommand = "X102,";
 		String sColour = String.format("%02X", Integer.valueOf(edLED65.getText().toString()));
 		sColour += String.format("%02X", Integer.valueOf(edLEDUVA.getText().toString()));
 		sColour += String.format("%02X", Integer.valueOf(edLED50.getText().toString()));
@@ -1863,8 +1867,8 @@ public class LightSettings extends Activity implements ServiceConnection {
 		sColour += String.format("%02X", Integer.valueOf(edBlue.getText().toString()));
 		sColour += String.format("%02X", Integer.valueOf(edLED395.getText().toString()));
 		sColour += String.format("%02X", Integer.valueOf(edLED420.getText().toString()));
-		sColour += "0000000000";
-		sCommand += sColour + "$" + sNewLine;
+		//sColour += "0000000000";
+		sCommand += sColour + ":1$" + sNewLine;
 
 		if (!power_drain_check(sColour)) {
 			return;

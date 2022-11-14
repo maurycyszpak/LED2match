@@ -88,7 +88,7 @@ public class LicenseClass extends Activity {
             String license_code = "";
             String mac = mackme().replaceAll(":", "");
             Log.d(TAG, "MAC: " + mac);
-            String sCommand = "L";
+            String sCommand = "X401,";
             sCommand += mac;
 
             String value = editLicense.getText().toString().trim();
@@ -140,7 +140,7 @@ public class LicenseClass extends Activity {
     private void request_license_data() {
         show_splash_screen();
         makeToast("Please wait - communicating with the controller.");
-        String sCommand = "F";
+        String sCommand = "X600,";
         sCommand = sCommand.concat(System.lineSeparator());
         Log.d(TAG, "requesting: " + sCommand);
         lclBTServiceInstance.sendData(sCommand);

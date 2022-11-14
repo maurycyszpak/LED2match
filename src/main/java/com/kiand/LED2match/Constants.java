@@ -4,6 +4,7 @@ class Constants {
 
     public static final int MAX_PRESET_NUM = 10;
     public static final String TL84_TAG = "TL84";
+    public static final String FIRMWARE_REQUEST_COMMAND = "X600";
     public static final String BLANK_LAMP_DEFINITION = "000,000,000,000,000,000,000,000,000,000";
     public static final String SHAREDPREFS_CURRENT_LAMPS= "lamps_current_values"; //Mauricio
     public static final String SHAREDPREFS_LAMP_DEFINITIONS = "presets_definition"; //Mauricio
@@ -17,6 +18,7 @@ class Constants {
     public static final String PREFS_PSU_CURRENT = "psu_max_power";
     public static final String SP_LAMP_TIMERS = "sequence_lamp_timers"; //Mauricio
     public static final String SP_SEQUENCE_COMMAND_GENERATE = "sequence_command_generated"; //Mauricio
+    public static final String SP_SEQUENCE_COMMAND_GENERATE_NEW = "new_sequence_command_generated"; //Mauricio
     public static final String EXTENDED_LAMPS_MODE_TAG = "XTNDD_MODE"; //Mauricio
     public static final String CUSTOMER_DATA_ARCHIVE_FILENAME = "LED2match_customer_data.zip"; //Mauricio
     public static final String CUSTOMER_LOGO_FILENAME = "customer_logo.png"; //Mauricio
@@ -30,6 +32,7 @@ class Constants {
     public static final String CUSTOMER_DATA_FLAG = "USE_CUSTOMER_DATA";
     public static final String CUSTOMER_LOGO_FLAG = "USE_CUSTOMER_LOGO";
     public static final String CUSTOMER_ZIPFILE_PROCESSED = "CUSTOMER_ZIPFILE_PROCESSED";
+    public static final String S_COMMAND_SEPARATOR = ",";
 
     public static final String BT_CONNECTED_PREFS = "bluetooth_connection_status";
 

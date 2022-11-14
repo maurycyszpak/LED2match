@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 buildscript {
-    ext.kotlin_version = '1.3.50'
+    ext.kotlin_version = '1.5.21'
     repositories {
         google()
         jcenter()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.0'
+        classpath 'com.android.tools.build:gradle:7.3.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -22,7 +22,7 @@ android {
         multiDexEnabled true
         compileSdkVersion 28
         versionCode 100
-        versionName "4.10"
+        versionName "5.00"
     }
 
     flavorDimensions "api"
@@ -37,7 +37,7 @@ android {
             // the highest compatible API level, assign version codes in increasing
             // value with API level. To learn more about assigning version codes to
             // support app updates and uploading to Google Play, read Multiple APK Support
-            versionCode 4000 + android.defaultConfig.versionCode
+            versionCode 5000 + android.defaultConfig.versionCode
             versionNameSuffix "-minApi19"
 
         }
@@ -50,7 +50,7 @@ android {
             // the highest compatible API level, assign version codes in increasing
             // value with API level. To learn more about assigning version codes to
             // support app updates and uploading to Google Play, read Multiple APK Support
-            versionCode 3000 + android.defaultConfig.versionCode
+            versionCode 5000 + android.defaultConfig.versionCode
             versionNameSuffix "-minApi14"
 
         }

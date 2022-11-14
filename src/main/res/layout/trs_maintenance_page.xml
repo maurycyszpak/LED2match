@@ -255,7 +255,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/lLayout5"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:orientation="horizontal">
 
@@ -266,8 +266,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
                     android:text="@string/maintenance_page_setting_1_label"
-                    android:textColor="@color/dark_gray"
-                    />
+                    android:textColor="@color/dark_gray" />
 
 
                 <EditText
@@ -278,8 +277,8 @@
                     android:imeOptions="actionNext"
                     android:nextFocusForward="@+id/edit_DACvalue"
                     android:singleLine="true"
-                    android:textSize="13sp"
                     android:textColor="@color/black"
+                    android:textSize="13sp"
 
 
                     />
@@ -328,7 +327,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/lLayout7"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="@dimen/maintenance_setting_vert_margin"
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:orientation="horizontal">
 
@@ -363,7 +362,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/lLayout8"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="@dimen/maintenance_setting_vert_margin"
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:orientation="horizontal">
 
@@ -374,8 +373,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
                     android:text="@string/maintenance_page_setting_4_label"
-                    android:textColor="@color/dark_gray"
-                    />
+                    android:textColor="@color/dark_gray" />
 
 
                 <EditText
@@ -385,9 +383,8 @@
                     android:hint="# of panels"
                     android:nextFocusForward="@+id/edit_temp_multiplier"
                     android:singleLine="true"
-                    android:textSize="13sp"
                     android:textColor="@color/black"
-                    />
+                    android:textSize="13sp" />
 
 
             </LinearLayout>
@@ -398,7 +395,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/lLayout9"
                 android:layout_marginLeft="@dimen/main_screen_sidemargin"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="@dimen/maintenance_setting_vert_margin"
                 android:layout_marginRight="@dimen/main_screen_sidemargin"
                 android:orientation="horizontal">
 
@@ -409,20 +406,18 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
                     android:text="@string/maintenance_page_setting_5_label"
-                    android:textColor="@color/dark_gray"
-                    />
+                    android:textColor="@color/dark_gray" />
 
 
                 <EditText
                     android:id="@+id/edit_temp_corr_factor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="1.00 to 7.20"
+                    android:hint="0.10 to 2.00"
                     android:nextFocusForward="@+id/btnSave"
                     android:singleLine="true"
-                    android:textSize="13sp"
                     android:textColor="@color/black"
-                    />
+                    android:textSize="13sp" />
 
 
             </LinearLayout>
@@ -480,14 +475,30 @@
                     android:id="@+id/button_back"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/button_backsave_height"
-                    android:layout_marginLeft="5dp"
                     android:layout_alignParentStart="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="@dimen/button_margin_10dp"
                     android:background="@color/torso_gray_button"
                     android:onClick="onClickBack"
                     android:text="back"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/button_text_size" />
+
+                <Button
+                    android:id="@+id/button_reassign"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_backsave_height"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
                     android:layout_marginBottom="@dimen/button_margin_10dp"
-                    android:textSize="@dimen/button_text_size"
-                    android:textColor="@color/black"/>
+                    android:background="@color/torso_gray_button"
+                    android:onClick="onClickReassign"
+                    android:paddingLeft="25dp"
+                    android:paddingRight="25dp"
+                    android:text="Reassign"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/button_text_size" />
 
                 <Button
                     android:id="@+id/button_save"
@@ -509,12 +520,11 @@
                     android:layout_below="@id/button_back"
                     android:layout_alignParentStart="true"
                     android:layout_marginEnd="@dimen/button_margin"
+                    android:backgroundTint="@color/torso_gray_button"
                     android:onClick="openLightPage"
                     android:text="Light settings"
-                    android:textSize="@dimen/button_text_size"
                     android:textColor="@color/black"
-                    android:backgroundTint="@color/torso_gray_button"
-                    />
+                    android:textSize="@dimen/button_text_size" />
 
                 <Button
                     android:id="@+id/btnFactoryReset"
