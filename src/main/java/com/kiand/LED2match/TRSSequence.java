@@ -51,6 +51,7 @@ import static com.kiand.LED2match.Constants.PRESETS_DEFINITION;
 import static com.kiand.LED2match.Constants.SHAREDPREFS_LAMP_DEFINITIONS;
 import static com.kiand.LED2match.Constants.SP_LAMP_TIMERS;
 import static com.kiand.LED2match.Constants.SP_SEQUENCE_COMMAND_GENERATE;
+import static com.kiand.LED2match.Constants.SP_SEQUENCE_COMMAND_GENERATE_NEW;
 import static com.kiand.LED2match.TRSDigitalPanel.SP_SEQUENCE_COMMAND_EXECUTED;
 import static com.kiand.LED2match.TRSDigitalPanel.SP_SEQUENCE_COMMAND_GENERATED;
 import static com.kiand.LED2match.TRSDigitalPanel.TL84_TAG;
@@ -550,13 +551,14 @@ public class TRSSequence extends ListActivity {
     }
 
     public void generateSequenceCommand(View v) {
-
+        String sSequencePrefix = "X201";
         Date dteNow = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         String sPresetName = "";
         int iCounter = 0;
         String sDelay = "0000";
+        String sNewSequenceCommand = "";
 
         ArrayList<String> encodedPresetRGBs = new ArrayList<>();
         ArrayList<String> encodedPresetNames = new ArrayList<>();
@@ -578,21 +580,24 @@ public class TRSSequence extends ListActivity {
         editorLampTimer.apply();
 
         for (String seq_step_entry: listItems) {
-            //makeToast("Processing '" + seq_step_entry + "'");
+            //makeToast("Processing '" + seq_step_entry + "'"); // e.g. '1. D65: 10s', '2. A: 5s'
             try {
-                sPresetName = seq_step_entry.substring(seq_step_entry.indexOf(".") + 2, seq_step_entry.indexOf(":"));
+                sPresetName = seq_step_entry.substring(seq_step_entry.indexOf(".") + 2, seq_step_entry.indexOf(":")); // e.g. 'D65, 'A'
                 if (sPresetName.length() > 0) {
-                    String seq_step_timer = seq_step_entry.substring(seq_step_entry.indexOf(":") + 2, seq_step_entry.length() - 1);
+                    String seq_step_timer = seq_step_entry.substring(seq_step_entry.indexOf(":") + 2, seq_step_entry.length() - 1); //e.g. 10, 5
                     Log.d(TAG, "Processing preset '" + sPresetName + "' with timer '" + seq_step_timer + "'");
-                    writeSequenceToFile(sPresetName, Integer.valueOf(seq_step_timer), String.valueOf(++iCounter));
-
-                    String sHEX = getRGBValues(sPresetName);
-                    sHEX = sHEX.concat(String.format("%04d", Integer.valueOf(seq_step_timer)));
                     int i_flag_TL84 = 0;
                     if (sPresetName.equalsIgnoreCase(TL84_TAG)) {
                         i_flag_TL84 = 1;
                         sDelay = get_tl84_delay();
                     }
+                    sNewSequenceCommand = sNewSequenceCommand.concat(sPresetName).concat(":").concat(String.format("%04d", Integer.valueOf(seq_step_timer))).concat(",");
+                    //sNewSequenceCommand = sNewSequenceCommand.concat(String.valueOf(i_flag_TL84)).concat(sDelay).concat(",");
+                    writeSequenceToFile(sPresetName, Integer.valueOf(seq_step_timer), String.valueOf(++iCounter));
+
+                    String sHEX = getRGBValues(sPresetName);
+                    sHEX = sHEX.concat(String.format("%04d", Integer.valueOf(seq_step_timer)));
+
                     //Log.d(TAG, "Calling updateLampHEX with preset:" + sPresetName + ", HEX: " + sHEX);
                     updateLampHEXsequence("SEQ"+iCounter, sPresetName+ "," + sHEX + ((i_flag_TL84 == 1) ? "01" : "00") + sDelay);
                     //generateSequenceCommand
@@ -608,10 +613,25 @@ public class TRSSequence extends ListActivity {
         }
 
         //Moved from Digital Panel
-        String sSequence = "D";
+        String sSequence = sSequencePrefix;
         duplicateSPFile();
         spLampTimers = getSharedPreferences(Constants.SP_LAMP_TIMERS, 0);
-        TreeMap<String, ?> allEntries = new TreeMap<String, Object>(spLampTimers.getAll());
+        SharedPreferences spLampSequence = getSharedPreferences(SP_SEQUENCE_COMMAND_GENERATE_NEW, 0);
+
+//        TreeMap<String, ?> allEntries = new TreeMap<String, Object>(spLampTimers.getAll());
+//        int i = 1;
+//        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+//            String sVal = entry.getValue().toString();
+//            String[] sBuffer = sVal.split(",");
+//            sSequence = sSequence.concat("0" + i);
+//            sSequence = sSequence.concat(sBuffer[1]);
+//            encodedPresetRGBs.add("0" + i + sBuffer[1]);
+//            encodedPresetNames.add(sBuffer[0]);
+//            Log.d(TAG, "Currently sSequence: " + entry.getKey() + ": " + sSequence);
+//            i++;
+//        }
+
+        TreeMap<String, ?> allEntries = new TreeMap<String, Object>(spLampSequence.getAll());
         int i = 1;
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
             String sVal = entry.getValue().toString();
@@ -623,13 +643,13 @@ public class TRSSequence extends ListActivity {
             Log.d(TAG, "Currently sSequence: " + entry.getKey() + ": " + sSequence);
             i++;
         }
-
+        //strip last comma
+        sNewSequenceCommand = sNewSequenceCommand.substring(0, sNewSequenceCommand.length()-1);
         sSequence = sSequence.concat("^").concat((check_sequence_for_loop()) ? "1" : "0");
         sSequence = sSequence.concat(System.lineSeparator());
-        String sTestString1 = TextUtils.join("", encodedPresetRGBs);
-        String sTestString2 = TextUtils.join(",", encodedPresetNames);
-        String sResult = sTestString1.concat(sTestString2).concat("^").concat((check_sequence_for_loop()) ? "1" : "0");
-        sSequence = "D" + String.format("%02d", i-1) + sResult + System.lineSeparator();
+
+        String sResult = sNewSequenceCommand.concat("^").concat((check_sequence_for_loop()) ? "1" : "0");
+        sSequence = sSequencePrefix + String.format("%02d", i-1) + "," + sResult + System.lineSeparator();
         Log.d(TAG, "Plomien 81: " + sResult);
 
         //lclBTServiceInstance.sendData(sSequence);
@@ -740,14 +760,26 @@ public class TRSSequence extends ListActivity {
     public void writeSequenceToFile(String sLampName, Integer iTimeToDisplay, String seq_id) {
 
         SharedPreferences prefs = getSharedPreferences(SP_SEQUENCE_COMMAND_GENERATE, 0);
+        SharedPreferences new_prefs = getSharedPreferences(SP_SEQUENCE_COMMAND_GENERATE_NEW, 0);
+
         SharedPreferences.Editor editor = prefs.edit();
+        SharedPreferences.Editor new_editor = new_prefs.edit();
 
         JSONArray jsonArray = new JSONArray();
+        JSONArray new_jsonArray = new JSONArray();
+
         jsonArray.put(sLampName);
         jsonArray.put(iTimeToDisplay);
-        //Log.d(TAG, "Writing '" + jsonArray.toString() + "' to Sequence file under id: '" + seq_id + "'");
+
+        new_jsonArray.put(sLampName);
+        new_jsonArray.put(iTimeToDisplay);
+
+        Log.d(TAG, "Writing '" + jsonArray + "' to Sequence file under id: '" + seq_id + "'");
         editor.putString(seq_id, jsonArray.toString());
         editor.apply();
+
+        new_editor.putString(seq_id, jsonArray.toString());
+        new_editor.apply();
     }
 
     private void clear_lamp_timers_sp_file() {

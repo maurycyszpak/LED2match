@@ -23,13 +23,14 @@ public class JSON_analyst {
     String getJSONValue(String sKeyScanned) {
         String sReturn = "";
         String sJSONbody = getJsonContent(spsFile);
-        //Log.d(TAG, "Contents of sJSONbody: " + sJSONbody);
+        Log.d(TAG, "Contents of sJSONbody: " + sJSONbody);
+
 
         if (sJSONbody.length() == 0) {
             Log.d(TAG, "JSON content in SP file has length: 0. I would be concerned if I were you.");
             return sReturn;
         }
-
+        sJSONbody = "{" + sJSONbody + "}";
         try {
             JSONObject jsonStructure = new JSONObject(sJSONbody);
             Iterator<String> iter = jsonStructure.keys();

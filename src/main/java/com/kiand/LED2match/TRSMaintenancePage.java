@@ -48,7 +48,7 @@ public class TRSMaintenancePage extends Activity {
     Button btnL1, btnL2, btnL3, btnL4, btnL5, btnL6;
     EditText edit_psu;
     EditText edit_tl84_dim;
-    EditText edit_tl84_master_dim;
+    EditText edit_tl84_full;
     EditText edit_no_of_panels;
     EditText edit_temp_corr_factor;
     Integer btn1Timer = 0;
@@ -165,7 +165,7 @@ public class TRSMaintenancePage extends Activity {
         setContentView(R.layout.trs_maintenance_page);
         edit_psu = findViewById(R.id.edit_PSU_current);
         edit_tl84_dim = findViewById(R.id.edit_DACvalue);
-        edit_tl84_master_dim = findViewById(R.id.edit_TL84_fullbright_value);
+        edit_tl84_full = findViewById(R.id.edit_TL84_fullbright_value);
         edit_no_of_panels = findViewById(R.id.edit_no_of_panels);
         edit_temp_corr_factor = findViewById(R.id.edit_temp_corr_factor);
         lclHandler = new Handler();
@@ -396,14 +396,14 @@ public class TRSMaintenancePage extends Activity {
         Log.d(TAG, "Populating page with unit config values");
         String ee_psucurrent_tag = "eeprom_PSU_current";
         String ee_tl84dim_tag = "eeprom_tl84_dim_value";
-        String ee_tl84masterdim_tag = "eeprom_tl84_master_dim_value";
+        String ee_tl84full_tag = "eeprom_tl84_full_value";
         String ee_noofpanels_tag = "eeprom_no_of_panels";
         String ee_tempcorrfactor_tag = "eeprom_temp_corr_factor";
 
         SharedPreferences spConfig = getSharedPreferences(CONFIG_SETTINGS, 0);
         String s_eeprom_PSU_current = spConfig.getString(ee_psucurrent_tag, "");
         String s_eeprom_tl84_dim_value = spConfig.getString(ee_tl84dim_tag, "");
-        String s_eeprom_tl84_master_dim_value = spConfig.getString(ee_tl84masterdim_tag,"");
+        String s_eeprom_tl84_full_value = spConfig.getString(ee_tl84full_tag,"");
         String s_eeprom_no_of_panels = spConfig.getString(ee_noofpanels_tag, "1");
         String s_eeprom_temp_corr_factor = spConfig.getString(ee_tempcorrfactor_tag, "1");
 
@@ -429,9 +429,9 @@ public class TRSMaintenancePage extends Activity {
         }
 
         try {
-            if (s_eeprom_tl84_master_dim_value.length() > 0) {
-                if (Integer.valueOf(s_eeprom_tl84_master_dim_value) != 0) {
-                    edit_tl84_master_dim.setText(s_eeprom_tl84_master_dim_value);
+            if (s_eeprom_tl84_full_value.length() > 0) {
+                if (Integer.valueOf(s_eeprom_tl84_full_value) != 0) {
+                    edit_tl84_full.setText(s_eeprom_tl84_full_value);
                 }
             }
         } catch (NullPointerException e) {
@@ -492,7 +492,7 @@ public class TRSMaintenancePage extends Activity {
             switch (entry.getKey()) {
                 case "1":
                     // preset8. Get name of this preset
-                    String preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
+                    String preset_name = json_analyst.getJSONValue("p1_nm");
                     btnL1.setText(entry.getValue().toString());
                     btnL1.setText(preset_name);
                     btnL1.setTag(entry.getValue().toString());
@@ -500,35 +500,35 @@ public class TRSMaintenancePage extends Activity {
                     break;
 
                 case "2":
-                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
+                    preset_name = json_analyst.getJSONValue("p2_nm");
                     btnL2.setText(entry.getValue().toString());
                     btnL2.setText(preset_name);
                     btnL2.setTag(entry.getValue().toString());
                     break;
 
                 case "3":
-                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
+                    preset_name = json_analyst.getJSONValue("p3_nm");
                     btnL3.setText(entry.getValue().toString());
                     btnL3.setText(preset_name);
                     btnL3.setTag(entry.getValue().toString());
                     break;
 
                 case "4":
-                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
+                    preset_name = json_analyst.getJSONValue("p4_nm");
                     btnL4.setText(entry.getValue().toString());
                     btnL4.setText(preset_name);
                     btnL4.setTag(entry.getValue().toString());
                     break;
 
                 case "5":
-                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
+                    preset_name = json_analyst.getJSONValue("p5_nm");
                     btnL5.setText(entry.getValue().toString());
                     btnL5.setText(preset_name);
                     btnL5.setTag(entry.getValue().toString());
                     break;
 
                 case "6":
-                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
+                    preset_name = json_analyst.getJSONValue("p6_nm");
                     btnL6.setText(entry.getValue().toString());
                     btnL6.setText(preset_name);
                     btnL6.setTag(entry.getValue().toString());
@@ -636,12 +636,12 @@ public class TRSMaintenancePage extends Activity {
         JSON_analyst json_analyst = new JSON_analyst(spFile);
 
         //Log.d(TAG, "bluetoothAskReply(V1)");
-        final String sLamp1Name = json_analyst.getJSONValue("preset1_name");
-        final String sLamp2Name = json_analyst.getJSONValue("preset2_name");
-        final String sLamp3Name = json_analyst.getJSONValue("preset3_name");
-        final String sLamp4Name = json_analyst.getJSONValue("preset4_name");
-        final String sLamp5Name = json_analyst.getJSONValue("preset5_name");
-        final String sLamp6Name = json_analyst.getJSONValue("preset6_name");
+        final String sLamp1Name = json_analyst.getJSONValue("p1_nm");
+        final String sLamp2Name = json_analyst.getJSONValue("p2_nm");
+        final String sLamp3Name = json_analyst.getJSONValue("p3_nm");
+        final String sLamp4Name = json_analyst.getJSONValue("p4_nm");
+        final String sLamp5Name = json_analyst.getJSONValue("p5_nm");
+        final String sLamp6Name = json_analyst.getJSONValue("p6_nm");
         //final String sLamp4Name = extractJSONvalue("", "lamp4_name");
 
         setLampName(1, sLamp1Name);
@@ -659,30 +659,46 @@ public class TRSMaintenancePage extends Activity {
         boolean bl_valid_psu_power = false;
         boolean bl_valid_temp_corr = false;
         float temp_corr_factor = 0.0f;
+        String new_settings_value = "";
+        String arduino_command_prefix = "X301,";
+        String var_name;
+        String var_value;
 
 
 
         String settings_value = "";
-        if (!TextUtils.isEmpty(edit_tl84_master_dim.getText().toString())) {
-            settings_value += string_int_to_hex_4(edit_tl84_master_dim.getText().toString());
+        if (!TextUtils.isEmpty(edit_tl84_full.getText().toString())) {
+            settings_value += string_int_to_hex_4(edit_tl84_full.getText().toString());
+            var_name = "TL84_FULL_VALUE";
+            var_value = edit_tl84_full.getText().toString();
+            new_settings_value += arduino_command_prefix + var_name + ":" + var_value + ";";
         } else {
             settings_value += "0000";
         }
 
         if (!TextUtils.isEmpty(edit_tl84_dim.getText().toString())) {
             settings_value += string_int_to_hex_4(edit_tl84_dim.getText().toString());
+            var_name = "TL84_DIM_VALUE";
+            var_value = edit_tl84_dim.getText().toString();
+            new_settings_value += "," + var_name + ":" + var_value + ";";
         } else {
             settings_value += "0000";
         }
 
         if (!TextUtils.isEmpty(edit_psu.getText().toString())) {
             settings_value += string_int_to_hex_4(edit_psu.getText().toString());
+            var_name = "MAX_PSU_CURRENT";
+            var_value = edit_psu.getText().toString();
+            new_settings_value += "," + var_name + ":" + var_value + ";";
         } else {
             settings_value += "0000";
         }
 
         if (!TextUtils.isEmpty(edit_no_of_panels.getText().toString())) {
             settings_value += string_int_to_hex_4(edit_no_of_panels.getText().toString());
+            var_name = "NO_OF_PANELS";
+            var_value = edit_no_of_panels.getText().toString();
+            new_settings_value += "," + var_name + ":" + var_value + ";";
         } else {
             settings_value += "0000";
         }
@@ -693,6 +709,9 @@ public class TRSMaintenancePage extends Activity {
             double d = (double) Math.round(i *100)/100;
             d *= 100;
             settings_value += string_int_to_hex_4(String.valueOf((int)d));
+            var_name = "TEMP_CORR_FACTOR";
+            var_value = String.valueOf(d);
+            new_settings_value += "," + var_name + ":" + var_value + ";";
             Log.d(TAG, "Passing '" + i + "' to int_to_hex function");
         } else {
             settings_value += "0000";
@@ -720,7 +739,8 @@ public class TRSMaintenancePage extends Activity {
         bl_valid_temp_corr = validate_temp_corr_factor(temp_corr_factor);
 
         if (bl_valid_temp_corr) {
-            String sCommand = "M1" + settings_value + "$" + newLine;
+            //String sCommand = "M1" + settings_value + "$" + newLine;
+            String sCommand = new_settings_value + "$" + newLine;
             if (mBoundBT) {
                 Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
                 lclBTServiceInstance.sendData(sCommand);

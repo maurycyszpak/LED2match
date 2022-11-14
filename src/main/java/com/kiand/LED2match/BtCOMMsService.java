@@ -256,9 +256,9 @@ public class BtCOMMsService extends Service {
                 }
 
                 try {
-                    sTemp = sTemp.replaceAll(";\\}", "\\}");
+                    sTemp = sTemp.replaceAll(";$", "");
                     sTemp = sTemp.replace("\\", "\\\\");
-                    //sTemp = sTemp.replaceAll("\";\"", "\",\"");
+                    sTemp = sTemp.replaceAll("\";\"", "\",\"");
                     //Log.d(TAG, "Replacing semicolons to commas?");
                 } catch ( PatternSyntaxException e) {
                     makeToast("Unable to find ';}' in string: " + sTemp);
@@ -270,6 +270,7 @@ public class BtCOMMsService extends Service {
                     makeToast("Unable to find ',' in string: " + sTemp);
                 }
 
+                Log.d(TAG, "Storing contents to JSON file: '" + sTemp + "'");
                 spsEditor.putString("JSON", sTemp);
                 spsEditor.putLong("timestamp", lMillisEpoch);
                 spsEditor.commit();
@@ -297,7 +298,7 @@ public class BtCOMMsService extends Service {
                             jsonPresets.put(iterKey1, jsonObject.getString(iterKey1));
                             jsonPresets.put(iterKey2, jsonObject.getString(iterKey2));
                         }
-                        Log.d(TAG, "Formatted JSON object will present: " + jsonPresets.toString());
+                        Log.d(TAG, "Formatted JSON object will present: " + jsonPresets);
                         store_presets_file(jsonPresets.toString());
                     } catch (JSONException e) {
                         Log.d(TAG, "JSON exception when trying to iterate over presets definition");
@@ -507,7 +508,7 @@ public class BtCOMMsService extends Service {
                         mConnectingThread = new ConnectingThread(device);
                         mConnectingThread.start();
                     } catch (IllegalArgumentException e) {
-                        Log.d(TAG, "PROBLEM WITH MAC ADDRESS : " + e.toString());
+                        Log.d(TAG, "PROBLEM WITH MAC ADDRESS : " + e);
                         Log.d(TAG, "ILLEGAL MAC ADDRESS, STOPPING SERVICE");
                         stopSelf();
                     }
@@ -593,7 +594,7 @@ public class BtCOMMsService extends Service {
                     mConnectingThread = new ConnectingThread(device);
                     mConnectingThread.start();
                 } catch (IllegalArgumentException e) {
-                    Log.d(TAG, "PROBLEM WITH MAC ADDRESS : " + e.toString());
+                    Log.d(TAG, "PROBLEM WITH MAC ADDRESS : " + e);
                     Log.d(TAG, "ILLEGAL MAC ADDRESS, STOPPING SERVICE");
                     stopSelf();
                 }
@@ -620,7 +621,7 @@ public class BtCOMMsService extends Service {
                 temp = (BluetoothSocket) device.getClass().getMethod("createRfcommSocket", int.class).invoke(device,1);
                 Log.d(TAG, "SOCKET CREATED : " + temp.toString());
             } catch (IOException  | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                Log.d(TAG, "SOCKET CREATION FAILED :" + e.toString());
+                Log.d(TAG, "SOCKET CREATION FAILED :" + e);
                 Log.d(TAG, "SOCKET CREATION FAILED, STOPPING SERVICE");
                 stopSelf();
             }
@@ -647,20 +648,20 @@ public class BtCOMMsService extends Service {
                 //mConnectedThread.write("S07030" + newline);
             } catch (IOException e) {
                 try {
-                    Log.d(TAG, "SOCKET CONNECTION FAILED : " + e.toString());
+                    Log.d(TAG, "SOCKET CONNECTION FAILED : " + e);
                     Log.d(TAG, "SOCKET CONNECTION FAILED, STOPPING SERVICE");
 
                     e.printStackTrace();
                     mmSocket.close();
                     stopSelf();
                 } catch (IOException e2) {
-                    Log.d(TAG, "SOCKET CLOSING FAILED :" + e2.toString());
+                    Log.d(TAG, "SOCKET CLOSING FAILED :" + e2);
                     Log.d(TAG, "SOCKET CLOSING FAILED, STOPPING SERVICE");
                     stopSelf();
                     //insert code to deal with this
                 }
             } catch (IllegalStateException e) {
-                Log.d(TAG, "CONNECTED THREAD START FAILED : " + e.toString());
+                Log.d(TAG, "CONNECTED THREAD START FAILED : " + e);
                 Log.d(TAG, "CONNECTED THREAD START FAILED, STOPPING SERVICE");
                 stopSelf();
             }
@@ -792,7 +793,7 @@ public class BtCOMMsService extends Service {
                 mmOutStream.write(msgBuffer);                //write bytes over BT connection via outstream
             } catch (IOException e) {
                 //if you cannot write, close the application
-                Log.d(TAG, "UNABLE TO READ/WRITE " + e.toString());
+                Log.d(TAG, "UNABLE TO READ/WRITE " + e);
                 Log.d(TAG, "UNABLE TO READ/WRITE, STOPPING SERVICE");
                 stopSelf();
             }

@@ -63,6 +63,7 @@ public class TRSSettings extends Activity {
     private static final String password = "hokus";
     private static final int MSG_SHOW_TOAST = 1;
     private static final int TOAST_MESSAGE = 1;
+    private static final String NO_PRESET_TEXT = "#n/a";
     private FileUtilities fileUtilities;
 
 
@@ -80,6 +81,7 @@ public class TRSSettings extends Activity {
     private CountDownTimer shutdownTimer;
     private final int iHours_idle_shutoff = 0;
     private int iMinutes_idle_shutoff = 0;
+    Button btnL1, btnL2, btnL3, btnL4, btnL5, btnL6;
 
     EditText editOff_m;
     EditText edit_TL84_delay;
@@ -345,7 +347,7 @@ public class TRSSettings extends Activity {
             String s_value = json.getJSONValue("slave_group1_led_full");
             if (s_value.length() > 0) {
                 ed = findViewById(R.id.edit_group1_LED_full);
-                int value = (int)s_value.charAt(0);
+                int value = s_value.charAt(0);
                 ed.setText(String.valueOf(value));
             }
         } catch (NullPointerException e) {
@@ -356,7 +358,7 @@ public class TRSSettings extends Activity {
             String s_value = json.getJSONValue("slave_group1_led_dim");
             if (s_value.length() > 0) {
                 ed = findViewById(R.id.edit_group1_LED_dim);
-                int value = (int)s_value.charAt(0);
+                int value = s_value.charAt(0);
                 ed.setText(String.valueOf(value));
             }
         } catch (NullPointerException e) {
@@ -367,7 +369,7 @@ public class TRSSettings extends Activity {
             String s_value = json.getJSONValue("slave_group1_tl84_full");
             if (s_value.length() > 0) {
                 ed = findViewById(R.id.edit_group1_TL84_full);
-                int value = (int)s_value.charAt(0);
+                int value = s_value.charAt(0);
                 ed.setText(String.valueOf(value));
             }
         } catch (NullPointerException e) {
@@ -378,7 +380,7 @@ public class TRSSettings extends Activity {
             String s_value = json.getJSONValue("slave_group1_tl84_dim");
             if (s_value.length() > 0) {
                 ed = findViewById(R.id.edit_group1_TL84_dim);
-                int value = (int)s_value.charAt(0);
+                int value = s_value.charAt(0);
                 ed.setText(String.valueOf(value));
             }
         } catch (NullPointerException e) {
@@ -390,7 +392,7 @@ public class TRSSettings extends Activity {
             String s_value = json.getJSONValue("slave_group2_led_full");
             if (s_value.length() > 0) {
                 ed = findViewById(R.id.edit_group2_LED_full);
-                int value = (int)s_value.charAt(0);
+                int value = s_value.charAt(0);
                 ed.setText(String.valueOf(value));
             }
         } catch (NullPointerException e) {
@@ -401,7 +403,7 @@ public class TRSSettings extends Activity {
             String s_value = json.getJSONValue("slave_group2_led_dim");
             if (s_value.length() > 0) {
                 ed = findViewById(R.id.edit_group2_LED_dim);
-                int value = (int)s_value.charAt(0);
+                int value = s_value.charAt(0);
                 ed.setText(String.valueOf(value));
             }
         } catch (NullPointerException e) {
@@ -412,7 +414,7 @@ public class TRSSettings extends Activity {
             String s_value = json.getJSONValue("slave_group2_tl84_full");
             if (s_value.length() > 0) {
                 ed = findViewById(R.id.edit_group2_TL84_full);
-                int value = (int)s_value.charAt(0);
+                int value = s_value.charAt(0);
                 ed.setText(String.valueOf(value));
             }
         } catch (NullPointerException e) {
@@ -423,7 +425,7 @@ public class TRSSettings extends Activity {
             String s_value = json.getJSONValue("slave_group2_tl84_dim");
             if (s_value.length() > 0) {
                 ed = findViewById(R.id.edit_group2_TL84_dim);
-                int value = (int)s_value.charAt(0);
+                int value = s_value.charAt(0);
                 ed.setText(String.valueOf(value));
             }
         } catch (NullPointerException e) {
@@ -435,7 +437,7 @@ public class TRSSettings extends Activity {
             String s_value = json.getJSONValue("slave_group3_led_full");
             if (s_value.length() > 0) {
                 ed = findViewById(R.id.edit_group3_LED_full);
-                int value = (int)s_value.charAt(0);
+                int value = s_value.charAt(0);
                 ed.setText(String.valueOf(value));
             }
         } catch (NullPointerException e) {
@@ -446,7 +448,7 @@ public class TRSSettings extends Activity {
             String s_value = json.getJSONValue("slave_group3_led_dim");
             if (s_value.length() > 0) {
                 ed = findViewById(R.id.edit_group3_LED_dim);
-                int value = (int)s_value.charAt(0);
+                int value = s_value.charAt(0);
                 ed.setText(String.valueOf(value));
             }
         } catch (NullPointerException e) {
@@ -457,7 +459,7 @@ public class TRSSettings extends Activity {
             String s_value = json.getJSONValue("slave_group3_tl84_full");
             if (s_value.length() > 0) {
                 ed = findViewById(R.id.edit_group3_TL84_full);
-                int value = (int)s_value.charAt(0);
+                int value = s_value.charAt(0);
                 ed.setText(String.valueOf(value));
             }
         } catch (NullPointerException e) {
@@ -468,7 +470,7 @@ public class TRSSettings extends Activity {
             String s_value = json.getJSONValue("slave_group3_tl84_dim");
             if (s_value.length() > 0) {
                 ed = findViewById(R.id.edit_group3_TL84_dim);
-                int value = (int)s_value.charAt(0);
+                int value = s_value.charAt(0);
                 ed.setText(String.valueOf(value));
             }
         } catch (NullPointerException e) {
@@ -550,6 +552,12 @@ public class TRSSettings extends Activity {
 
         editOff_m = findViewById(R.id.editAutoShutOFF_m);
         edit_TL84_delay = findViewById(R.id.edit_TL84_delay);
+        btnL1 = findViewById(R.id.btnL1);
+        btnL2 = findViewById(R.id.btnL2);
+        btnL3 = findViewById(R.id.btnL3);
+        btnL4 = findViewById(R.id.btnL4);
+        btnL5 = findViewById(R.id.btnL5);
+        btnL6 = findViewById(R.id.btnL6);
 
         btnSave = findViewById(R.id.btnSave);
         btnSave.setBackgroundDrawable(getResources().getDrawable(R.drawable.buttonselector_main));
@@ -749,6 +757,32 @@ public class TRSSettings extends Activity {
         return s + "/" + Constants.CUSTOMER_LOGO_FILENAME;
     }
 
+    public void onClickReassign(View v) {
+
+        String sTags = "";
+        if (!btnL1.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL1.getText().toString() + ","; } else { sTags = sTags + ","; }
+        if (!btnL2.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL2.getText().toString() + ","; } else { sTags = sTags + ","; }
+        if (!btnL3.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL3.getText().toString() + ","; } else { sTags = sTags + ","; }
+        if (!btnL4.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL4.getText().toString() + ","; } else { sTags = sTags + ","; }
+        if (!btnL5.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL5.getText().toString() + ","; } else { sTags = sTags + ","; }
+        if (!btnL6.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL6.getText().toString() + ","; } else { sTags = sTags + ","; }
+        //if (!btnL10.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL10.getText().toString() + ","; } else { sTags = sTags + ","; }
+        //if (!btnL11.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL11.getText().toString() + ","; } else { sTags = sTags + ","; }
+        //if (!btnL12.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL12.getText().toString() + ","; } else { sTags = sTags + ","; }
+
+
+        SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        JSON_analyst json_analyst = new JSON_analyst(spFile);
+        String sPresetCounter = json_analyst.getJSONValue("preset_counter");
+
+        int iCtr = ((!sPresetCounter.trim().equals("") ? Integer.valueOf(sPresetCounter) : 0));
+
+        Intent intentLampAssignment = new Intent(TRSSettings.this, ReassignLamps.class);
+        intentLampAssignment.putExtra("tags", sTags);
+        intentLampAssignment.putExtra("counter", iCtr);
+        startActivity(intentLampAssignment);
+    }
+
     public void goto_maintenance(final View view) {
 
         if (BtCore.Connected() || true) {
@@ -903,11 +937,19 @@ public class TRSSettings extends Activity {
         Log.d(TAG, "Entering function saveSettings.");
 
         String settings_value = "";
+        String new_settings_value = "";
+        String arduino_command_prefix = "X301,";
+        String var_name;
+        String var_value;
 
         if (editOff_m.getText().toString().isEmpty()) { iMinutes_idle_shutoff = 0; } else { iMinutes_idle_shutoff = Integer.valueOf(editOff_m.getText().toString()); }
 
         Integer iTimeToOFF = iMinutes_idle_shutoff * 60;
+        var_name = "AUTO_SHUTOFF";
+        var_value = String.valueOf(iTimeToOFF);
         settings_value += string_int_to_hex_4(String.valueOf(iTimeToOFF));
+
+        new_settings_value = arduino_command_prefix + var_name + ":" + var_value + ";";
 
 
         if (!TextUtils.isEmpty(edit_TL84_delay.getText().toString())) {
@@ -918,12 +960,15 @@ public class TRSSettings extends Activity {
         if (bl_edit_tl84delay) {
             settings_value += string_int_to_hex_4(edit_TL84_delay.getText().toString());
             //makeToast("TL84 delay of " + edit_TL84_delay.getText().toString() + "ms stored in the config file.");
+            var_name = "TL84_DELAY";
+            var_value = edit_TL84_delay.getText().toString();
+            new_settings_value += "," + var_name + ":" + var_value  + ";";
             makeToast("Config settings stored.");
         } else {
             settings_value += string_int_to_hex_4("0000");
         }
 
-        String sCommand = "I" + settings_value + "$" + newLine;
+        String sCommand = new_settings_value + "$" + newLine;
         if (mBoundBT) {
             lclBTServiceInstance.sendData(sCommand);
         } else {
@@ -1033,11 +1078,7 @@ public class TRSSettings extends Activity {
         }
 
         Log.d(TAG, "Sending unit config string: " + settings_value);
-
-        /*Log.d(TAG, "DAC value of '" + value + "' stored in prefs file");
-        makeToast( "DAC value of '" + value + "' successfully stored.");*/
-
-        String sCommand = "M2" + settings_value + "$" + newLine;
+        String sCommand = "X302," + settings_value + "$" + newLine;
         if (mBoundBT) {
             Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
             lclBTServiceInstance.sendData(sCommand);

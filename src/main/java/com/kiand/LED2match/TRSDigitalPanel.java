@@ -29,7 +29,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
-import android.support.multidex.BuildConfig;
+//import android.support.multidex.BuildConfig;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -78,6 +78,7 @@ import static com.kiand.LED2match.Constants.BT_CONNECTED_PREFS;
 import static com.kiand.LED2match.Constants.CONFIG_SETTINGS;
 import static com.kiand.LED2match.Constants.DEFAULT_PSU_POWER;
 import static com.kiand.LED2match.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
+import static com.kiand.LED2match.Constants.S_COMMAND_SEPARATOR;
 import static com.kiand.LED2match.Constants.sNewLine;
 import static com.kiand.LED2match.TRSSettings.TL84_DELAY_KEY;
 import static java.lang.System.lineSeparator;
@@ -188,8 +189,9 @@ public class TRSDigitalPanel extends Activity {
             lclBTServiceInstance = ((BtCOMMsService.MyBinder) arg1).getService();
             lclBTServiceInstance.setHandler(mHandler);
             mBoundBT = true;
-            String sCommand = "F" + Constants.sNewLine;
+            String sCommand = "X600" + Constants.sNewLine;
             lclBTServiceInstance.sendData(sCommand);
+            Log.d(TAG, "Command: '" + sCommand + "' sent.");
         }
 
         @Override
@@ -300,6 +302,7 @@ public class TRSDigitalPanel extends Activity {
         }
 
         try {
+            sJSONbody = "{" + sJSONbody + "}";
             JSONObject jsonStructure = new JSONObject(sJSONbody);
             Iterator<String> iter = jsonStructure.keys();
             while (iter.hasNext()) {
@@ -650,6 +653,9 @@ public class TRSDigitalPanel extends Activity {
                     if (!check_for_BT_connection()) {
                         Intent intent = new Intent(TRSDigitalPanel.this, TRSBluetoothDevicesScan.class);
                         startActivity(intent); //or start activity for result? this should be "modal"
+                    } else {
+                        Intent intent = new Intent(TRSDigitalPanel.this, TRSBluetoothDevicesScan.class);
+                        startActivity(intent); //or start activity for result? this should be "modal"
                     }
                 } else {
                     logme(TAG, "Requesting to enable BT on mobile");
@@ -891,7 +897,7 @@ public class TRSDigitalPanel extends Activity {
         String ee_tl84delay_tag = "eeprom_tl84_delay";
         String ee_psucurrent_tag = "eeprom_PSU_current";
         String ee_tl84dim_tag = "eeprom_tl84_dim_value";
-        String ee_tl84masterdim_tag = "eeprom_tl84_master_dim_value";
+        String ee_tl84full_tag = "eeprom_tl84_full_value";
         String ee_noofpanels_tag = "eeprom_no_of_panels";
         String ee_temp_corr_factor_tag = "eeprom_temp_corr_factor";
 
@@ -900,7 +906,7 @@ public class TRSDigitalPanel extends Activity {
         String s_eeprom_tl84_delay = json_analyst.getJSONValue(ee_tl84delay_tag);
         String s_eeprom_PSU_current = json_analyst.getJSONValue(ee_psucurrent_tag);
         String s_eeprom_tl84_dim_value = json_analyst.getJSONValue(ee_tl84dim_tag);
-        String s_eeprom_tl84_master_dim_value = json_analyst.getJSONValue(ee_tl84masterdim_tag);
+        String s_eeprom_tl84_full_value = json_analyst.getJSONValue(ee_tl84full_tag);
         String s_eeprom_no_of_panels = json_analyst.getJSONValue(ee_noofpanels_tag);
         String s_eeprom_temp_corr_factor = json_analyst.getJSONValue(ee_temp_corr_factor_tag);
 
@@ -910,7 +916,7 @@ public class TRSDigitalPanel extends Activity {
         spConfigEditor.putString(ee_tl84delay_tag, s_eeprom_tl84_delay);
         spConfigEditor.putString(ee_psucurrent_tag, s_eeprom_PSU_current);
         spConfigEditor.putString(ee_tl84dim_tag, s_eeprom_tl84_dim_value);
-        spConfigEditor.putString(ee_tl84masterdim_tag, s_eeprom_tl84_master_dim_value);
+        spConfigEditor.putString(ee_tl84full_tag, s_eeprom_tl84_full_value);
         spConfigEditor.putString(ee_noofpanels_tag, s_eeprom_no_of_panels);
         spConfigEditor.putString(ee_temp_corr_factor_tag, s_eeprom_temp_corr_factor);
         spConfigEditor.apply();
@@ -1622,6 +1628,9 @@ public class TRSDigitalPanel extends Activity {
                         sCommand  = "S11000" + convertRGBwithCommasToHexString(sPresetRGBValues) + "$" + sNewLine;
                         BL_TL84_ON = false;
                         send_via_bt(sCommand);
+                        String sCommandSeparator = ",";
+                        sCommand = "X101" + sCommandSeparator + button.getTag().toString() + sCommandSeparator + "1$" + sNewLine;
+                        send_via_bt(sCommand);
 
                         BL_COMMAND_SENT = true;
                         if (!BL_COMMAND_SENT) {
@@ -1979,6 +1988,9 @@ public class TRSDigitalPanel extends Activity {
         send_via_bt(sCommand);
         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
 
+        sCommand = "X101" + S_COMMAND_SEPARATOR + "OFF" + S_COMMAND_SEPARATOR + "1$" + sNewLine;
+        send_via_bt(sCommand);
+
         //blLamp9_ON = true;
         if (!BL_LOW_MODE) {
             btnL9.setBackgroundResource(R.drawable.buttonselector_active);
@@ -2219,7 +2231,7 @@ public class TRSDigitalPanel extends Activity {
 
     private String getFWver_JSON() {
         String sReturn = "";
-        sReturn = extractJSONvalue("", "firmware_version");
+        sReturn = extractJSONvalue("", "fw_vrsn");
 
         return sReturn;
     }
