@@ -168,7 +168,7 @@ public class ServicePageActivity extends Activity implements Serializable {
             }
         });
 
-        if (BtCore.Connected() && LightSettings.check_eeprom_populated()) {
+        if (BtCore.Connected()) {
             checkForNewUnitName();
             //checkForNewLampName();
             checkForLampInstallDate();
@@ -422,7 +422,7 @@ public class ServicePageActivity extends Activity implements Serializable {
     }
 
     /** Defines callbacks for service binding, passed to bindService() */
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -439,7 +439,7 @@ public class ServicePageActivity extends Activity implements Serializable {
         }
     };
 
-    private ServiceConnection btConnection = new ServiceConnection() {
+    private final ServiceConnection btConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -554,7 +554,7 @@ public class ServicePageActivity extends Activity implements Serializable {
             iResult = lclUsbServiceInstance.sendBytes(sCommand.getBytes());
         }
         catch (RuntimeException e) {
-            Toast.makeText(this.getBaseContext(), "Exception: " + e.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.getBaseContext(), "Exception: " + e, Toast.LENGTH_SHORT).show();
         }
         if (iResult < 0) {
             Toast.makeText(this.getBaseContext(), "Stream was null, no request sent", Toast.LENGTH_SHORT).show();
@@ -639,7 +639,7 @@ public class ServicePageActivity extends Activity implements Serializable {
 
             try { iResult = lclUsbServiceInstance.sendBytes(sCommand.getBytes()); }
             catch (RuntimeException e) {
-                Toast.makeText(this.getBaseContext(), "Exception: " + e.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this.getBaseContext(), "Exception: " + e, Toast.LENGTH_SHORT).show();
             }
             if (iResult < 0) {
                 Toast.makeText(this.getBaseContext(), "Stream was null, no request sent", Toast.LENGTH_SHORT).show();

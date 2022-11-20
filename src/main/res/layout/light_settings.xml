@@ -101,20 +101,6 @@
                 android:layout_marginBottom="0dp" >
 
                 <Button
-                    android:layout_weight="2"
-                    android:layout_width="0px"
-                    android:layout_height="@dimen/main_btn_height"
-                    android:background="@drawable/buttonselector_main"
-                    android:text="Read controller"
-                    android:onClick="refresh_controller_data"
-                    android:textColor="@android:color/white"
-                    android:textStyle="bold"
-                    android:layout_marginRight="5dp"
-                    android:visibility="gone"
-                    />
-
-
-                <Button
                     android:layout_weight="5"
                     android:layout_width="0px"
                     android:layout_height="@dimen/main_btn_height"

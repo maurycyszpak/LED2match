@@ -17,8 +17,7 @@ class Constants {
     public static final String SHAREDPREFS_CONTROLLER_FILEIMAGE = "LEDbar.json"; //Mauricio
     public static final String PREFS_PSU_CURRENT = "psu_max_power";
     public static final String SP_LAMP_TIMERS = "sequence_lamp_timers"; //Mauricio
-    public static final String SP_SEQUENCE_COMMAND_GENERATE = "sequence_command_generated"; //Mauricio
-    public static final String SP_SEQUENCE_COMMAND_GENERATE_NEW = "new_sequence_command_generated"; //Mauricio
+    public static final String SP_SEQUENCE_COMMAND_LOCAL = "sequence_steps_local_file"; //Mauricio
     public static final String EXTENDED_LAMPS_MODE_TAG = "XTNDD_MODE"; //Mauricio
     public static final String CUSTOMER_DATA_ARCHIVE_FILENAME = "LED2match_customer_data.zip"; //Mauricio
     public static final String CUSTOMER_LOGO_FILENAME = "customer_logo.png"; //Mauricio

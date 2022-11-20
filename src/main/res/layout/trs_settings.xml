@@ -576,6 +576,47 @@
                     android:theme="@style/EditTextGrayUnderline"
                     />
 
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lLayout5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_screen_sidemargin"
+                android:layout_marginRight="@dimen/main_screen_sidemargin"
+                android:layout_below="@+id/lLayout4"
+                android:layout_marginTop="10dp"
+                android:baselineAligned="false"
+                >
+
+
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_label_width"
+                    android:gravity="center_vertical"
+                    android:text="Exit light delay (mins)"
+                    android:textColor="@color/dark_gray"
+                    />
+
+                <EditText
+                    android:id="@+id/editEmergency_m"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_value_width"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:inputType="number"
+                    android:textSize="13sp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/dark_gray"
+                    android:theme="@style/EditTextGrayUnderline"
+                    android:hint="0"
+                    />
+
 
             </LinearLayout>
 

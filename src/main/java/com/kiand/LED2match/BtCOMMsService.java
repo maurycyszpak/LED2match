@@ -141,6 +141,7 @@ public class BtCOMMsService extends Service {
         if (sBuffer.length() > 0) {
             sBTResponse = sBTResponse.concat(sBuffer);
             if (blHasNewLine(sBTResponse)) {
+                Log.d(TAG, "Received a newline. BTconcatresponse so far: " + sBTResponse);
                 String[] sBufferRows = sBTResponse.split("(\\r|\\n)");
 
                 for (String sBufferRow: sBufferRows) {
@@ -183,12 +184,12 @@ public class BtCOMMsService extends Service {
             makeToast("Unable to find ',' in string: " + sDecodedReply);
         }
         String sDataPart = sDecodedReply.substring(sDecodedReply.indexOf(",")+1); // expecting eg "J,255,0,234,123,..."
-        Log.d(TAG, "Data part of the payload: " + sDataPart + ", prefix: " + sPrefix + ", sPrefix = RGBW: " + sPrefix.equals("RGBW"));
+        //Log.d(TAG, "Data part of the payload: " + sDataPart + ", prefix: " + sPrefix + ", sPrefix = RGBW: " + sPrefix.equals("RGBW"));
 
         if (sPrefix.equals("RGBW")) {
             //Log.d(TAG, "Decoding response, 'RGBW' found");
             if (APP_DEBUG_MODE) {
-                Log.d(TAG, "Decoding response, RGBW found");
+                //Log.d(TAG, "Decoding response, RGBW found");
                 Log.d(TAG, "PAYLOAD: " + sDataPart);
             }
 
@@ -265,7 +266,7 @@ public class BtCOMMsService extends Service {
                 }
 
                 try {
-                    sTemp = sTemp.substring(sTemp.indexOf(",")+1); // expecting "RGBW"
+                    sTemp = sTemp.substring(sTemp.indexOf(",")+1);
                 } catch (StringIndexOutOfBoundsException e) {
                     makeToast("Unable to find ',' in string: " + sTemp);
                 }
@@ -290,13 +291,21 @@ public class BtCOMMsService extends Service {
                     //wez jeden dżejson i zrob drugi
                     JSONObject jsonObject = null;
                     try {
+                        sTemp = "{" + sTemp + "}";
+                        Log.d(TAG, "Trying to create JSON Object on: " + sTemp);
                         jsonObject = new JSONObject(sTemp);
+                        Log.d(TAG, "Trying to parse: " + sTemp);
                         JSONObject jsonPresets = new JSONObject();
                         for (int i=1; i<11; i++) {
-                            String iterKey1 = "preset" + i + "_name";
-                            String iterKey2 = "preset" + i + "_rgbw";
-                            jsonPresets.put(iterKey1, jsonObject.getString(iterKey1));
-                            jsonPresets.put(iterKey2, jsonObject.getString(iterKey2));
+                            String iterKey1 = "p" + i + "_nm";
+                            String iterKey2 = "p" + i + "_def";
+                            if (jsonObject.getString(iterKey1).length() > 0) {
+                                jsonPresets.put(iterKey1, jsonObject.getString(iterKey1));
+                                jsonPresets.put(iterKey2, jsonObject.getString(iterKey2));
+                            } else {
+                                Log.d(TAG, "Not storing preset " + i + ", " + iterKey1 + " = '" + jsonObject.getString(iterKey1) + "'");
+                            }
+
                         }
                         Log.d(TAG, "Formatted JSON object will present: " + jsonPresets);
                         store_presets_file(jsonPresets.toString());
@@ -305,26 +314,9 @@ public class BtCOMMsService extends Service {
                         e.printStackTrace();
                     }
 
-                    /*jsonObject.put("DUPPA", "000,123,123,000,005,123,123,005,000,010");
-                    Iterator<String> keysIterator = jsonObject.keys();
-                    while (keysIterator.hasNext()) {
-                        String key = keysIterator.next();
-                        Log.d(TAG, "key: " + key + ", value: " + jsonObject.getString(key));
-                    }*/
-
                 }
                 Intent intent = new Intent("controller_data_refreshed_event");
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-
-
-                //Also populate unit name
-                String sUnitName = json_analyst.getJSONValue("unit_name");
-                Log.d (TAG, "Unit name extracted from json: " + sUnitName);
-                SharedPreferences spUnitName = getSharedPreferences(SHAREDPREFS_UNITNAME, 0);
-                SharedPreferences.Editor spEditor = spUnitName.edit();
-                spEditorPresets.clear();
-                spEditor.putString("UNIT_NAME", sUnitName);
-                spEditor.apply();
 
 
             } else if ((sDataArray[0]).equals("J")) {
@@ -357,7 +349,7 @@ public class BtCOMMsService extends Service {
                         Log.d(TAG, "Sending intent to highlight PRG in APP");
                         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                     } else {
-                        Log.d(TAG, "*** NEW debug info - 0:" + sDataArray[0] + ",1:" + sDataArray[1]);
+                        //Log.d(TAG, "*** NEW debug info - 0:" + sDataArray[0] + ",1:" + sDataArray[1]);
                         if (sDataArray[1].indexOf("^") > 0) {
                             Log.d(TAG, "Found '^' in the name of button to be highlighted!");
                             sDataArray[1] = sDataArray[1].replace("^","");
@@ -379,6 +371,7 @@ public class BtCOMMsService extends Service {
                                     iButtonIndex = Integer.valueOf(entry.getKey());
                                     Intent intent = new Intent("button_highlight_event");
                                     intent.putExtra("button_index", String.valueOf(iButtonIndex));
+                                    intent.putExtra("button_name", sDataArray[1]);
                                     Log.d(TAG, "Found preset '" + sDataArray[1] + "' under index: " + iButtonIndex);
                                     LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                                 }

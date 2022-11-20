@@ -1,10 +1,8 @@
 package com.kiand.LED2match;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,7 +20,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TimeZone;
-import java.util.TimerTask;
 import java.util.regex.PatternSyntaxException;
 
 import android.app.ActivityManager;
@@ -76,7 +73,9 @@ import org.json.JSONObject;
 import static com.kiand.LED2match.BtScannerActivity.BT_PREFS;
 import static com.kiand.LED2match.Constants.CONFIG_SETTINGS;
 import static com.kiand.LED2match.Constants.DEFAULT_PSU_POWER;
+import static com.kiand.LED2match.Constants.MAX_PRESET_NUM;
 import static com.kiand.LED2match.Constants.PRESETS_DEFINITION_JSONFILE;
+import static com.kiand.LED2match.TRSDigitalPanel.convertStreamToString;
 import static com.kiand.LED2match.TRSSettings.TL84_DELAY_KEY;
 
 public class LightSettings extends Activity implements ServiceConnection {
@@ -329,43 +328,24 @@ public class LightSettings extends Activity implements ServiceConnection {
         messageHandler.post(() -> setTitle("Set Lights" + " " + sUnitName));
     }
 
-    /*private void populateLampNames() {
-        //String sUnitName = "";
-
-        //Log.d(TAG, "bluetoothAskReply(V1)");
-        final String sLamp1Name = extractJSONvalue("", "lamp1_name");
-        final String sLamp2Name = extractJSONvalue("", "lamp2_name");
-        final String sLamp3Name = extractJSONvalue("", "lamp3_name");
-        //final String sLamp4Name = extractJSONvalue("", "lamp4_name");
-
-        messageHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                setLampName(1, sLamp1Name);
-                setLampName(2, sLamp2Name);
-                setLampName(3, sLamp3Name);
-                //setLampName(4, sLamp4Name);
-            }
-        });
-
-    }*/
 
 	public void colorizeLayout(String sPresetName, String sFileName) {
 		String strRGB = "1,0,0,0,0,0,0,0,0,0,0";
+		String strPresetDef = "00000000000000000000";
 		boolean blContinue = true;
 		try {
-			JSONObject jsonObject = new JSONObject(getBodyOfJSONfile());
+			JSONObject jsonObject = new JSONObject(getThisPageDefinitionsJSON());
 			Iterator<String> keysIterator = jsonObject.keys();
 			int i = 1;
 			while (keysIterator.hasNext() && blContinue) {
 				String key = keysIterator.next();
 				String value = jsonObject.getString(key);
-				if (key.contains("_name")) {
+				if (key.contains("_nm")) {
 					//Log.d(TAG, "i=" + i + ", key=" + key + ", value=" + value);
 					if (value.equalsIgnoreCase(sPresetName)) {
 						Log.d(TAG, "Preset '" + sPresetName + "' found on position: " + i);
-						key = "preset" + i + "_rgbw";
-						strRGB = jsonObject.getString(key);
+						key = "p" + i + "_def";
+						strPresetDef = jsonObject.getString(key);
 						blContinue = false;
 					}
 					i++;
@@ -376,8 +356,12 @@ public class LightSettings extends Activity implements ServiceConnection {
 			je.printStackTrace();
 		}
 
-		Log.d(TAG, "File: " + sFileName + ", Key: " + sPresetName + ", Value: " + strRGB);
-		String[] arrColour = strRGB.split(",");
+		Log.d(TAG, "colorize_layout() File: " + sFileName + ", Key: " + sPresetName + ", Value: " + strPresetDef);
+		String[] arrColour = new String[10];
+		for (int i=0; i<10; i++) {
+			arrColour[i] = strPresetDef.substring(i*2, (i+1)*2);
+			//Log.d(TAG, "Led #: " + i + "intensity value in hex: " + arrColour[i]);
+		}
 
 		//int ll = Integer.parseInt(arrColour[0]); //214
 		if (arrColour.length != 10) {
@@ -385,16 +369,17 @@ public class LightSettings extends Activity implements ServiceConnection {
 			return;
 		}
 
-		int led_65 = Integer.parseInt(arrColour[0]);
-		int led_uva = Integer.parseInt(arrColour[1]);
-		int led_50 = Integer.parseInt(arrColour[2]);
-		int led_27 = Integer.parseInt(arrColour[3]);
-		int led_w = Integer.parseInt(arrColour[4]);
-		int led_r = Integer.parseInt(arrColour[5]);
-		int led_g = Integer.parseInt(arrColour[6]);
-		int led_b = Integer.parseInt(arrColour[7]);
-		int led_395 = Integer.parseInt(arrColour[8]);
-		int led_660 = Integer.parseInt(arrColour[9]);
+		int led_65 = Integer.parseInt(arrColour[0], 16);
+		int led_uva = Integer.parseInt(arrColour[1], 16);
+		int led_50 = Integer.parseInt(arrColour[2], 16);
+		int led_27 = Integer.parseInt(arrColour[3], 16);
+		int led_w = Integer.parseInt(arrColour[4], 16);
+		int led_r = Integer.parseInt(arrColour[5], 16);
+		int led_g = Integer.parseInt(arrColour[6], 16);
+		int led_b = Integer.parseInt(arrColour[7], 16);
+		int led_395 = Integer.parseInt(arrColour[8], 16);
+		int led_660 = Integer.parseInt(arrColour[9], 16);
+
 
 		rgbLay.setBackgroundColor(Color.rgb(led_r, led_g, led_b));
 
@@ -429,8 +414,8 @@ public class LightSettings extends Activity implements ServiceConnection {
 		/*menu.add(Menu.NONE, 0, 0, "Scan").setIcon(
 				getResources().getDrawable(R.drawable.icon_scan));*/
 
-		menu.add(Menu.NONE, 1, 1, "Service page").setIcon(
-				getResources().getDrawable(R.drawable.icon_scan));
+		/*menu.add(Menu.NONE, 1, 1, "Service page").setIcon(
+				getResources().getDrawable(R.drawable.icon_scan));*/
 
 		/*menu.add(Menu.NONE, 2, 2, "About").setIcon(
 				getResources().getDrawable(R.drawable.icon_information));*/
@@ -1177,6 +1162,10 @@ public class LightSettings extends Activity implements ServiceConnection {
 			}
 		});
 
+//		public static int convert(int n) {
+//			return Integer.valueOf(String.valueOf(n), 16);
+//		}
+
 		btnStore.setOnClickListener(view -> {
 
 			//popupWaitDialog();
@@ -1212,11 +1201,17 @@ public class LightSettings extends Activity implements ServiceConnection {
 					//spsEditor_write.clear();
 					//spsEditor_write.commit();
 
-					String strComaDel = "";
-					strComaDel += edLED65.getText().toString() + "," +
-							edLEDUVA.getText().toString() + "," + edLED50.getText().toString() + "," + edLED27.getText().toString() + "," +
-							edWhite.getText().toString() + "," + edRed.getText().toString() + "," + edGreen.getText().toString() + "," +
-							edBlue.getText().toString() + "," + edLED395.getText().toString() + "," + edLED420.getText().toString();
+					String strHexPresetString = "";
+					strHexPresetString += String.format("%02X", Integer.valueOf(edLED65.getText().toString())) +
+						String.format("%02X", Integer.valueOf(edLEDUVA.getText().toString())) +
+						String.format("%02X", Integer.valueOf(edLED50.getText().toString())) +
+						String.format("%02X", Integer.valueOf(edLED27.getText().toString())) +
+						String.format("%02X", Integer.valueOf(edWhite.getText().toString())) +
+						String.format("%02X", Integer.valueOf(edRed.getText().toString())) +
+						String.format("%02X", Integer.valueOf(edGreen.getText().toString())) +
+						String.format("%02X", Integer.valueOf(edBlue.getText().toString())) +
+						String.format("%02X", Integer.valueOf(edLED395.getText().toString())) +
+						String.format("%02X", Integer.valueOf(edLED420.getText().toString()));
 
 					//spinnerPresets.setEnabled(false);
 					//getEmptyPresetSlot();
@@ -1224,11 +1219,11 @@ public class LightSettings extends Activity implements ServiceConnection {
 					Log.d(TAG, "Will store new preset at slot: " + slot);
 
 					if (slot > 0) {
-						addNewPreset(slot, edtPresetName.getText().toString().toUpperCase(), strComaDel);
+						addNewPreset(slot, edtPresetName.getText().toString().toUpperCase(), strHexPresetString.toUpperCase());
 					}
 
 					//Toast.makeText(getBaseContext(), edtPresetName.getText().toString().toUpperCase() + " preset saved.\nValues: " + strComaDel, Toast.LENGTH_SHORT).show();
-					spsEditor_write.putString(edtPresetName.getText().toString().toUpperCase(), strComaDel);
+					spsEditor_write.putString(edtPresetName.getText().toString().toUpperCase(), strHexPresetString);
 					spsEditor_write.commit();
 
 					show_splash_screen();
@@ -1268,18 +1263,65 @@ public class LightSettings extends Activity implements ServiceConnection {
 			}
 			sPrefsKeyToBeDeleted = spinner_control_preset_list.getSelectedItem().toString();
 
-			// find which position it is
-			int slot = findGivenPresetSlot(sPrefsKeyToBeDeleted);
-			if (slot > 0) {
-				Log.d(TAG, "Zeroing preset in position: " + slot);
-				addNewPreset(slot, "", ZERO_RGB);
+			Log.d(TAG, "Tryting to remove preset: " + sPrefsKeyToBeDeleted);
+			spnPresetsArrayList.clear();
+			String sCommand = "";
+
+			try {
+				JSONObject jsonObject = new JSONObject(getThisPageDefinitionsJSON());
+
+				for (int i = 0; i < Constants.MAX_PRESET_NUM; i++) {
+					String key1 = "p" + (i+1) + "_nm";
+					String key2 = "p" + (i+1) + "_def";
+					String preset_name = jsonObject.getString(key1);
+					String preset_definition = jsonObject.getString(key2);
+
+					if (key1.contains("_nm") && preset_name.length() > 0) {
+						if (preset_name.equals(sPrefsKeyToBeDeleted)) {
+							Log.d(TAG, "Found preset to be deleted: " + preset_name);
+
+						} else {
+							Log.d(TAG, "Preset: " + preset_name + " stays");
+							spnPresetsArrayList.add(preset_name);
+							sCommand += preset_name + ":" + preset_definition + ",";
+							Log.d(TAG, "Presets command so far: " + sCommand );
+						}
+					}
+				}
+
+
+			} catch (JSONException ioe) {
+				ioe.printStackTrace();
+			}
+			//Collections.sort(spnPresetsArrayList);
+			spnPresetsAdapter.notifyDataSetChanged();
+
+			//send the presets
+			//makeToast("toast me");
+			sCommand = sCommand.substring(0, sCommand.length()-1);
+			String sSize; //FIXDIS
+			if (spnPresetsArrayList.size() < 10) {
+				sSize =  "0" + spnPresetsArrayList.size();
+			} else {
+				sSize = String.valueOf(spnPresetsArrayList.size());
 			}
 
+			sCommand = "X701," + sSize + sCommand;
+			sCommand += "$";
+			sCommand += sNewLine;
+
+			Log.d(TAG, sCommand);
+			if (lclBTServiceInstance.connected) {
+				Log.d(TAG, "New way to send the presets: '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
+				lclBTServiceInstance.sendData(sCommand);
+			} else {
+				Log.d(TAG, "Service btService not connected!");
+			}
 			show_splash_screen();
 
 			if (spnPresetsArrayList.size() > 0) {
-				sendPresetsOverSerial();
-				sendPresetsOverBT();
+				//sendPresetsOverSerial();
+				//sendPresetsOverBT();
 				SystemClock.sleep(100);
 
 				getJSONFile();
@@ -1302,26 +1344,13 @@ public class LightSettings extends Activity implements ServiceConnection {
 	}
 
 	private void refresh_spinner_list() {
-		extractPresetsFromJSONfile();
+		//extractPresetsFromJSONfile();
+		populatePresetSpinnerFromLocalDatasource();
 		spnPresetsAdapter.notifyDataSetChanged();
 		makeToast("Preset list refreshed on dropdopwn");
 	}
 
-	public void extractPresetsFromJson() {
-        SharedPreferences prefs_presets = getSharedPreferences(Constants.PRESETS_DEFINITION, 0);
-
-		spnPresetsArrayList.clear();
-        Map<String,?> keys = prefs_presets.getAll();
-
-        for(Map.Entry<String,?> entry : keys.entrySet()){
-            spnPresetsArrayList.add(entry.getKey());
-            //Log.d("map values",entry.getKey() + ": " + entry.getValue().toString());
-        }
-		Collections.sort(spnPresetsArrayList);
-		spnPresetsAdapter.notifyDataSetChanged();
-	}
-
-	private String getBodyOfJSONfile() {
+	private String getThisPageDefinitionsJSON() { // thi
 		String readString = "";
 		try {
 
@@ -1352,48 +1381,84 @@ public class LightSettings extends Activity implements ServiceConnection {
 		return readString;
 	}
 
-	public void extractPresetsFromJSONfile() {
 
+	public void populatePresetSpinnerFromLocalDatasource() {
+
+		Log.d(TAG, "populatePresetSpinnerFromLocalDatasource_() - new approach to presets");
+		spnPresetsArrayList.clear();
 		try {
-			Log.d(TAG, "inside costam");
 
-			spnPresetsArrayList.clear();
-			JSONObject jsonObject = new JSONObject(getBodyOfJSONfile());
-			Iterator<String> keysIterator = jsonObject.keys();
-			while (keysIterator.hasNext()) {
-				String key = keysIterator.next();
-				String value = jsonObject.getString(key);
-				if (key.contains("_name") && value.length() > 0) {
-					spnPresetsArrayList.add(value);
-					Log.d(TAG, "key: " + key + ", value: " + value + "(" + value.length() + ")");
+			JSONObject jsonPresets = new JSONObject(getBodyOfJSONPresetsfile());
+
+			for (int i=1; i<MAX_PRESET_NUM+1; i++) {
+				String key1 = "p" + i + "_nm";
+				String key2 = "p" + i + "_def";
+
+				if (jsonPresets.has(key1)) {
+					String preset_name = jsonPresets.getString(key1);
+					String preset_def_key = "p" + i + "_def";
+
+					Log.d(TAG, i + ". Adding preset name: " + preset_name + " to the spinner control array list");
+					if (preset_name.length() > 0) {
+						spnPresetsArrayList.add(preset_name);
+					}
 				}
-				if (key.contains("_rgbw")) {
-					Log.d(TAG, "key: " + key + ", value: " + value);
-				}
+
 			}
-		} catch (JSONException ioe) {
+			spnPresetsAdapter.notifyDataSetChanged();
+		} catch (JSONException ex) {
+			Log.e(TAG, "JSON Exception error.");
+			ex.printStackTrace();
+		}
+	}
+
+	private String getBodyOfJSONPresetsfile() { // checks file /files/presets_definition.json
+		String readString = "";
+		try {
+
+			PackageManager m = getPackageManager();
+			String s = getPackageName();
+			try {
+				PackageInfo p = m.getPackageInfo(s, 0);
+				s = p.applicationInfo.dataDir;
+			} catch (PackageManager.NameNotFoundException e) {
+				e.printStackTrace();
+			}
+			Log.d(TAG, "PATH: " + s);
+			File file = new File(s + "/files/" + Constants.PRESETS_DEFINITION_JSONFILE);
+			FileInputStream fin = new FileInputStream(file);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(fin));
+			StringBuilder sb = new StringBuilder();
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line).append(System.lineSeparator());
+			}
+			readString = new String(sb);
+			reader.close();
+			fin.close();
+
+		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		}
-		//Collections.sort(spnPresetsArrayList);
-		spnPresetsAdapter.notifyDataSetChanged();
+		return readString;
 	}
+
 	public int getEmptyPresetSlot() {
 		int i = -1;
 		try {
-			JSONObject jsonObject = new JSONObject(getBodyOfJSONfile());
+			JSONObject jsonObject = new JSONObject(getThisPageDefinitionsJSON());
 			Iterator<String> keysIterator = jsonObject.keys();
 			int j =0;
 			while (keysIterator.hasNext()) {
 				String key = keysIterator.next();
 				String value = jsonObject.getString(key);
+				Log.d(TAG, "checking key: " + key + ", value: " + value);
 
-				if (key.contains("_name")) {
+				if (key.contains("_nm")) {
 					j++;
-					if (value.length() == 0) {
-						return j;
-					}
 				}
 			}
+			return j +1;
 		} catch (JSONException ioe) {
 			ioe.printStackTrace();
 		}
@@ -1403,14 +1468,14 @@ public class LightSettings extends Activity implements ServiceConnection {
 	public int findGivenPresetSlot(String presetName) {
 		int i = -1;
 		try {
-			JSONObject jsonObject = new JSONObject(getBodyOfJSONfile());
+			JSONObject jsonObject = new JSONObject(getThisPageDefinitionsJSON());
 			Iterator<String> keysIterator = jsonObject.keys();
 			int j =0;
 			while (keysIterator.hasNext()) {
 				String key = keysIterator.next();
 				String value = jsonObject.getString(key);
 
-				if (key.contains("_name")) {
+				if (key.contains("_nm")) {
 					j++;
 					if (value.equalsIgnoreCase(presetName)) {
 						return j;
@@ -1426,9 +1491,9 @@ public class LightSettings extends Activity implements ServiceConnection {
 	private void addNewPreset(int slot, String preset_name, String rgbw) {
 		Log.d(TAG, "addNewPreset_() - adding preset '" + preset_name + "' in slot: " + slot);
 		try {
-			JSONObject jsonPresets = new JSONObject(getBodyOfJSONfile());
-			String key1 = "preset" + slot + "_name";
-			String key2 = "preset" + slot + "_rgbw";
+			JSONObject jsonPresets = new JSONObject(getThisPageDefinitionsJSON());
+			String key1 = "p" + slot + "_nm";
+			String key2 = "p" + slot + "_def";
 			jsonPresets.put(key1, preset_name);
 			jsonPresets.put(key2, rgbw);
 			store_presets_file(jsonPresets.toString());
@@ -1609,18 +1674,22 @@ public class LightSettings extends Activity implements ServiceConnection {
 		String sReturn = "";
 		String sJSONbody = getJsonBody(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE);
 		if (sJSONbody.length() == 0) {
+			Log.e(TAG, Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE + " has an empty JSON body");
 			return sReturn;
 		}
 
 		try {
+			//sJSONbody = "{" + sJSONbody + "}";
+			//Log.d(TAG, "Trying to parse the BODY:" + sJSONbody);
 			JSONObject jsonStructure = new JSONObject(sJSONbody);
 			Iterator<String> iter = jsonStructure.keys();
 			while (iter.hasNext()) {
 				String sKey = iter.next();
+				//Log.d(TAG, "Evaluating key '" + sKey + "' to match: " + sKeyScanned);
 				try {
 					if (sKey.equals(sKeyScanned)) {
 						Object objValue = jsonStructure.get(sKey);
-						//makeToast("key = " + key + ", value = " + value.toString());
+						//makeToast("key = " + sKey + ", value = " + objValue.toString());
 						sReturn = objValue.toString();
 					}
 				} catch (JSONException e) {
@@ -1628,6 +1697,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 				}
 			}
 		} catch (JSONException j) {
+			Log.w(TAG, "Unable to parse string to JSON object");
 			makeToast("Unable to parse string to JSON object");
 		}
 		return sReturn;
@@ -1675,21 +1745,6 @@ public class LightSettings extends Activity implements ServiceConnection {
 		spnPresetsAdapter.notifyDataSetChanged();
 	}
 
-
-    public void refresh_controller_data(View view) {
-
-        //popupWaitDialog();
-		//sendDataOverSerialAsync(sNewLine);
-		String sCommand = "F" + sNewLine;
-		lclBTServiceInstance.sendData(sCommand);
-		sendDataOverSerial(sCommand);
-		SystemClock.sleep(700);
-		getLampsState();
-		getUnitName();
-		onClickRead(null);
-		refreshSeekBars();
-    }
-
     public void getLampsState() {
 		String sCommand = "U" + sNewLine;
 		lclBTServiceInstance.sendData(sCommand);
@@ -1697,20 +1752,9 @@ public class LightSettings extends Activity implements ServiceConnection {
 		SystemClock.sleep(200);
 	}
 
-	public void popupWaitDialog() {
-		pDialog = new ProgressDialog(context); // this = YourActivity
-		pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		pDialog.setTitle("Loading");
-		pDialog.setMessage("Loading. Please wait...");
-		pDialog.setIndeterminate(true);
-		pDialog.setCanceledOnTouchOutside(false);
-		pDialog.show();
-	}
-
-
 	public String getJsonBody(String sSharedPrefsFilename) {
 		SharedPreferences spsValues = getSharedPreferences(sSharedPrefsFilename, 0);
-		return spsValues.getString("JSON", "");
+		return "{" + spsValues.getString("JSON", "") + "}";
 
 	}
 
@@ -1720,55 +1764,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 
 	}
 
-    public void onClickRead(View v) {
-		/*String sCommand = "F" + sNewLine;
-		sendDataOverSerial(sCommand);
 
-
-		getLampsState();
-		SystemClock.sleep(100);
-
-
-
-		if (sJsonBody.length() == 0) {
-			makeToast("No data found in '" + SHAREDPREFS_CONTROLLER_FILEIMAGE + "' file.");
-			return;
-		}*/
-
-		SharedPreferences spsPresets = getSharedPreferences(APP_SHAREDPREFS_READ, 0);
-		SharedPreferences.Editor spsEditor = spsPresets.edit();
-
-		spsEditor.clear();
-		String sJsonBody = getJsonBody(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE);
-		String sValue = extractJSONvalue(sJsonBody, "preset_counter");
-		makeToast("preset_counter: " + sValue);
-
-		int iPresetCount = 0;
-
-		if (sValue.length() != 0) {
-			if (Integer.valueOf(sValue) == 0) {
-				makeToast("No presets stored in the controller's memory.");
-			}
-			iPresetCount = Integer.valueOf(sValue);
-		} else {
-			makeToast("No presets stored in the controller's memory.");
-		}
-
-		for (int i=0; i<iPresetCount;i++) {
-			int j = i+1;
-			String sKeyName = "preset" + j + "_name";
-			String sPresetName = extractJSONvalue(sJsonBody, sKeyName); //eg. "GTI+"
-			sKeyName = "preset" + j + "_rgbw";
-			String sPresetValue = extractJSONvalue(sJsonBody, sKeyName); //eg. "123,123,255,000,000,064,006,255,100,001"
-			spsEditor.putString(sPresetName, sPresetValue);
-			spnPresetsArrayList.add(sPresetName.toUpperCase());
-		}
-
-		spsEditor.commit();
-		refreshItemsOnSpinner();
-		SystemClock.sleep(50);
-		//messageHandler.sendEmptyMessage(MSG_HIDE_PROGRESS_DIALOG);
-	}
 
 	public void sendDataOverSerial(String data) {
 		Log.d (TAG, "sendDataOverSerial: '" + data.replaceAll("\r", "").replaceAll("\n", "") + "'");
@@ -1794,20 +1790,20 @@ public class LightSettings extends Activity implements ServiceConnection {
 		}
 	}*/
 
-    public String getRGBValues(String sPresetName) {
-        String sPresetRGB = "";
-
-        SharedPreferences spsValues = getSharedPreferences(Constants.PRESETS_DEFINITION, 0);
-        Map<String, ?> allEntries = spsValues.getAll();
-        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-            String sVal = entry.getKey();
-            if (sVal.equalsIgnoreCase(sPresetName)) {
-                String sValue = entry.getValue().toString();
-                sPresetRGB = convertRGBwithCommasToHexString(sValue);
-            }
-        }
-        return sPresetRGB;
-    }
+//    public String getRGBValues(String sPresetName) {
+//        String sPresetRGB = "";
+//
+//        SharedPreferences spsValues = getSharedPreferences(Constants.PRESETS_DEFINITION, 0);
+//        Map<String, ?> allEntries = spsValues.getAll();
+//        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+//            String sVal = entry.getKey();
+//            if (sVal.equalsIgnoreCase(sPresetName)) {
+//                String sValue = entry.getValue().toString();
+//                sPresetRGB = convertRGBwithCommasToHexString(sValue);
+//            }
+//        }
+//        return sPresetRGB;
+//    }
 
     public String convertRGBwithCommasToHexString(String sRGB) {
         String sValue = "";
@@ -1836,21 +1832,6 @@ public class LightSettings extends Activity implements ServiceConnection {
 		String sCommand = "T" + sNewLine;
 		sendDataOverSerial(sCommand);
 		SystemClock.sleep(250);
-	}
-
-	public void setUiEnabled(boolean bool) {
-		if (bool) {
-			btnSend.setBackgroundDrawable(getApplicationContext().getResources().getDrawable(R.drawable.buttonselector_main));
-			stopButton.setBackgroundDrawable(getApplicationContext().getResources().getDrawable(R.drawable.buttonselector_main));
-			startButton.setBackgroundDrawable(getApplicationContext().getResources().getDrawable(R.drawable.button_idle_disabled));
-		} else {
-			btnSend.setBackgroundDrawable(getApplicationContext().getResources().getDrawable(R.drawable.button_idle_disabled));
-			stopButton.setBackgroundDrawable(getApplicationContext().getResources().getDrawable(R.drawable.button_idle_disabled));
-			startButton.setBackgroundDrawable(getApplicationContext().getResources().getDrawable(R.drawable.buttonselector_main));
-		}
-		startButton.setEnabled(!bool);
-		btnSend.setEnabled(bool);
-		stopButton.setEnabled(bool);
 	}
 
 	public void onClickSend(View view) {
@@ -2025,13 +2006,6 @@ public class LightSettings extends Activity implements ServiceConnection {
 
 	}
 
-	/*private Float get_max_power() {
-		SharedPreferences spFile = getSharedPreferences(Constants.PREFS_PSU_CURRENT, 0);
-		Float fPower = spFile.getFloat("psu_current", 0.0f) * 1000;
-		Log.d (TAG, "Max power for this PSU is " + fPower);
-		return fPower;
-	}*/
-
 	private int get_max_power() {
 		int power = 0;
 		Log.d(TAG, "get_max_power_() - checking max PSU power from " + CONFIG_SETTINGS);
@@ -2059,37 +2033,6 @@ public class LightSettings extends Activity implements ServiceConnection {
 		dlg.setMessage(message);
 		dlg.setIcon(R.drawable.icon_main);
 		dlg.show();
-	}
-
-	public void refreshItemsOnSpinner() {
-
-		SharedPreferences spsValues = getSharedPreferences(APP_SHAREDPREFS_READ, 0);
-		String sVal;
-
-		Log.d(TAG, "Reading APP_SHAREDPREFS_READ and refreshing spnPresetsArrayList and spinnerPresets");
-		spnPresetsArrayList.clear();
-		//read in APP_SHAREDPREFS_READ;
-		//For each pair of key-> value add item to the list
-		//refresh the list and the spinner
-		Map<String, ?> allEntries = spsValues.getAll();
-		for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-			sVal = entry.getKey();
-			spnPresetsArrayList.add(sVal);
-		}
-		Collections.sort(spnPresetsArrayList);
-		spnPresetsAdapter.notifyDataSetChanged();
-	}
-
-	public static boolean check_eeprom_populated() {
-		boolean blEEPROM_populated = false;
-		String sEEPROMbyte = LightSettings.bluetoothAskReply("Y");
-		//Toast.makeText(this.getBaseContext(),"Application title '" + unitName + "' set.", Toast.LENGTH_SHORT).show();
-		Log.d(TAG, "EEPROM first byte:" + sEEPROMbyte);
-		if (sEEPROMbyte.equals("")) sEEPROMbyte = Integer.toString(255);
-		if (Integer.parseInt(sEEPROMbyte) < 255) {
-			blEEPROM_populated = true;
-		}
-		return blEEPROM_populated;
 	}
 
 	@Override
@@ -2139,7 +2082,24 @@ public class LightSettings extends Activity implements ServiceConnection {
         }
 
         Log.d(TAG, "Executing costam");
-		extractPresetsFromJSONfile();
+		//clearPresetsDataSource();
+		populatePresetSpinnerFromLocalDatasource();
+	}
+
+	private void clearPresetsDataSource() {
+		PackageManager m = getPackageManager();
+		String s = getPackageName();
+		try {
+			PackageInfo p = m.getPackageInfo(s, 0);
+			s = p.applicationInfo.dataDir;
+			File file = new File(s + "/files/" + Constants.PRESETS_DEFINITION_JSONFILE);
+			if (!file.delete()) {
+				makeToast("Unable to refresh presets - unable to delete local preset definition file");
+			}
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	private final BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
@@ -2176,8 +2136,6 @@ public class LightSettings extends Activity implements ServiceConnection {
         Intent bindingIntent = new Intent(this, service);
         bindService(bindingIntent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
-
-
 
     private void setFilters() {
         IntentFilter filter = new IntentFilter();
@@ -2295,12 +2253,6 @@ public class LightSettings extends Activity implements ServiceConnection {
         unregisterReceiver(mUsbReceiver);
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
         unbindService(usbConnection);
-
-        if (isMyServiceRunning(BtCOMMsService.class)) {
-        	//Log.d(TAG, "BtCOMMS srvc is running. Unregistering and unbinding from btService");
-			//unregisterReceiver(btReceiver);
-			//unbindService(btConnection);
-		}
 	}
 
 	@Override
@@ -2426,15 +2378,6 @@ public class LightSettings extends Activity implements ServiceConnection {
 		return true;
 	}
 
-
-
-	//
-	// private void openSequencerView()
-	// {
-	// Intent sequencerIntent = new Intent(this, BtSequencerActivity.class);
-	// startActivity(sequencerIntent);
-	// }
-
 	private void openJSONReport() {
 
 		String sJSONbody = getJsonBody(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE);
@@ -2470,110 +2413,6 @@ public class LightSettings extends Activity implements ServiceConnection {
 		dlg.show();
 	}
 
-	public void btnClicked(View v) {
-		SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
-		String sPresetRGBValues = "000";
-		String sCommand = "";
-		JSON_analyst json_analyst = new JSON_analyst(spFile);
-
-		switch_all_off();
-
-		switch (v.getId()) {
-			case R.id.btnL1:
-				blLamp1_ON = true;
-				btnL1.setBackgroundResource(R.drawable.buttonselector_active);
-				btnL1.setTextColor(Color.BLACK);
-
-				sPresetRGBValues = json_analyst.getJSONValue("preset1_rgbw");
-				String[] sRGB = sPresetRGBValues.split(",");
-				for (int i=0; i < sRGB.length; i++) {
-					if (i < 9) {
-						sCommand = "S0" + (i+1) + sRGB[i] + sNewLine;
-						usbService.write(sCommand.getBytes());
-					} else {
-						sCommand = "S" + (i+1) + sRGB[i] + sNewLine;
-						usbService.write(sCommand.getBytes());
-					}
-					//Toast.makeText(context, sCommand, Toast.LENGTH_LONG).show();
-				}
-
-				barLED65.setProgress(Integer.valueOf(sRGB[0]));
-				barLEDUVA.setProgress(Integer.valueOf(sRGB[1]));
-				barLED50.setProgress(Integer.valueOf(sRGB[2]));
-				barLED27.setProgress(Integer.valueOf(sRGB[3]));
-				barWhite.setProgress(Integer.valueOf(sRGB[4]));
-				barRed.setProgress(Integer.valueOf(sRGB[5]));
-				barGreen.setProgress(Integer.valueOf(sRGB[6]));
-				barBlue.setProgress(Integer.valueOf(sRGB[7]));
-				barLED395.setProgress(Integer.valueOf(sRGB[8]));
-				barLED660.setProgress(Integer.valueOf(sRGB[9]));
-
-				break;
-
-			case R.id.btnL2:
-				blLamp2_ON = true;
-				btnL2.setBackgroundResource(R.drawable.buttonselector_active);
-				btnL2.setTextColor(Color.BLACK);
-
-				sPresetRGBValues = json_analyst.getJSONValue("preset2_rgbw");
-				sRGB = sPresetRGBValues.split(",");
-				for (int i=0; i < sRGB.length; i++) {
-					if (i < 9) {
-						sCommand = "S0" + (i+1) + sRGB[i] + sNewLine;
-						usbService.write(sCommand.getBytes());
-					} else {
-						sCommand = "S" + (i+1) + sRGB[i] + sNewLine;
-						usbService.write(sCommand.getBytes());
-					}
-					//Toast.makeText(context, sCommand, Toast.LENGTH_LONG).show();
-				}
-
-				barLED65.setProgress(Integer.valueOf(sRGB[0]));
-				barLEDUVA.setProgress(Integer.valueOf(sRGB[1]));
-				barLED50.setProgress(Integer.valueOf(sRGB[2]));
-				barLED27.setProgress(Integer.valueOf(sRGB[3]));
-				barWhite.setProgress(Integer.valueOf(sRGB[4]));
-				barRed.setProgress(Integer.valueOf(sRGB[5]));
-				barGreen.setProgress(Integer.valueOf(sRGB[6]));
-				barBlue.setProgress(Integer.valueOf(sRGB[7]));
-				barLED395.setProgress(Integer.valueOf(sRGB[8]));
-				barLED660.setProgress(Integer.valueOf(sRGB[9]));
-
-				break;
-
-			case R.id.btnL3:
-				blLamp3_ON = true;
-				btnL3.setBackgroundResource(R.drawable.buttonselector_active);
-				btnL3.setTextColor(Color.BLACK);
-
-				sPresetRGBValues = json_analyst.getJSONValue("preset3_rgbw");
-				sRGB = sPresetRGBValues.split(",");
-				for (int i=0; i < sRGB.length; i++) {
-					if (i < 9) {
-						sCommand = "S0" + (i+1) + sRGB[i] + sNewLine;
-						usbService.write(sCommand.getBytes());
-					} else {
-						sCommand = "S" + (i+1) + sRGB[i] + sNewLine;
-						usbService.write(sCommand.getBytes());
-					}
-					//Toast.makeText(context, sCommand, Toast.LENGTH_LONG).show();
-				}
-
-				barLED65.setProgress(Integer.valueOf(sRGB[0]));
-				barLEDUVA.setProgress(Integer.valueOf(sRGB[1]));
-				barLED50.setProgress(Integer.valueOf(sRGB[2]));
-				barLED27.setProgress(Integer.valueOf(sRGB[3]));
-				barWhite.setProgress(Integer.valueOf(sRGB[4]));
-				barRed.setProgress(Integer.valueOf(sRGB[5]));
-				barGreen.setProgress(Integer.valueOf(sRGB[6]));
-				barBlue.setProgress(Integer.valueOf(sRGB[7]));
-				barLED395.setProgress(Integer.valueOf(sRGB[8]));
-				barLED660.setProgress(Integer.valueOf(sRGB[9]));
-
-				break;
-		}
-	}
-
 	public void switch_all_off() {
 		blLamp1_ON = false;
 		btnL1.setBackgroundResource(R.drawable.buttonselector_main);
@@ -2598,29 +2437,6 @@ public class LightSettings extends Activity implements ServiceConnection {
 		//botLay.setBackgroundColor(Color.rgb(rr, gg, bb));
 		rgbLay.setBackgroundColor(Color.rgb((ww/2+rr/2), (ww/2+gg/2), (ww/2+bb/2)));
 	}
-
-	int rgbColor = 0;
-	private void writeData(View view, String fileName, String sData) {
-		BufferedWriter bufferWriter = null;
-
-		//writeToFile(timeStamp, lampRecord);
-		try {
-			FileOutputStream fileWrite = openFileOutput(fileName, Context.MODE_PRIVATE);
-			bufferWriter = new BufferedWriter(new OutputStreamWriter(fileWrite));
-			bufferWriter.write(sData);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				assert bufferWriter != null;
-				bufferWriter.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 
 	public static boolean blHasNewLine(String sBuffer) {
 		String newline = "\n";
@@ -2658,114 +2474,28 @@ public class LightSettings extends Activity implements ServiceConnection {
 		return sReply.trim();
 	}
 
-	private String readData(View view, String fileName) {
-		String output = "";
-		BufferedReader bufferedReader = null;
-		StringBuilder result = new StringBuilder();
-		try {
-			FileInputStream fileInputStream = openFileInput(fileName);
-			bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
-			String line;
-			while ((line = bufferedReader.readLine()) != null) {
-				result.append(line);// + "\r\n");
-				output = line.trim();
-			}
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				bufferedReader.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return output;
-	}
-
-	private void sendPresetsOverBT_old () {
-		SharedPreferences spsValues = getSharedPreferences(APP_SHAREDPREFS_WRITE, 0);
-		//SharedPreferences spsValues = getSharedPreferences(PRESETS_DEFINITION, 0);
-		String sVal;
-		String sKey;
-		ArrayList<String> encodedPresetNames = new ArrayList<>();
-		ArrayList<String> encodedPresetRGBs = new ArrayList<>();
-
-		//For each pair of key-> value add item to the list
-		//refresh the list and the spinner
-		Log.d(TAG, "BT Sending: O - to clear all presets on Controller\n");
-
-		if (lclBTServiceInstance.connected) {
-			String string = "O" + sNewLine;
-			Log.d(TAG, "Service btService connected. Calling lclBTServiceInstance.sendData with message '" + string.replace("\n", "\\n").replace("\r", "\\r") + "'");
-			lclBTServiceInstance.sendData(string);
-		} else {
-			Log.d(TAG, "Service btService not connected!");
-		}
-		SystemClock.sleep(50);
-
-		Map<String, ?> allEntries = spsValues.getAll();
-		int i = 1;
-		for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-			sKey = entry.getKey();
-			sVal = entry.getValue().toString();
-
-			Log.d(TAG, "Sending '" + sVal + "' to convert to HEX");
-			encodedPresetRGBs.add(convertRGBwithCommasToHexString(sVal));
-			encodedPresetNames.add(sKey);
-		}
-
-		String sSize;
-		if (encodedPresetNames.size() < 10) {
-			sSize =  "0" + encodedPresetNames.size();
-		} else {
-			sSize = String.valueOf(encodedPresetNames.size());
-		}
-
-		String sCommand = "Q" + sSize + TextUtils.join("", encodedPresetRGBs) + TextUtils.join(",", encodedPresetNames) + "$\n";
-		Log.d(TAG, sCommand);
-		if (lclBTServiceInstance.connected) {
-			Log.d(TAG, "New way to send the presets: '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-			lclBTServiceInstance.sendData(sCommand);
-		} else {
-			Log.d(TAG, "Service btService not connected!");
-		}
-	}
-
 	private void sendPresetsOverBT () {
 		int iTotal = 0;
 		String sVal;
-		String sKey;
+		String sKeyName;
+		String sKeyDef;
 		ArrayList<String> encodedPresetNames = new ArrayList<>();
-		ArrayList<String> encodedPresetRGBs = new ArrayList<>();
+		ArrayList<String> encodedPresetDefs = new ArrayList<>();
 		try {
-			JSONObject jsonObject = new JSONObject(getBodyOfJSONfile());
+			JSONObject jsonObject = new JSONObject(getThisPageDefinitionsJSON());
 			for (int i=1; i<11; i++) {
-				sKey = jsonObject.getString("preset" + i + "_name");
-				encodedPresetNames.add(sKey);
-				if (sKey.length() > 0) {
+				sKeyName = jsonObject.getString("p" + i + "_nm");
+				sKeyDef = jsonObject.getString("p" + i + "_def");
+				encodedPresetNames.add(sKeyName);
+				encodedPresetDefs.add(sKeyDef);
+				if (sKeyName.length() > 0) {
 					iTotal++;
 				}
-				Log.d(TAG, "Preset index: " + i + ", name: " + sKey + ", preset counter: " + iTotal);
-				sVal = convertRGBwithCommasToHexString(jsonObject.getString("preset" + i + "_rgbw"));
-				encodedPresetRGBs.add(sVal);
+				Log.d(TAG, "Preset index: " + i + ", name: " + sKeyName + ", preset counter: " + iTotal + ", preset definition: " + sKeyDef);
 			}
 		} catch (JSONException je) {
 			je.printStackTrace();
 		}
-
-		Log.d(TAG, "BT Sending: O - to clear all presets on Controller\n");
-
-		if (lclBTServiceInstance.connected) {
-			String string = "O" + sNewLine;
-			Log.d(TAG, "Service btService connected. Calling lclBTServiceInstance.sendData with message '" + string.replace("\n", "\\n").replace("\r", "\\r") + "'");
-			lclBTServiceInstance.sendData(string);
-		} else {
-			Log.d(TAG, "Service btService not connected!");
-		}
-		SystemClock.sleep(50);
 
 		String sSize; //FIXDIS
 		if (iTotal < 10) {
@@ -2774,11 +2504,18 @@ public class LightSettings extends Activity implements ServiceConnection {
 			sSize = String.valueOf(iTotal);
 		}
 
-		String sCommand = "Q" + sSize + TextUtils.join("", encodedPresetRGBs) + TextUtils.join(",", encodedPresetNames) + "$\n";
-		Log.d(TAG, sCommand);
+		String sCommandNew = "X701," + sSize;
+		for (int i=0; i<encodedPresetDefs.size(); i++) {
+			sCommandNew = sCommandNew.concat(encodedPresetNames.get(i) + ":" + encodedPresetDefs.get(i) + ",");
+		}
+		sCommandNew = sCommandNew.substring(0, sCommandNew.length()-1);
+        sCommandNew += "$";
+		sCommandNew += sNewLine;
+
+		Log.d(TAG, sCommandNew);
 		if (lclBTServiceInstance.connected) {
-			Log.d(TAG, "New way to send the presets: '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
-			lclBTServiceInstance.sendData(sCommand);
+			Log.d(TAG, "New way to send the presets: '" + sCommandNew.replace("\n", "\\n").replace("\r", "\\r") + "'");
+			lclBTServiceInstance.sendData(sCommandNew);
 		} else {
 			Log.d(TAG, "Service btService not connected!");
 		}
@@ -2836,10 +2573,6 @@ public class LightSettings extends Activity implements ServiceConnection {
 		dlgProgressSplash.show();
 	}
 
-	private void hideSplash() {
-		dlgProgressSplash.dismiss();
-	}
-
 	public void USBconcatResponse(String sBuffer) {
 
 		//Toast.makeText(this, "USBConcat:" + sBuffer, Toast.LENGTH_SHORT).show();
@@ -2857,37 +2590,6 @@ public class LightSettings extends Activity implements ServiceConnection {
                 sUSBResponse = "";
             }
         }
-	}
-
-	static public class MyAsyncTask extends AsyncTask<Void, Void, String> {
-
-		private final Context mContext;
-		private final UsbCOMMsService mUsbService;
-
-		private final String sBuffer;
-
-		public MyAsyncTask(Context context, UsbCOMMsService usbService, String buffer) {
-			mContext = context;
-			mUsbService = usbService;
-			sBuffer = buffer;
-		}
-		@Override protected String doInBackground(Void... params) {
-			String sResult = "";
-
-			if (mUsbService != null) {
-				SerialCommsLog SC_log = new SerialCommsLog("OUT", sBuffer);
-				SC_log.appendMessage("OUT >> ", sBuffer);
-				mUsbService.write(sBuffer.getBytes());
-			} else {
-				//makeToast("Serial port is not open. Unable to send.");
-			}
-
-			return sResult;
-
-		}
-		@Override protected void onPostExecute(String result) {
-
-		}
 	}
 
 	public class JSONFileRefresh extends AsyncTask<Void, Void, String> {
@@ -2946,18 +2648,6 @@ public class LightSettings extends Activity implements ServiceConnection {
 			super.onPostExecute(result);
 			//mHandler.sendEmptyMessage(MSG_HIDE_PROGRESS_DIALOG);
 
-		}
-	}
-
-
-	class firstTask extends TimerTask {
-		@Override
-		public void run(){
-			LightSettings.this.runOnUiThread(() -> {
-				long starttime = 0;
-				long millis = System.currentTimeMillis() - starttime;
-				int seconds = (int) (millis/1000);
-			});
 		}
 	}
 
