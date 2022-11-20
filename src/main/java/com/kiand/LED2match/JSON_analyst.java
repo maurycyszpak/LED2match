@@ -23,14 +23,15 @@ public class JSON_analyst {
     String getJSONValue(String sKeyScanned) {
         String sReturn = "";
         String sJSONbody = getJsonContent(spsFile);
-        Log.d(TAG, "Contents of sJSONbody: " + sJSONbody);
+        //Log.d(TAG, "Contents of sJSONbody: " + sJSONbody);
 
 
         if (sJSONbody.length() == 0) {
-            Log.d(TAG, "JSON content in SP file has length: 0. I would be concerned if I were you.");
+            //Log.d(TAG, "JSON content in SP file has length: 0. I would be concerned if I were you.");
             return sReturn;
         }
         sJSONbody = "{" + sJSONbody + "}";
+        //Log.d(TAG, "Now contents of sJSONbody: " + sJSONbody);
         try {
             JSONObject jsonStructure = new JSONObject(sJSONbody);
             Iterator<String> iter = jsonStructure.keys();
@@ -98,13 +99,14 @@ public class JSON_analyst {
 
         ArrayList<String> presetNames = new ArrayList<>();
         for (int i=1; i<11; i++) {
-            String sPresetName = getJSONValue("preset" + i + "_name");
-            String sPresetRGB = getJSONValue("preset" + i + "_rgbw");
+            String sPresetName = getJSONValue("p" + i + "_nm");
+            String sPresetRGB = getJSONValue("p" + i + "_def");
             if (sPresetName.length() > 0) {
                 String sTemp = sPresetName + ":" + sPresetRGB;
+                Log.d(TAG, "Adding '" + sTemp + "' to presetNames array");
                 presetNames.add(sTemp);
             }
         }
-        return TextUtils.join(";", presetNames);
+        return TextUtils.join(",", presetNames);
     }
 }

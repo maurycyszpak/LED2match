@@ -85,6 +85,7 @@ public class TRSSettings extends Activity {
 
     EditText editOff_m;
     EditText edit_TL84_delay;
+    EditText edit_emergency_delay;
 
     Float versionName = BuildConfig.VERSION_CODE / 1000.0f;
     public String apkVersion = "v." + versionName;
@@ -278,18 +279,16 @@ public class TRSSettings extends Activity {
     };
 
     private void trigger_temp_reading() {
+        String sCommand = "X303" + Constants.sNewLine;
         if (mBound) {
-            String sCommand = "G" + Constants.sNewLine;
             lclUsbServiceInstance.sendBytes(sCommand.getBytes());
         }
 
         if (mBoundBT) {
-            SystemClock.sleep(500);
+            SystemClock.sleep(100);
             try {
-                String sSequence = "G";
                 Log.d(TAG, "Requesting temp reading from controller");
-                sSequence = sSequence.concat(System.lineSeparator());
-                lclBTServiceInstance.sendData(sSequence);
+                lclBTServiceInstance.sendData(sCommand);
             } catch (NullPointerException e) {
                 Log.d(TAG, "NullPointerException when sending command via Bluetooth");
             }
@@ -303,6 +302,7 @@ public class TRSSettings extends Activity {
         String ee_psucurrent_tag = "eeprom_PSU_current";
         String ee_tl84dim_tag = "eeprom_tl84_dim_value";
         String ee_tl84masterdim_tag = "eeprom_tl84_master_dim_value";
+        String ee_emergency_tag = "eeprom_emergency_light_delay";
 
         SharedPreferences spConfig = getSharedPreferences(CONFIG_SETTINGS, 0);
         SharedPreferences.Editor spConfigEditor = spConfig.edit();
@@ -311,6 +311,9 @@ public class TRSSettings extends Activity {
         String s_eeprom_PSU_current = spConfig.getString(ee_psucurrent_tag, "");
         String s_eeprom_tl84_dim_value = spConfig.getString(ee_tl84dim_tag, "");
         String s_eeprom_tl84_master_dim_value = spConfig.getString(ee_tl84masterdim_tag,"");
+        String s_eeprom_emergency_light_delay = spConfig.getString(ee_emergency_tag,"");
+
+        Log.d(TAG, "emergency light delay: " + s_eeprom_emergency_light_delay);
 
         try {
             if (s_eeprom_tl84_delay.length() > 0) {
@@ -327,6 +330,15 @@ public class TRSSettings extends Activity {
             }
         } catch (NullPointerException e) {
             makeToast("TL84 dim value not yet defined for this unit");
+        }
+
+        try {
+            if (s_eeprom_emergency_light_delay.length() > 0) {
+                int iMinutes = Integer.parseInt(s_eeprom_emergency_light_delay);
+                edit_emergency_delay.setText(String.valueOf(iMinutes));
+            }
+        } catch (NullPointerException e) {
+            makeToast("Emergency light delay value not yet defined for this unit");
         }
     }
 
@@ -552,6 +564,7 @@ public class TRSSettings extends Activity {
 
         editOff_m = findViewById(R.id.editAutoShutOFF_m);
         edit_TL84_delay = findViewById(R.id.edit_TL84_delay);
+        edit_emergency_delay = findViewById(R.id.editEmergency_m);
         btnL1 = findViewById(R.id.btnL1);
         btnL2 = findViewById(R.id.btnL2);
         btnL3 = findViewById(R.id.btnL3);
@@ -957,6 +970,11 @@ public class TRSSettings extends Activity {
             bl_edit_tl84delay = validate_tl84_delay(Integer.valueOf(edit_TL84_delay.getText().toString()));
         }
 
+        if (TextUtils.isEmpty(edit_emergency_delay.getText().toString())) {
+            //makeToast("NO BUENO");
+            edit_emergency_delay.setText("0");
+        }
+
         if (bl_edit_tl84delay) {
             settings_value += string_int_to_hex_4(edit_TL84_delay.getText().toString());
             //makeToast("TL84 delay of " + edit_TL84_delay.getText().toString() + "ms stored in the config file.");
@@ -967,6 +985,10 @@ public class TRSSettings extends Activity {
         } else {
             settings_value += string_int_to_hex_4("0000");
         }
+
+        var_name = "EMERGENCY_LIGHT_DELAY";
+        var_value = edit_emergency_delay.getText().toString();
+        new_settings_value += "," + var_name + ":" + var_value  + ";";
 
         String sCommand = new_settings_value + "$" + newLine;
         if (mBoundBT) {

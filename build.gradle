@@ -21,8 +21,8 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         compileSdkVersion 28
-        versionCode 100
-        versionName "5.00"
+        versionCode 10
+        versionName "6.0"
     }
 
     flavorDimensions "api"
@@ -37,8 +37,8 @@ android {
             // the highest compatible API level, assign version codes in increasing
             // value with API level. To learn more about assigning version codes to
             // support app updates and uploading to Google Play, read Multiple APK Support
-            versionCode 5000 + android.defaultConfig.versionCode
-            versionNameSuffix "-minApi19"
+            versionCode 6000 + android.defaultConfig.versionCode
+            //versionNameSuffix "-minApi19"
 
         }
 
