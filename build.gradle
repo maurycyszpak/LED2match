@@ -17,7 +17,7 @@ apply plugin: 'kotlin-android'
 
 android {
     defaultConfig {
-        applicationId "com.kiand.LED2match"
+        applicationId "com.morris.LEDbar_controller"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         compileSdkVersion 28

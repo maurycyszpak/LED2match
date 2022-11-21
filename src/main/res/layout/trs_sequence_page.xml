@@ -5,7 +5,7 @@
     android:layout_height="fill_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context="com.kiand.LED2match.TRSSequence"
+    tools:context="com.morris.LEDbar_controller.TRSSequence"
     android:background="@color/app_background">
 
     <RelativeLayout
