@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/menu_color_picker"
-        android:actionProviderClass="com.kiand.LED2match.HsvColorActionProvider"
+        android:actionProviderClass="com.morris.LEDbar_controller.HsvColorActionProvider"
         android:showAsAction="ifRoom"
         android:title="Color Picker"/>
 </menu>
