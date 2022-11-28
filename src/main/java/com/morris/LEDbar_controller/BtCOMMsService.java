@@ -314,6 +314,7 @@ public class BtCOMMsService extends Service {
                 }
                 Intent intent = new Intent("controller_data_refreshed_event");
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                Log.d (TAG, "controller_data_refreshed_event intent sent!");
 
 
             } else if ((sDataArray[0]).equals("J")) {

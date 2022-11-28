@@ -123,7 +123,7 @@ public class TRSLightOperatingHours extends Activity {
 
         SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
         JSON_analyst json_analyst = new JSON_analyst(spFile);
-        String sFWVersion = json_analyst.getJSONValue("firmware_version");
+        String sFWVersion = json_analyst.getJSONValue("fw_vrsn");
         TextView tvInfoBox = findViewById(R.id.infobox);
         String version_line = "FW Version: " + sFWVersion;
         tvInfoBox.setText(getString(R.string.system_footer) + "\n" + version_line);
@@ -272,46 +272,48 @@ public class TRSLightOperatingHours extends Activity {
         String preset_name = "";
         String preset_timer = "";
 
-        //Log.d(TAG, "Checking time elapsed for preset: " + btnL1.getTag().toString());
-        //String time_elapsed = json_analyst.getJSONValue(btnL1.getTag().toString() + "_time_elapsed");
-
-        Log.d(TAG, "Pulling name of preset: " + btnL1.getTag().toString() + "_name");
+        Log.d(TAG, "Pulling name of preset: " + btnL1.getTag().toString() + "_nm");
         if (!btnL1.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-            Log.d(TAG, "button1 tag = " + btnL1.getTag().toString());
-            preset_name = json_analyst.getJSONValue(btnL1.getTag().toString() + "_name");
-            preset_timer = json_analyst.getJSONValue(btnL1.getTag().toString() + "_time_elapsed");
+            String preset_tag = btnL1.getTag().toString();
+            Log.d(TAG, "button1 tag = " + preset_tag);
+            preset_name = json_analyst.getJSONValue(preset_tag + "_nm");
+            preset_timer = json_analyst.getJSONValue(preset_tag.replace("p", "preset") + "_time_elapsed");
             btnL1.setText(preset_name + sNewLine + convert_secs_to_hhmm(preset_timer));
         }
 
         if (!btnL2.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
+            String preset_tag = btnL2.getTag().toString();
             Log.d(TAG, "button2 tag = " + btnL2.getTag().toString());
-            preset_name = json_analyst.getJSONValue(btnL2.getTag().toString() + "_name");
-            preset_timer = json_analyst.getJSONValue(btnL2.getTag().toString() + "_time_elapsed");
+            preset_name = json_analyst.getJSONValue(preset_tag + "_nm");
+            preset_timer = json_analyst.getJSONValue(preset_tag.replace("p", "preset") + "_time_elapsed");
             btnL2.setText(preset_name + sNewLine + convert_secs_to_hhmm(preset_timer));
         }
 
         if (!btnL3.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-            Log.d(TAG, "button3 tag = " + btnL3.getTag().toString());
-            preset_name = json_analyst.getJSONValue(btnL3.getTag().toString() + "_name");
-            preset_timer = json_analyst.getJSONValue(btnL3.getTag().toString() + "_time_elapsed");
+            String preset_tag = btnL3.getTag().toString();
+            preset_name = json_analyst.getJSONValue(preset_tag + "_nm");
+            preset_timer = json_analyst.getJSONValue(preset_tag.replace("p", "preset") + "_time_elapsed");
             btnL3.setText(preset_name + sNewLine + convert_secs_to_hhmm(preset_timer));
         }
 
         if (!btnL4.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-            preset_name = json_analyst.getJSONValue(btnL4.getTag().toString() + "_name");
-            preset_timer = json_analyst.getJSONValue(btnL4.getTag().toString() + "_time_elapsed");
+            String preset_tag = btnL4.getTag().toString();
+            preset_name = json_analyst.getJSONValue(preset_tag + "_nm");
+            preset_timer = json_analyst.getJSONValue(preset_tag.replace("p", "preset") + "_time_elapsed");
             btnL4.setText(preset_name + sNewLine + convert_secs_to_hhmm(preset_timer));
         }
 
         if (!btnL5.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-            preset_name = json_analyst.getJSONValue(btnL5.getTag().toString() + "_name");
-            preset_timer = json_analyst.getJSONValue(btnL5.getTag().toString() + "_time_elapsed");
+            String preset_tag = btnL5.getTag().toString();
+            preset_name = json_analyst.getJSONValue(preset_tag + "_nm");
+            preset_timer = json_analyst.getJSONValue(preset_tag.replace("p", "preset") + "_time_elapsed");
             btnL5.setText(preset_name + sNewLine + convert_secs_to_hhmm(preset_timer));
         }
 
         if (!btnL6.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
-            preset_name = json_analyst.getJSONValue(btnL6.getTag().toString() + "_name");
-            preset_timer = json_analyst.getJSONValue(btnL6.getTag().toString() + "_time_elapsed");
+            String preset_tag = btnL6.getTag().toString();
+            preset_name = json_analyst.getJSONValue(preset_tag + "_nm");
+            preset_timer = json_analyst.getJSONValue(preset_tag.replace("p", "preset") + "_time_elapsed");
             btnL6.setText(preset_name + sNewLine + convert_secs_to_hhmm(preset_timer));
         }
     }
@@ -346,7 +348,7 @@ public class TRSLightOperatingHours extends Activity {
         btnL5.setTag(NO_PRESET_TEXT);
         btnL6.setText(NO_PRESET_TEXT);
         btnL6.setTag(NO_PRESET_TEXT);
-
+        Log.d(TAG, "repopulate_button_assignments_(): ");
         SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
         JSON_analyst json_analyst = new JSON_analyst(spFile);
 
@@ -359,42 +361,42 @@ public class TRSLightOperatingHours extends Activity {
             switch (entry.getKey()) {
                 case "1":
                     // preset8. Get name of this preset
-                    String preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
+                    String preset_name = json_analyst.getJSONValue(entry.getValue() + "_nm");
                     btnL1.setText(entry.getValue().toString());
                     btnL1.setText(preset_name);
                     btnL1.setTag(entry.getValue().toString());
                     break;
 
                 case "2":
-                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
+                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_nm");
                     btnL2.setText(entry.getValue().toString());
                     btnL2.setText(preset_name);
                     btnL2.setTag(entry.getValue().toString());
                     break;
 
                 case "3":
-                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
+                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_nm");
                     btnL3.setText(entry.getValue().toString());
                     btnL3.setText(preset_name);
                     btnL3.setTag(entry.getValue().toString());
                     break;
 
                 case "4":
-                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
+                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_nm");
                     btnL4.setText(entry.getValue().toString());
                     btnL4.setText(preset_name);
                     btnL4.setTag(entry.getValue().toString());
                     break;
 
                 case "5":
-                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
+                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_nm");
                     btnL5.setText(entry.getValue().toString());
                     btnL5.setText(preset_name);
                     btnL5.setTag(entry.getValue().toString());
                     break;
 
                 case "6":
-                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_name");
+                    preset_name = json_analyst.getJSONValue(entry.getValue() + "_nm");
                     btnL6.setText(entry.getValue().toString());
                     btnL6.setText(preset_name);
                     btnL6.setTag(entry.getValue().toString());
@@ -408,7 +410,7 @@ public class TRSLightOperatingHours extends Activity {
     }
 
     public void onClickTimers (View v) {
-        String sSequence = "F";
+        String sSequence = "X600";
         try {
             sSequence = sSequence.concat(sNewLine);
             lclBTServiceInstance.sendData(sSequence);
@@ -438,12 +440,12 @@ public class TRSLightOperatingHours extends Activity {
         final String sLamp5Counter = json_analyst.getJSONValue("preset5_time_elapsed");
         final String sLamp6Counter = json_analyst.getJSONValue("preset6_time_elapsed");
 
-        final String sLamp1Name = json_analyst.getJSONValue("preset1_name");
-        final String sLamp2Name = json_analyst.getJSONValue("preset2_name");
-        final String sLamp3Name = json_analyst.getJSONValue("preset3_name");
-        final String sLamp4Name = json_analyst.getJSONValue("preset4_name");
-        final String sLamp5Name = json_analyst.getJSONValue("preset5_name");
-        final String sLamp6Name = json_analyst.getJSONValue("preset6_name");
+        final String sLamp1Name = json_analyst.getJSONValue("p1_nm");
+        final String sLamp2Name = json_analyst.getJSONValue("p2_nm");
+        final String sLamp3Name = json_analyst.getJSONValue("p3_nm");
+        final String sLamp4Name = json_analyst.getJSONValue("p4_nm");
+        final String sLamp5Name = json_analyst.getJSONValue("p5_nm");
+        final String sLamp6Name = json_analyst.getJSONValue("p6_nm");
 
         //final String sLamp4Name = extractJSONvalue("", "lamp4_name");
 
@@ -457,50 +459,57 @@ public class TRSLightOperatingHours extends Activity {
 
     public void setLampName(int i, String sLampName, String sCounter) {
         Log.d(TAG, "setLampName_() - setting lamp name '" + sLampName + "' for button " + i);
+        String lamp_text = "";
         if (i == 1) {
             if (sLampName.length() > 0) {
-                btnL1.setText(sLampName + sNewLine + sCounter);
-                btnL1.setTag("preset1");
+                lamp_text = sLampName + sNewLine + sCounter;
+                btnL1.setText(lamp_text);
+                btnL1.setTag("p1");
             } else {
                 btnL1.setText(NO_PRESET_TEXT);
                 btnL1.setTag(NO_PRESET_TEXT);
             }
         } else if (i == 2) {
             if (sLampName.length() > 0) {
-                btnL2.setText(sLampName + sNewLine + sCounter);
-                btnL2.setTag("preset2");
+                lamp_text = sLampName + sNewLine + sCounter;
+                btnL2.setText(lamp_text);
+                btnL2.setTag("p2");
             } else {
                 btnL2.setText(NO_PRESET_TEXT);
                 btnL2.setTag(NO_PRESET_TEXT);
             }
         } else if (i == 3) {
             if (sLampName.length() > 0) {
-                btnL3.setText(sLampName + sNewLine + sCounter);
-                btnL3.setTag("preset3");
+                lamp_text = sLampName + sNewLine + sCounter;
+                btnL3.setText(lamp_text);
+                btnL3.setTag("p3");
             } else {
                 btnL3.setText(NO_PRESET_TEXT);
                 btnL3.setTag(NO_PRESET_TEXT);
             }
         } else if (i == 4) {
             if (sLampName.length() > 0) {
-                btnL4.setText(sLampName + sNewLine + sCounter);
-                btnL4.setTag("preset4");
+                lamp_text = sLampName + sNewLine + sCounter;
+                btnL4.setText(lamp_text);
+                btnL4.setTag("p4");
             } else {
                 btnL4.setText(NO_PRESET_TEXT);
                 btnL4.setTag(NO_PRESET_TEXT);
             }
         } else if (i == 5) {
             if (sLampName.length() > 0) {
-                btnL5.setText(sLampName + sNewLine + sCounter);
-                btnL5.setTag("preset5");
+                lamp_text = sLampName + sNewLine + sCounter;
+                btnL5.setText(lamp_text);
+                btnL5.setTag("p5");
             } else {
                 btnL5.setText(NO_PRESET_TEXT);
                 btnL5.setTag(NO_PRESET_TEXT);
             }
         } else if (i == 6) {
             if (sLampName.length() > 0) {
-                btnL6.setText(sLampName + sNewLine + sCounter);
-                btnL6.setTag("preset6");
+                lamp_text = sLampName + sNewLine + sCounter;
+                btnL6.setText(lamp_text);
+                btnL6.setTag("p6");
             } else {
                 btnL6.setText(NO_PRESET_TEXT);
                 btnL6.setTag(NO_PRESET_TEXT);

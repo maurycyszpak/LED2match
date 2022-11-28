@@ -190,7 +190,7 @@ public class TRSDigitalPanel extends Activity {
             mBoundBT = true;
             String sCommand = "X600" + Constants.sNewLine;
             lclBTServiceInstance.sendData(sCommand);
-            Log.d(TAG, "Command: '" + sCommand + "' sent.");
+            //Log.d(TAG, "Command: '" + sCommand + "' sent.");
         }
 
         @Override
@@ -325,7 +325,8 @@ public class TRSDigitalPanel extends Activity {
                 //logme(TAG, "Iterating over button name: " + ((Button) view).getText().toString());
                 if (((Button) view).getText().toString().equals(button_name)) {
                     if (!bl_additional) {
-                        mark_all_buttons_off_on_mobile(false);
+                        boolean flag = !BL_LOW_MODE;
+                        mark_all_buttons_off_on_mobile(flag);
                     }
                     view.setBackgroundResource(R.drawable.buttonselector_active);
                     ((Button) view).setTextColor(Color.BLACK);
@@ -344,7 +345,8 @@ public class TRSDigitalPanel extends Activity {
                 //logme(TAG, "Iterating over button name: " + ((Button) view).getText().toString());
                 if (((Button) view).getText().toString().equals(button_name)) {
                     if (!bl_additional) {
-                        mark_all_buttons_off_on_mobile(true);
+                        boolean flag = !BL_LOW_MODE;
+                        mark_all_buttons_off_on_mobile(flag);
                     }
                     view.setBackgroundResource(R.drawable.buttonselector_active);
                     ((Button) view).setTextColor(Color.BLACK);
@@ -363,7 +365,8 @@ public class TRSDigitalPanel extends Activity {
                 //logme(TAG, "Iterating over button name: " + ((Button) view).getText().toString());
                 if (((Button) view).getText().toString().equals(button_name)) {
                     if (!bl_additional) {
-                        mark_all_buttons_off_on_mobile(true);
+                        boolean flag = !BL_LOW_MODE;
+                        mark_all_buttons_off_on_mobile(flag);
                     }
                     view.setBackgroundResource(R.drawable.buttonselector_active);
                     ((Button) view).setTextColor(Color.BLACK);
@@ -502,19 +505,6 @@ public class TRSDigitalPanel extends Activity {
 
             SystemClock.sleep(50);
 
-            /*if (mBoundBT) {
-                if (bluetooth_connected()) {
-                    try {
-                        String sSequence = "F";
-                        sSequence = sSequence.concat(lineSeparator());
-
-                        lclBTServiceInstance.sendData(sSequence);
-                    } catch (NullPointerException e) {
-                        Log.e(TAG, "NullPointerException when sending command via Bluetooth");
-                    }
-                    SystemClock.sleep(500);
-                }
-            }*/
         }
 
 
@@ -1298,6 +1288,7 @@ public class TRSDigitalPanel extends Activity {
                 btnLOW.setBackgroundResource(R.drawable.buttonselector_active);
                 btnLOW.setTextColor(Color.BLACK);
                 //makeToast("LOW mode switched on");
+                BL_LOW_MODE = true;
                 break;
 
             case 9: //OFF
@@ -1349,11 +1340,14 @@ public class TRSDigitalPanel extends Activity {
     }
 
     private void setUnitName() {
-        SharedPreferences spUnitName = getSharedPreferences(SHAREDPREFS_UNITNAME, 0);
-        String sUnitName = spUnitName.getString("UNIT_NAME", "not_loaded");
+        SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+        JSON_analyst json_analyst = new JSON_analyst(spFile);
+
+        final String sUnitName = json_analyst.getJSONValue("unit_name");
         messageHandler.post(new Runnable() {
             @Override
             public void run() {
+                Log.d (TAG, "UNIT NAME of '"  + sUnitName + "' set!");
                 setTitle(getResources().getString(R.string.app_header_title) + " " + sUnitName);
             }
         });
@@ -1663,7 +1657,7 @@ public class TRSDigitalPanel extends Activity {
 
 
                     if (button.getText().toString().equalsIgnoreCase(TL84_TAG)) {
-                        sCommand = "S11050" + convertRGBwithCommasToHexString(sPresetRGBValues) + get_tl84_delay() + "$" + sNewLine;
+                        sCommand = sCommand = "X101" + S_COMMAND_SEPARATOR + button.getTag().toString() + S_COMMAND_SEPARATOR + "1$" + sNewLine;
                         logme(TAG, " *** NEW TL84 command (LOW): " + sCommand);
                         send_via_bt(sCommand);
                         lclUsbServiceInstance.sendBytes(sCommand.getBytes());
@@ -1912,6 +1906,7 @@ public class TRSDigitalPanel extends Activity {
         if (bl_force_LOW_off) {
             btnLOW.setBackgroundResource(R.drawable.buttonselector_main);
             btnLOW.setTextColor(Color.WHITE);
+            Log.d(TAG, "Forcing LOW button OFF on Digital Panel");
         }
 
 
@@ -2089,8 +2084,8 @@ public class TRSDigitalPanel extends Activity {
         menu.add(Menu.NONE, 8, 8, "About").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));
 
-        menu.add(Menu.NONE, 9, 9, "TEST PRESETS").setIcon(
-                getResources().getDrawable(R.drawable.icon_information));
+//        menu.add(Menu.NONE, 9, 9, "TEST PRESETS").setIcon(
+//                getResources().getDrawable(R.drawable.icon_information));
 
         getMenuInflater().inflate(R.menu.menu, menu);
         MenuItem item = menu.findItem(R.id.menu_color_picker);
@@ -2152,10 +2147,10 @@ public class TRSDigitalPanel extends Activity {
                 openAboutDialog();
                 break;
 
-            case 9:
-                Intent intent_test = new Intent(TRSDigitalPanel.this, LightSettings.class);
-                startActivity(intent_test);
-                break;
+//            case 9:
+//                Intent intent_test = new Intent(TRSDigitalPanel.this, LightSettings.class);
+//                startActivity(intent_test);
+//                break;
             /*case 99:
                 Intent intent99 = new Intent(TRSDigitalPanel.this, TstVrly.class);
                 startActivity(intent99);
