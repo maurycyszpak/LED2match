@@ -1228,7 +1228,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 					show_splash_screen();
 
 					sendPresetsOverBT();
-					sendPresetsOverSerial();
+					//sendPresetsOverSerial();
 					getJSONFile();
 
 				} else {
@@ -1891,10 +1891,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 	public void onStart() {
 
     	super.onStart();
-		IntentFilter filter = new IntentFilter();
-		filter.addAction("controller_data_refreshed_event");
-		filter.addAction("request_preset_event");
-		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, filter);
+
 	}
 
     private Boolean power_drain_check(String sPresetRGBValues) {
@@ -2057,6 +2054,13 @@ public class LightSettings extends Activity implements ServiceConnection {
 	@Override
 	public void onResume() {
 
+
+		super.onResume();
+		IntentFilter filter = new IntentFilter();
+		filter.addAction("controller_data_refreshed_event");
+		filter.addAction("request_preset_event");
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, filter);
+
 		h.postDelayed( runnable = () -> {
 			getJSONFile();
 			getLampsState();
@@ -2072,7 +2076,6 @@ public class LightSettings extends Activity implements ServiceConnection {
 
         if (!mBoundBT) {
             Intent intent = new Intent(this, BtCOMMsService.class);
-            //startService(intent);
             bindService(intent, btConnection, Context.BIND_AUTO_CREATE);
             //Toast.makeText(this.getBaseContext(),"Service bound (onResume)", Toast.LENGTH_SHORT).show();
 
@@ -2114,6 +2117,8 @@ public class LightSettings extends Activity implements ServiceConnection {
 			} else if (intent.getAction().equals("controller_data_refreshed_event")) {
 				Log.d(TAG, "controller data refreshed - intent received");
 				refresh_spinner_list();
+			} else {
+				Log.d(TAG, "Unrecognized intent received");
 			}
 
 		}
@@ -2520,47 +2525,47 @@ public class LightSettings extends Activity implements ServiceConnection {
 		}
 	}
 
-	private void sendPresetsOverSerial () {
-		SharedPreferences spsValues = getSharedPreferences(APP_SHAREDPREFS_WRITE, 0);
-		String sReply = "";
-		String sVal = "";
-		String sKey = "";
-
-		//For each pair of key-> value add item to the list
-		//refresh the list and the spinner
-		Log.d(TAG, "Sending: O - to clear all presets on Controller\n");
-		//sendDataOverSerial("O" + sNewLine);
-		sendDataOverSerial("O" + sNewLine);
-		//sReply = bluetoothAskReply("O"); //clear presets before sending fresh ones
-		SystemClock.sleep(50);
-
-		Map<String, ?> allEntries = spsValues.getAll();
-		int i = 1;
-		for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-			sKey = entry.getKey();
-			sVal = entry.getValue().toString();
-
-			//get rid of initial number
-			//sVal = sVal.substring(sVal.indexOf(",") +1 , sVal.length() - sVal.indexOf(",")+1);
-
-			String sNum = Integer.toString(i);
-			if (sNum.length() == 1) { sNum = "0"+sNum; }
-			Log.d(TAG, "Splitting entry from spsValues: sKey=" + sKey + ", sVal="+ sVal);
-			Log.d(TAG, "Sending: Q" + sNum + "," + sKey + "," +sVal + "\n");
-			//sendDataOverSerial("Q" + sNum + "," + sKey + "," +sVal + sNewLine);
-			sendDataOverSerial("Q" + sNum + "," + sKey + "," +sVal + sNewLine);
-			//sReply = bluetoothAskReply("Q" + sNum + "," + sKey + "," +sVal);
-			//sReply = USBAskReply("Q" + sNum + "," + sKey + "," +sVal);
-
-			//BtCore.sendMessageBluetooth("Q1" + sNum + "," + sKey + "," +sVal + "\n");
-			Log.d(TAG, "Receiving: " + sReply + "\n");
-			i++;
-		}
-		Log.d(TAG, "Sending: Q - to move presets from flash to EEPROM on Controller\n");
-		//makeToast("sendPresetsOverSerial - sent: " + (i-1) + " presets.");
-		//BtCore.sendMessageBluetooth("Q" + "\n");
-
-	}
+//	private void sendPresetsOverSerial () {
+//		SharedPreferences spsValues = getSharedPreferences(APP_SHAREDPREFS_WRITE, 0);
+//		String sReply = "";
+//		String sVal = "";
+//		String sKey = "";
+//
+//		//For each pair of key-> value add item to the list
+//		//refresh the list and the spinner
+//		Log.d(TAG, "Sending: O - to clear all presets on Controller\n");
+//		//sendDataOverSerial("O" + sNewLine);
+//		sendDataOverSerial("O" + sNewLine);
+//		//sReply = bluetoothAskReply("O"); //clear presets before sending fresh ones
+//		SystemClock.sleep(50);
+//
+//		Map<String, ?> allEntries = spsValues.getAll();
+//		int i = 1;
+//		for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+//			sKey = entry.getKey();
+//			sVal = entry.getValue().toString();
+//
+//			//get rid of initial number
+//			//sVal = sVal.substring(sVal.indexOf(",") +1 , sVal.length() - sVal.indexOf(",")+1);
+//
+//			String sNum = Integer.toString(i);
+//			if (sNum.length() == 1) { sNum = "0"+sNum; }
+//			Log.d(TAG, "Splitting entry from spsValues: sKey=" + sKey + ", sVal="+ sVal);
+//			Log.d(TAG, "Sending: Q" + sNum + "," + sKey + "," +sVal + "\n");
+//			//sendDataOverSerial("Q" + sNum + "," + sKey + "," +sVal + sNewLine);
+//			sendDataOverSerial("Q" + sNum + "," + sKey + "," +sVal + sNewLine);
+//			//sReply = bluetoothAskReply("Q" + sNum + "," + sKey + "," +sVal);
+//			//sReply = USBAskReply("Q" + sNum + "," + sKey + "," +sVal);
+//
+//			//BtCore.sendMessageBluetooth("Q1" + sNum + "," + sKey + "," +sVal + "\n");
+//			Log.d(TAG, "Receiving: " + sReply + "\n");
+//			i++;
+//		}
+//		Log.d(TAG, "Sending: Q - to move presets from flash to EEPROM on Controller\n");
+//		//makeToast("sendPresetsOverSerial - sent: " + (i-1) + " presets.");
+//		//BtCore.sendMessageBluetooth("Q" + "\n");
+//
+//	}
 
 
 	private void showSplash() {
