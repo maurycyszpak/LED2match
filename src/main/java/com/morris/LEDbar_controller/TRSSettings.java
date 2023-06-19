@@ -768,22 +768,21 @@ public class TRSSettings extends Activity {
     public void onClickReassign(View v) {
 
         String sTags = "";
-        if (!btnL1.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL1.getText().toString() + ","; } else { sTags = sTags + ","; }
-        if (!btnL2.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL2.getText().toString() + ","; } else { sTags = sTags + ","; }
-        if (!btnL3.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL3.getText().toString() + ","; } else { sTags = sTags + ","; }
-        if (!btnL4.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL4.getText().toString() + ","; } else { sTags = sTags + ","; }
-        if (!btnL5.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL5.getText().toString() + ","; } else { sTags = sTags + ","; }
-        if (!btnL6.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL6.getText().toString() + ","; } else { sTags = sTags + ","; }
-        //if (!btnL10.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL10.getText().toString() + ","; } else { sTags = sTags + ","; }
-        //if (!btnL11.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL11.getText().toString() + ","; } else { sTags = sTags + ","; }
-        //if (!btnL12.getText().toString().equalsIgnoreCase(NO_PRESET_TEXT)) { sTags = sTags + btnL12.getText().toString() + ","; } else { sTags = sTags + ","; }
 
+        SharedPreferences spLampMappingFile = getSharedPreferences(Constants.SHAREDPREFS_LAMP_ASSIGNMENTS, 0);
+        String sData = "";
+        for (int i = 1; i<7; i++) {
+            sData = spLampMappingFile.getString(String.valueOf(i), "");
+            sTags = (sData.length() > 0) ? sTags + sData + "," : sTags + ",";
+        }
+        makeToast("Passing this: '" + sTags + "'.");
+        Log.d(TAG, "Passing this: '" + sTags + "'.");
 
         SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
         JSON_analyst json_analyst = new JSON_analyst(spFile);
         String sPresetCounter = json_analyst.getJSONValue("preset_counter");
 
-        int iCtr = ((!sPresetCounter.trim().equals("") ? Integer.valueOf(sPresetCounter) : 0));
+        int iCtr = ((sPresetCounter != null && !sPresetCounter.trim().equals("") ? Integer.valueOf(sPresetCounter) : 0));
 
         Intent intentLampAssignment = new Intent(TRSSettings.this, ReassignLamps.class);
         intentLampAssignment.putExtra("tags", sTags);

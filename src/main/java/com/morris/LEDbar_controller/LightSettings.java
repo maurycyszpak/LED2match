@@ -75,6 +75,7 @@ import static com.morris.LEDbar_controller.Constants.CONFIG_SETTINGS;
 import static com.morris.LEDbar_controller.Constants.DEFAULT_PSU_POWER;
 import static com.morris.LEDbar_controller.Constants.MAX_PRESET_NUM;
 import static com.morris.LEDbar_controller.Constants.PRESETS_DEFINITION_JSONFILE;
+import static com.morris.LEDbar_controller.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 import static com.morris.LEDbar_controller.TRSSettings.TL84_DELAY_KEY;
 
 public class LightSettings extends Activity implements ServiceConnection {
@@ -321,11 +322,25 @@ public class LightSettings extends Activity implements ServiceConnection {
 		SystemClock.sleep(200);
 	}
 
-	private void getUnitName() {
-        SharedPreferences spUnitName = getSharedPreferences(SHAREDPREFS_UNITNAME, 0);
-        String sUnitName = spUnitName.getString("UNIT_NAME", "not_loaded");
-        messageHandler.post(() -> setTitle("Set Lights" + " " + sUnitName));
-    }
+//	private void getUnitName() {
+//        SharedPreferences spUnitName = getSharedPreferences(SHAREDPREFS_UNITNAME, 0);
+//        String sUnitName = spUnitName.getString("UNIT_NAME", "not_loaded");
+//        messageHandler.post(() -> setTitle("Set Lights" + " " + sUnitName));
+//    }
+
+	private void setUnitName() {
+		SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+		JSON_analyst json_analyst = new JSON_analyst(spFile);
+
+		final String sUnitName = json_analyst.getJSONValue("unit_name");
+		messageHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				Log.d (TAG, "UNIT NAME of '"  + sUnitName + "' set!");
+				setTitle("Set Lights" + " " + sUnitName);
+			}
+		});
+	}
 
 
 	public void colorizeLayout(String sPresetName, String sFileName) {
@@ -426,11 +441,11 @@ public class LightSettings extends Activity implements ServiceConnection {
 		        getResources().getDrawable(R.drawable.icon_information));
 
 		/*menu.add(Menu.NONE, 5, 5, "Torso Sequence").setIcon(
-				getResources().getDrawable(R.drawable.icon_information));
+				getResources().getDrawable(R.drawable.icon_information));*/
 
-		menu.add(Menu.NONE, 6, 6, "Blower settings").setIcon(
+		menu.add(Menu.NONE, 6, 6, "Settings").setIcon(
 				getResources().getDrawable(R.drawable.icon_information));
-        menu.add(Menu.NONE, 7, 7, "Operating Hours").setIcon(
+        /*menu.add(Menu.NONE, 7, 7, "Operating Hours").setIcon(
                 getResources().getDrawable(R.drawable.icon_information));*/
 
 		getMenuInflater().inflate(R.menu.menu, menu);
@@ -2068,7 +2083,8 @@ public class LightSettings extends Activity implements ServiceConnection {
 		}, delay);
 
 		//extractPresetsFromJson();
-		getUnitName();
+		//getUnitName();
+		setUnitName();
 		super.onResume();
         setFilters();  // Start listening notifications from UsbService
 		Log.d(TAG, "starting USB connection service");
@@ -2392,7 +2408,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 		String formattedDate = sdf.format(date);
 
 		AlertDialog dlg = new AlertDialog.Builder(this).create();
-		String sFWver = extractJSONvalue("", "firmware_version");
+		String sFWver = extractJSONvalue("", "fw_vrsn");
 		dlg.setTitle("FW v" + sFWver + " (" + sJSONbody.length() + " bytes)\n" + formattedDate);
 		String jsonContent = "";
 
