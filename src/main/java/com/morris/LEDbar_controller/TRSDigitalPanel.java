@@ -888,7 +888,6 @@ public class TRSDigitalPanel extends Activity {
         String sPresetCounter = json_analyst.getJSONValue("preset_counter");
 
         int iCtr = ((!sPresetCounter.trim().equals("") ? Integer.valueOf(sPresetCounter) : 0));
-
         Intent intentLampAssignment = new Intent(TRSDigitalPanel.this, ReassignLamps.class);
         intentLampAssignment.putExtra("tags", sTags);
         intentLampAssignment.putExtra("counter", iCtr);

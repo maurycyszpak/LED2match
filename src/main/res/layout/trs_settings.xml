@@ -725,7 +725,7 @@
                     android:text="Reassign"
                     android:textColor="@color/black"
                     android:textSize="@dimen/button_text_size"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     />
 
 

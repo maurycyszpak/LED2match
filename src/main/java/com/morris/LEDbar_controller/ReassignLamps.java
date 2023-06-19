@@ -67,14 +67,6 @@ public class ReassignLamps extends Activity {
         }
         arrayListLampNames.add("");
 
-        /*arrayListLampNames.add(json_analyst.getJSONValue("preset1_name"));
-        arrayListLampNames.add(json_analyst.getJSONValue("preset2_name"));
-        arrayListLampNames.add(json_analyst.getJSONValue("preset3_name"));
-        arrayListLampNames.add(json_analyst.getJSONValue("preset4_name"));
-        arrayListLampNames.add(json_analyst.getJSONValue("preset5_name"));
-        arrayListLampNames.add(json_analyst.getJSONValue("preset6_name"));*/
-
-
         arrayAdapterLampNames = new ArrayAdapter<String>(this, R.layout.spinner_lamp_assignment, arrayListLampNames);
         spinner1.setAdapter(arrayAdapterLampNames);
         spinner2.setAdapter(arrayAdapterLampNames);
@@ -170,6 +162,10 @@ public class ReassignLamps extends Activity {
             spinner9.setSelection(spinnerPosition);
         }
         this.setTitle(getString(R.string.app_header_title) + " assign buttons");
+    }
+
+    public void onResume() {
+        super.onResume();
 
 
     }
@@ -294,6 +290,11 @@ public class ReassignLamps extends Activity {
         }
 
         return blReturn;
+    }
+
+    protected void onStop() {
+        super.onStop();
+        finish();
     }
 
 

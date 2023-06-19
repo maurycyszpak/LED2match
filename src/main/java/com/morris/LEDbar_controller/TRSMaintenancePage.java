@@ -297,7 +297,7 @@ public class TRSMaintenancePage extends Activity {
                 .setPositiveButton("OK", (dialog, id) -> {
                     //brace for reset!
                     delete_all_shared_prefs();
-                    String sCommand = "T" + newLine;
+                    String sCommand = "X103$" + newLine;
                     send_via_bt(sCommand);
                     restart_app();
 

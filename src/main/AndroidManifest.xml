@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.morris.LEDbar_controller"
-    android:versionCode="590"
-    android:versionName="5.9">
+    android:versionCode="610"
+    android:versionName="6.1">
 
     <uses-feature
         android:name="android.hardware.usb.host"
@@ -31,7 +31,9 @@
         <activity
             android:name="com.morris.LEDbar_controller.TRSSequence"
             android:label="Sequence Programming (PRG)" />
-        <activity android:name="com.morris.LEDbar_controller.ReassignLamps" />
+        <activity
+            android:name="com.morris.LEDbar_controller.ReassignLamps"
+            android:label="Reassign Lamps" />
         <activity
             android:name="com.morris.LEDbar_controller.LightSettings"
             android:label="Set Lights"
