@@ -1,5 +1,7 @@
 package com.morris.LEDbar_controller;
 
+import static com.morris.LEDbar_controller.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -12,17 +14,16 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import static com.morris.LEDbar_controller.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 
 public class LicenseClass extends Activity {
 

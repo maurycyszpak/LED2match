@@ -1,51 +1,53 @@
     package com.morris.LEDbar_controller;
 
-import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.os.Binder;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.SystemClock;
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
-import android.widget.Toast;
+    import static com.morris.LEDbar_controller.Constants.BT_CONNECTED_PREFS;
+    import static com.morris.LEDbar_controller.Constants.PRESETS_DEFINITION;
+    import static com.morris.LEDbar_controller.Constants.PRESETS_DEFINITION_JSONFILE;
+    import static com.morris.LEDbar_controller.Constants.sNewLine;
+    import static com.morris.LEDbar_controller.LightSettings.SHAREDPREFS_LAMP_STATE;
+    import static com.morris.LEDbar_controller.LightSettings.SHAREDPREFS_LED_TIMERS;
+    import static com.morris.LEDbar_controller.TRSDigitalPanel.SHAREDPREFS_LAMP_ASSIGNMENTS;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+    import android.app.Service;
+    import android.bluetooth.BluetoothAdapter;
+    import android.bluetooth.BluetoothDevice;
+    import android.bluetooth.BluetoothSocket;
+    import android.content.Context;
+    import android.content.Intent;
+    import android.content.SharedPreferences;
+    import android.os.AsyncTask;
+    import android.os.Binder;
+    import android.os.Handler;
+    import android.os.IBinder;
+    import android.os.SystemClock;
+    import android.util.Log;
+    import android.widget.Toast;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.TreeMap;
-import java.util.UUID;
-import java.util.regex.PatternSyntaxException;
+    import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import static com.morris.LEDbar_controller.Constants.BT_CONNECTED_PREFS;
-import static com.morris.LEDbar_controller.Constants.PRESETS_DEFINITION_JSONFILE;
-import static com.morris.LEDbar_controller.LightSettings.SHAREDPREFS_LAMP_STATE;
-import static com.morris.LEDbar_controller.LightSettings.SHAREDPREFS_LED_TIMERS;
-import static com.morris.LEDbar_controller.TRSDigitalPanel.SHAREDPREFS_LAMP_ASSIGNMENTS;
-import static com.morris.LEDbar_controller.Constants.sNewLine;
-import static com.morris.LEDbar_controller.Constants.PRESETS_DEFINITION;
+    import org.json.JSONException;
+    import org.json.JSONObject;
 
-public class BtCOMMsService extends Service {
+    import java.io.FileOutputStream;
+    import java.io.IOException;
+    import java.io.InputStream;
+    import java.io.OutputStream;
+    import java.io.OutputStreamWriter;
+    import java.lang.reflect.InvocationTargetException;
+    import java.sql.Timestamp;
+    import java.text.SimpleDateFormat;
+    import java.util.Arrays;
+    import java.util.Collections;
+    import java.util.Date;
+    import java.util.List;
+    import java.util.Locale;
+    import java.util.Map;
+    import java.util.TimeZone;
+    import java.util.TreeMap;
+    import java.util.UUID;
+    import java.util.regex.PatternSyntaxException;
+
+    public class BtCOMMsService extends Service {
 
     final boolean APP_DEBUG_MODE = false;
     //final boolean APP_DEBUG_MODE = true;
@@ -382,7 +384,7 @@ public class BtCOMMsService extends Service {
                 }
 
                 //also check for modifiers / special buttons (LOW, UV, OFF, PRG)
-                List<String> extra = Arrays.asList("OFF");
+                List<String> extra = Collections.singletonList("OFF");
                 for (String entry: extra) {
                     try {
                         if (sDataArray[1].equalsIgnoreCase(entry)) {
@@ -738,7 +740,7 @@ public class BtCOMMsService extends Service {
             mark_BT_connnected();
 
             // Keep looping to listen for received messages
-            while (true && !stopThread) {
+            while (!stopThread) {
                 try {
                     bytes = mmInStream.read(buffer);            //read bytes from input buffer
                     String readMessage = new String(buffer, 0, bytes);

@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
@@ -17,6 +16,8 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class OverlayPage extends Activity {
     public static String TAG = "MORRIS-splash";
@@ -86,7 +87,7 @@ public class OverlayPage extends Activity {
             }
         };
         handler = new Handler();
-        handler.postDelayed(my_runnable, time_s * 1000);
+        handler.postDelayed(my_runnable, time_s * 1000L);
     }
 
     private void no_connection_popup() {

@@ -1,5 +1,62 @@
 package com.morris.LEDbar_controller;
 
+import static com.morris.LEDbar_controller.BtScannerActivity.BT_PREFS;
+import static com.morris.LEDbar_controller.Constants.CONFIG_SETTINGS;
+import static com.morris.LEDbar_controller.Constants.DEFAULT_PSU_POWER;
+import static com.morris.LEDbar_controller.Constants.MAX_PRESET_NUM;
+import static com.morris.LEDbar_controller.Constants.PRESETS_DEFINITION_JSONFILE;
+import static com.morris.LEDbar_controller.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
+import static com.morris.LEDbar_controller.TRSSettings.TL84_DELAY_KEY;
+
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
+import android.os.SystemClock;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,62 +78,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.regex.PatternSyntaxException;
-
-import android.app.ActivityManager;
-import android.app.ProgressDialog;
-import android.content.ComponentName;
-import android.content.ServiceConnection;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Looper;
-import android.os.Message;
-import android.os.SystemClock;
-import android.support.v4.content.LocalBroadcastManager;
-import android.text.TextUtils;
-import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.inputmethod.InputMethodManager;
-
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.RelativeLayout;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import static com.morris.LEDbar_controller.BtScannerActivity.BT_PREFS;
-import static com.morris.LEDbar_controller.Constants.CONFIG_SETTINGS;
-import static com.morris.LEDbar_controller.Constants.DEFAULT_PSU_POWER;
-import static com.morris.LEDbar_controller.Constants.MAX_PRESET_NUM;
-import static com.morris.LEDbar_controller.Constants.PRESETS_DEFINITION_JSONFILE;
-import static com.morris.LEDbar_controller.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
-import static com.morris.LEDbar_controller.TRSSettings.TL84_DELAY_KEY;
 
 public class LightSettings extends Activity implements ServiceConnection {
 
@@ -560,6 +561,7 @@ public class LightSettings extends Activity implements ServiceConnection {
 	int delay = 300*1000; //1 second=1000 millisecond, 15*1000=15seconds
 	Runnable runnable;
 
+	@SuppressLint("MissingInflatedId")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -2308,7 +2310,8 @@ public class LightSettings extends Activity implements ServiceConnection {
 
 	public void openDialog(final View view) {
 
-		if (BtCore.Connected() || blUSBConnected || true) {
+		BtCore.Connected();
+		if (true) {
 			LayoutInflater layoutInflater = LayoutInflater.from(context);
 			View promptView = layoutInflater.inflate(R.layout.prompts, null);
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);

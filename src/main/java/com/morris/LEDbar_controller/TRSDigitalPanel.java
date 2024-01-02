@@ -1,5 +1,13 @@
 package com.morris.LEDbar_controller;
 
+import static com.morris.LEDbar_controller.Constants.BT_CONNECTED_PREFS;
+import static com.morris.LEDbar_controller.Constants.CONFIG_SETTINGS;
+import static com.morris.LEDbar_controller.Constants.DEFAULT_PSU_POWER;
+import static com.morris.LEDbar_controller.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
+import static com.morris.LEDbar_controller.Constants.S_COMMAND_SEPARATOR;
+import static com.morris.LEDbar_controller.Constants.sNewLine;
+import static com.morris.LEDbar_controller.TRSSettings.TL84_DELAY_KEY;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -28,11 +36,6 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
-import android.support.annotation.NonNull;
-//import android.support.multidex.BuildConfig;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -47,6 +50,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,15 +78,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import static com.morris.LEDbar_controller.BtCOMMsService.SHAREDPREFS_UNITNAME;
-import static com.morris.LEDbar_controller.Constants.BT_CONNECTED_PREFS;
-import static com.morris.LEDbar_controller.Constants.CONFIG_SETTINGS;
-import static com.morris.LEDbar_controller.Constants.DEFAULT_PSU_POWER;
-import static com.morris.LEDbar_controller.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
-import static com.morris.LEDbar_controller.Constants.S_COMMAND_SEPARATOR;
-import static com.morris.LEDbar_controller.Constants.sNewLine;
-import static com.morris.LEDbar_controller.TRSSettings.TL84_DELAY_KEY;
 
 public class TRSDigitalPanel extends Activity {
 
@@ -206,16 +205,11 @@ public class TRSDigitalPanel extends Activity {
             if (msg.what == MSG_SHOW_TOAST) {
                 String message = (String)msg.obj;
 
-                switch (msg.what) {
-                    case TOAST_MESSAGE:
-                        Toast.makeText(MainApplication.getAppContext(), message.getBytes().toString() , Toast.LENGTH_SHORT).show();
-                        break;
+                //super.handleMessage(msg);
+                if (msg.what == TOAST_MESSAGE) {
+                    Toast.makeText(MainApplication.getAppContext(), message.getBytes().toString(), Toast.LENGTH_SHORT).show();
 
                     //handle the result here
-
-                    default:
-                        //super.handleMessage(msg);
-                        break;
                 }
 
             }
@@ -2161,7 +2155,8 @@ public class TRSDigitalPanel extends Activity {
 
     public void goto_maintenance(final View view) {
 
-        if (BtCore.Connected() || true) {
+        BtCore.Connected();
+        if (true) {
             LayoutInflater layoutInflater = LayoutInflater.from(context);
             View promptView = layoutInflater.inflate(R.layout.prompts, null);
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -2478,7 +2473,7 @@ public class TRSDigitalPanel extends Activity {
 
     public void reverseTimer(int Seconds, String sPresetName){
 
-        new CountDownTimer(Seconds* 1000+1000, 2000) {
+        new CountDownTimer(Seconds* 1000L +1000, 2000) {
 
             public void onTick(long millisUntilFinished) {
                 //makeToast("TICK " + sPresetName + " " + Seconds);
@@ -2586,7 +2581,6 @@ public class TRSDigitalPanel extends Activity {
     public void change_logo(String path_to_logo) {
         if (!fileUtilities.logoFileExists()) {
             makeToast("Expecting file '" + Constants.CUSTOMER_LOGO_FILENAME + "' , but can't find it!");
-            return;
         } else {
             logme(TAG, "change_logo_() - customer logo file found");
             File imgFile = new File(path_to_logo);
@@ -2614,7 +2608,6 @@ public class TRSDigitalPanel extends Activity {
     public void process_customer_data(String path_to_datafile) {
         if (!fileUtilities.dataFileExists()) {
             makeToast("File '" + Constants.CUSTOMER_DATA_FILENAME + "' couldn't be found!");
-            return;
         } else {
             logme(TAG, "Customer data XML file found");
             try {

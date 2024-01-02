@@ -1,5 +1,8 @@
 package com.morris.LEDbar_controller;
 
+import static com.morris.LEDbar_controller.Constants.BT_CONNECTED_PREFS;
+import static com.morris.LEDbar_controller.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
+
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -23,7 +26,6 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,13 +39,12 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Iterator;
-
-import static com.morris.LEDbar_controller.Constants.BT_CONNECTED_PREFS;
-import static com.morris.LEDbar_controller.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
 
 public class TRSSettings extends Activity {
 
@@ -97,13 +98,11 @@ public class TRSSettings extends Activity {
             if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
                 final int bluetoothState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
                         BluetoothAdapter.ERROR);
-                switch (bluetoothState) {
-                    case BluetoothAdapter.STATE_ON:
-                        if (bl_bluetooth_forced_on) {
-                            Log.d(TAG, " *** Calling start BT Service");
-                            startBluetoothService();
-                        }
-                        break;
+                if (bluetoothState == BluetoothAdapter.STATE_ON) {
+                    if (bl_bluetooth_forced_on) {
+                        Log.d(TAG, " *** Calling start BT Service");
+                        startBluetoothService();
+                    }
                 }
             }
 
@@ -792,7 +791,8 @@ public class TRSSettings extends Activity {
 
     public void goto_maintenance(final View view) {
 
-        if (BtCore.Connected() || true) {
+        BtCore.Connected();
+        if (true) {
             LayoutInflater layoutInflater = LayoutInflater.from(context);
             View promptView = layoutInflater.inflate(R.layout.prompts, null);
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -855,16 +855,11 @@ public class TRSSettings extends Activity {
             if (msg.what == MSG_SHOW_TOAST) {
                 String message = (String)msg.obj;
 
-                switch (msg.what) {
-                    case TOAST_MESSAGE:
-                        Toast.makeText(MainApplication.getAppContext(), message.getBytes().toString() , Toast.LENGTH_SHORT).show();
-                        break;
+                //super.handleMessage(msg);
+                if (msg.what == TOAST_MESSAGE) {
+                    Toast.makeText(MainApplication.getAppContext(), message.getBytes().toString(), Toast.LENGTH_SHORT).show();
 
                     //handle the result here
-
-                    default:
-                        //super.handleMessage(msg);
-                        break;
                 }
 
             }
@@ -1151,7 +1146,7 @@ public class TRSSettings extends Activity {
 
     public void switchOFFAfterX(int hours, int minutes) {
 
-            shutdownTimer = new CountDownTimer(hours*60*60*1000 + minutes*60*1000 + 30, 10000) { //30ms is for shits and giggles
+            shutdownTimer = new CountDownTimer((long) hours *60*60*1000 + (long) minutes *60*1000 + 30, 10000) { //30ms is for shits and giggles
                 public void onTick(long millisUntilFinished) {
                     Log.d(TAG, " *** TICK *** " + millisUntilFinished/1000 + " secs left until shutdown");
                 }
