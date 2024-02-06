@@ -21,8 +21,8 @@ android {
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         multiDexEnabled true
         compileSdkVersion 28
-        versionCode 200
-        versionName "6.2"
+        versionCode 300
+        versionName "6.3"
     }
 
     flavorDimensions "api"

@@ -961,7 +961,7 @@ public class TRSSettings extends Activity {
 
         if (TextUtils.isEmpty(edit_emergency_delay.getText().toString())) {
             //makeToast("NO BUENO");
-            edit_emergency_delay.setText("0");
+            edit_emergency_delay.setText("");
         }
 
         if (bl_edit_tl84delay) {

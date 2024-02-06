@@ -311,9 +311,10 @@
 
                 <EditText
                     android:id="@+id/edit_group2_LED_full"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/button_margin"
+                    android:layout_weight="@dimen/settings_pg_masterslave_value_width"
                     android:focusableInTouchMode="false"
                     android:inputType="number"
                     android:maxLines="1"

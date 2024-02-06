@@ -1,5 +1,9 @@
 package com.morris.LEDbar_controller;
 
+import static com.morris.LEDbar_controller.Constants.CONFIG_SETTINGS;
+import static com.morris.LEDbar_controller.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
+import static com.morris.LEDbar_controller.Constants.sNewLine;
+
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -30,10 +34,6 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.Map;
 import java.util.TreeMap;
-
-import static com.morris.LEDbar_controller.Constants.CONFIG_SETTINGS;
-import static com.morris.LEDbar_controller.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
-import static com.morris.LEDbar_controller.Constants.sNewLine;
 
 public class TRSMaintenancePage extends Activity {
 
@@ -570,7 +570,7 @@ public class TRSMaintenancePage extends Activity {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         makeToast("Resetting timer of preset: " + preset_name);
-                        String sCommand = "X," + preset_name + "$" + sNewLine;
+                        String sCommand = "X104," + preset_name + "$" + sNewLine;
                         Log.d(TAG, "Resetting timer of preset: " + preset_name);
                         if (mBoundBT) {
                             Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
