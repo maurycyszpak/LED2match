@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.morris.LEDbar_controller"
-    android:versionCode="610"
-    android:versionName="6.1">
+    android:versionCode="630"
+    android:versionName="6.3">
 
     <uses-feature
         android:name="android.hardware.usb.host"

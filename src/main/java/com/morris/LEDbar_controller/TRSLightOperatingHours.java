@@ -1,5 +1,8 @@
 package com.morris.LEDbar_controller;
 
+import static com.morris.LEDbar_controller.LightSettings.sNewLine;
+import static com.morris.LEDbar_controller.TRSDigitalPanel.SHAREDPREFS_LAMP_ASSIGNMENTS;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -27,9 +30,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
-
-import static com.morris.LEDbar_controller.LightSettings.sNewLine;
-import static com.morris.LEDbar_controller.TRSDigitalPanel.SHAREDPREFS_LAMP_ASSIGNMENTS;
 
 public class TRSLightOperatingHours extends Activity {
 
@@ -142,7 +142,7 @@ public class TRSLightOperatingHours extends Activity {
         //Toast.makeText(this.getBaseContext(),"Activity started", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, UsbCOMMsService.class);
         bindService (intent, mConnection, Context.BIND_AUTO_CREATE);
-        show_splash_screen();
+        //show_splash_screen();
     }
 
     @Override
@@ -279,6 +279,7 @@ public class TRSLightOperatingHours extends Activity {
             preset_name = json_analyst.getJSONValue(preset_tag + "_nm");
             preset_timer = json_analyst.getJSONValue(preset_tag.replace("p", "preset") + "_time_elapsed");
             btnL1.setText(preset_name + sNewLine + convert_secs_to_hhmm(preset_timer));
+            Log.d(TAG, "Timer of: " + preset_timer + " populated for button1");
         }
 
         if (!btnL2.getTag().toString().equalsIgnoreCase(NO_PRESET_TEXT)) {
@@ -360,11 +361,13 @@ public class TRSLightOperatingHours extends Activity {
         for (Map.Entry<String, ?> entry : keys.entrySet()) {
             switch (entry.getKey()) {
                 case "1":
-                    // preset8. Get name of this preset
+                    // preset. Get name of this preset
                     String preset_name = json_analyst.getJSONValue(entry.getValue() + "_nm");
                     btnL1.setText(entry.getValue().toString());
                     btnL1.setText(preset_name);
                     btnL1.setTag(entry.getValue().toString());
+                    makeToast("setting button 1 caption to: " + preset_name);
+                    Log.d(TAG, "setting button 1 caption to: " + preset_name);
                     break;
 
                 case "2":

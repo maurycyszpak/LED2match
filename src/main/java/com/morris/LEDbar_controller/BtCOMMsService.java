@@ -1,51 +1,53 @@
     package com.morris.LEDbar_controller;
 
-import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.os.Binder;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.SystemClock;
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
-import android.widget.Toast;
+    import static com.morris.LEDbar_controller.Constants.BT_CONNECTED_PREFS;
+    import static com.morris.LEDbar_controller.Constants.PRESETS_DEFINITION;
+    import static com.morris.LEDbar_controller.Constants.PRESETS_DEFINITION_JSONFILE;
+    import static com.morris.LEDbar_controller.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
+    import static com.morris.LEDbar_controller.Constants.sNewLine;
+    import static com.morris.LEDbar_controller.LightSettings.SHAREDPREFS_LAMP_STATE;
+    import static com.morris.LEDbar_controller.LightSettings.SHAREDPREFS_LED_TIMERS;
+    import static com.morris.LEDbar_controller.TRSDigitalPanel.SHAREDPREFS_LAMP_ASSIGNMENTS;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+    import android.app.Service;
+    import android.bluetooth.BluetoothAdapter;
+    import android.bluetooth.BluetoothDevice;
+    import android.bluetooth.BluetoothSocket;
+    import android.content.Context;
+    import android.content.Intent;
+    import android.content.SharedPreferences;
+    import android.os.AsyncTask;
+    import android.os.Binder;
+    import android.os.Handler;
+    import android.os.IBinder;
+    import android.os.SystemClock;
+    import android.util.Log;
+    import android.widget.Toast;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.TreeMap;
-import java.util.UUID;
-import java.util.regex.PatternSyntaxException;
+    import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import static com.morris.LEDbar_controller.Constants.BT_CONNECTED_PREFS;
-import static com.morris.LEDbar_controller.Constants.PRESETS_DEFINITION_JSONFILE;
-import static com.morris.LEDbar_controller.LightSettings.SHAREDPREFS_LAMP_STATE;
-import static com.morris.LEDbar_controller.LightSettings.SHAREDPREFS_LED_TIMERS;
-import static com.morris.LEDbar_controller.TRSDigitalPanel.SHAREDPREFS_LAMP_ASSIGNMENTS;
-import static com.morris.LEDbar_controller.Constants.sNewLine;
-import static com.morris.LEDbar_controller.Constants.PRESETS_DEFINITION;
+    import org.json.JSONException;
+    import org.json.JSONObject;
 
-public class BtCOMMsService extends Service {
+    import java.io.FileOutputStream;
+    import java.io.IOException;
+    import java.io.InputStream;
+    import java.io.OutputStream;
+    import java.io.OutputStreamWriter;
+    import java.lang.reflect.InvocationTargetException;
+    import java.sql.Timestamp;
+    import java.text.SimpleDateFormat;
+    import java.util.Collections;
+    import java.util.Date;
+    import java.util.List;
+    import java.util.Locale;
+    import java.util.Map;
+    import java.util.TimeZone;
+    import java.util.TreeMap;
+    import java.util.UUID;
+    import java.util.regex.PatternSyntaxException;
+
+    public class BtCOMMsService extends Service {
 
     final boolean APP_DEBUG_MODE = false;
     //final boolean APP_DEBUG_MODE = true;
@@ -164,7 +166,7 @@ public class BtCOMMsService extends Service {
 
     public void decodeBTResponse(String sDecodedReply) {
         //makeToast("Entering decodeBTResponse: '" + sReply + "'");
-        Log.d(TAG, "decodeBTResponse() - sDecodedReply = " + sDecodedReply);
+        //Log.d(TAG, "decodeBTResponse() - sDecodedReply = " + sDecodedReply);
 
         //String sDecodedReply = sReply;
         //logIncomingData(sDecodedReply);
@@ -246,7 +248,7 @@ public class BtCOMMsService extends Service {
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm.ss", Locale.US);
 
                 String sTemp = sDataPart;
-                Log.d(TAG, "FILE json contents received: " + sDataPart);
+                //Log.d(TAG, "FILE json contents received: " + sDataPart);
                 //makeToast("Filesize: " + sTemp.length());
                 if (sTemp.length() < 10) {
                     //factoryReset(); TBC
@@ -268,7 +270,7 @@ public class BtCOMMsService extends Service {
                     makeToast("Unable to find ',' in string: " + sTemp);
                 }
 
-                Log.d(TAG, "Storing contents to JSON file: '" + sTemp + "'");
+                //Log.d(TAG, "Storing contents to JSON file: '" + sTemp + "'");
                 spsEditor.putString("JSON", sTemp);
                 spsEditor.putLong("timestamp", lMillisEpoch);
                 spsEditor.commit();
@@ -289,9 +291,9 @@ public class BtCOMMsService extends Service {
                     JSONObject jsonObject = null;
                     try {
                         sTemp = "{" + sTemp + "}";
-                        Log.d(TAG, "Trying to create JSON Object on: " + sTemp);
+                        //Log.d(TAG, "Trying to create JSON Object on: " + sTemp);
                         jsonObject = new JSONObject(sTemp);
-                        Log.d(TAG, "Trying to parse: " + sTemp);
+                        //Log.d(TAG, "Trying to parse: " + sTemp);
                         JSONObject jsonPresets = new JSONObject();
                         for (int i=1; i<11; i++) {
                             String iterKey1 = "p" + i + "_nm";
@@ -365,13 +367,39 @@ public class BtCOMMsService extends Service {
                             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                         } else {
                             Log.d(TAG, "BUTTON data received with value: " + sDataArray[1]);
-                            for (Map.Entry<String, ?> entry : keys.entrySet()) {
-                                if (entry.getValue().toString().equalsIgnoreCase(sDataArray[1])) {
-                                    iButtonIndex = Integer.valueOf(entry.getKey());
+                            if (shared_prefs_exists(SHAREDPREFS_LAMP_ASSIGNMENTS, "666")) {
+                                for (Map.Entry<String, ?> entry : keys.entrySet()) {
+                                    if (entry.getValue().toString().equalsIgnoreCase(sDataArray[1])) {
+                                        iButtonIndex = Integer.valueOf(entry.getKey());
+                                        Intent intent = new Intent("button_highlight_event");
+                                        intent.putExtra("button_index", String.valueOf(iButtonIndex));
+                                        intent.putExtra("button_name", sDataArray[1]);
+                                        Log.d(TAG, "Found preset '" + sDataArray[1] + "' under index: " + iButtonIndex);
+                                        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                                    }
+                                }
+                            } else {
+                                Log.d(TAG, "No 666 key, scanning JSON xml file for button name to exist");
+                                boolean blFOUND = false;
+                                String button_nm_received = sDataArray[1];
+
+                                SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+                                JSON_analyst json_analyst = new JSON_analyst(spFile);
+
+                                for (int x=1; x<10; x++ ){
+                                    String tag ="p" + x + "_nm";
+                                    String lamp_name = json_analyst.getJSONValue(tag);
+                                    if (lamp_name.equalsIgnoreCase(button_nm_received) && button_nm_received.length() > 0) {
+                                        blFOUND = true;
+                                        x=10;
+                                    }
+                                }
+
+                                if (blFOUND || sDataArray[1].equalsIgnoreCase("OFF")) {
                                     Intent intent = new Intent("button_highlight_event");
-                                    intent.putExtra("button_index", String.valueOf(iButtonIndex));
+                                    //intent.putExtra("button_index", String.valueOf(iButtonIndex));
                                     intent.putExtra("button_name", sDataArray[1]);
-                                    Log.d(TAG, "Found preset '" + sDataArray[1] + "' under index: " + iButtonIndex);
+                                    Log.d(TAG, "Sending preset name '" + sDataArray[1] + "' to intent: button_highlight_event");
                                     LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                                 }
                             }
@@ -382,7 +410,7 @@ public class BtCOMMsService extends Service {
                 }
 
                 //also check for modifiers / special buttons (LOW, UV, OFF, PRG)
-                List<String> extra = Arrays.asList("OFF");
+                List<String> extra = Collections.singletonList("OFF");
                 for (String entry: extra) {
                     try {
                         if (sDataArray[1].equalsIgnoreCase(entry)) {
@@ -401,6 +429,11 @@ public class BtCOMMsService extends Service {
         //asyncTask.execute();
         //arrReply.add(i, sLamps[i]);
     }
+
+        public boolean shared_prefs_exists(String sFileName, String sKey) {
+            SharedPreferences spFile = getSharedPreferences(sFileName, 0);
+            return spFile.contains(sKey);
+        }
 
     private void store_presets_file(String content) {
         try {
@@ -738,7 +771,7 @@ public class BtCOMMsService extends Service {
             mark_BT_connnected();
 
             // Keep looping to listen for received messages
-            while (true && !stopThread) {
+            while (!stopThread) {
                 try {
                     bytes = mmInStream.read(buffer);            //read bytes from input buffer
                     String readMessage = new String(buffer, 0, bytes);

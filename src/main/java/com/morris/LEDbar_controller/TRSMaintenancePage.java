@@ -1,5 +1,9 @@
 package com.morris.LEDbar_controller;
 
+import static com.morris.LEDbar_controller.Constants.CONFIG_SETTINGS;
+import static com.morris.LEDbar_controller.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
+import static com.morris.LEDbar_controller.Constants.sNewLine;
+
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -30,10 +34,6 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.Map;
 import java.util.TreeMap;
-
-import static com.morris.LEDbar_controller.Constants.CONFIG_SETTINGS;
-import static com.morris.LEDbar_controller.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
-import static com.morris.LEDbar_controller.Constants.sNewLine;
 
 public class TRSMaintenancePage extends Activity {
 
@@ -283,6 +283,7 @@ public class TRSMaintenancePage extends Activity {
     }
 
     public void factoryReset(View v) {
+
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         View promptView = layoutInflater.inflate(R.layout.factory_reset_confirmation_view, null);
@@ -318,6 +319,18 @@ public class TRSMaintenancePage extends Activity {
             }
         });
         alertD.show();
+    }
+
+    public void reportSharedPreferences(Context ctx){
+        File dir = new File(ctx.getFilesDir().getParent() + "/shared_prefs/");
+        String[] children = dir.list();
+//        for (int i = 0; i < children.length; i++) {
+//            // clear each preference file
+//            ctx.getSharedPreferences(children[i].replace(".xml", ""), Context.MODE_PRIVATE).edit().clear().commit();
+//            //delete the file
+//            new File(dir, children[i]).delete();
+//        }
+        makeToast("Shared preferences dir: " + dir);
     }
 
     public int get_tier() {
@@ -570,7 +583,7 @@ public class TRSMaintenancePage extends Activity {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         makeToast("Resetting timer of preset: " + preset_name);
-                        String sCommand = "X," + preset_name + "$" + sNewLine;
+                        String sCommand = "X104," + preset_name + "$" + sNewLine;
                         Log.d(TAG, "Resetting timer of preset: " + preset_name);
                         if (mBoundBT) {
                             Log.d(TAG, "Service btService connected. Calling btService.sendData with message '" + sCommand.replace("\n", "\\n").replace("\r", "\\r") + "'");
