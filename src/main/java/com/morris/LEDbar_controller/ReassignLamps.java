@@ -175,6 +175,7 @@ public class ReassignLamps extends Activity {
         SharedPreferences spFile = getSharedPreferences(Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
         String json = spFile.getString("JSON", "");
         json = json.replaceAll(";", ",");
+        json = "{" + json + "}";
         try {
             JSONObject jsonObject = new JSONObject(json);
             Iterator<String> keysIterator = jsonObject.keys();
@@ -214,31 +215,31 @@ public class ReassignLamps extends Activity {
             //SystemClock.sleep(15000);
 
             int slot1 = findGivenPresetSlot(spinner1.getSelectedItem().toString());
-            if (spinner1.getSelectedItem().toString().length() > 0) { editor.putString("1", "preset" + slot1); }
+            if (spinner1.getSelectedItem().toString().length() > 0) { editor.putString("1", "p" + slot1); }
 
             int slot2 = findGivenPresetSlot(spinner2.getSelectedItem().toString());
-            if (spinner2.getSelectedItem().toString().length() > 0) { editor.putString("2", "preset" + slot2); }
+            if (spinner2.getSelectedItem().toString().length() > 0) { editor.putString("2", "p" + slot2); }
 
             int slot3 = findGivenPresetSlot(spinner3.getSelectedItem().toString());
-            if (spinner3.getSelectedItem().toString().length() > 0) { editor.putString("3", "preset" + slot3); }
+            if (spinner3.getSelectedItem().toString().length() > 0) { editor.putString("3", "p" + slot3); }
 
             int slot4 = findGivenPresetSlot(spinner4.getSelectedItem().toString());
-            if (spinner4.getSelectedItem().toString().length() > 0) { editor.putString("4", "preset" + slot4); }
+            if (spinner4.getSelectedItem().toString().length() > 0) { editor.putString("4", "p" + slot4); }
 
             int slot5 = findGivenPresetSlot(spinner5.getSelectedItem().toString());
-            if (spinner5.getSelectedItem().toString().length() > 0) { editor.putString("5", "preset" + slot5); }
+            if (spinner5.getSelectedItem().toString().length() > 0) { editor.putString("5", "p" + slot5); }
 
             int slot6 = findGivenPresetSlot(spinner6.getSelectedItem().toString());
-            if (spinner6.getSelectedItem().toString().length() > 0) { editor.putString("6", "preset" + slot6); }
+            if (spinner6.getSelectedItem().toString().length() > 0) { editor.putString("6", "p" + slot6); }
 
             int slot7 = findGivenPresetSlot(spinner7.getSelectedItem().toString());
-            if (spinner7.getSelectedItem().toString().length() > 0) { editor.putString("7", "preset" + slot7); }
+            if (spinner7.getSelectedItem().toString().length() > 0) { editor.putString("7", "p" + slot7); }
 
             int slot8 = findGivenPresetSlot(spinner8.getSelectedItem().toString());
-            if (spinner8.getSelectedItem().toString().length() > 0) { editor.putString("8", "preset" + slot8); }
+            if (spinner8.getSelectedItem().toString().length() > 0) { editor.putString("8", "p" + slot8); }
 
             int slot9 = findGivenPresetSlot(spinner9.getSelectedItem().toString());
-            if (spinner9.getSelectedItem().toString().length() > 0) { editor.putString("9", "preset" + slot9); }
+            if (spinner9.getSelectedItem().toString().length() > 0) { editor.putString("9", "p" + slot9); }
 
 
             if (spinner1.getSelectedItem().toString().length() > 0) { edit.putString("1", spinner1.getSelectedItem().toString()); }

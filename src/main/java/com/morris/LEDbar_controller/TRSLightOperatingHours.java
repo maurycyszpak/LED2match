@@ -361,11 +361,13 @@ public class TRSLightOperatingHours extends Activity {
         for (Map.Entry<String, ?> entry : keys.entrySet()) {
             switch (entry.getKey()) {
                 case "1":
-                    // preset8. Get name of this preset
+                    // preset. Get name of this preset
                     String preset_name = json_analyst.getJSONValue(entry.getValue() + "_nm");
                     btnL1.setText(entry.getValue().toString());
                     btnL1.setText(preset_name);
                     btnL1.setTag(entry.getValue().toString());
+                    makeToast("setting button 1 caption to: " + preset_name);
+                    Log.d(TAG, "setting button 1 caption to: " + preset_name);
                     break;
 
                 case "2":

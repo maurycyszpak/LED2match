@@ -506,9 +506,9 @@ public class TRSDigitalPanel extends Activity {
 
         if (shared_prefs_exists(SHAREDPREFS_LAMP_ASSIGNMENTS, "666")) {
             repopulate_button_assignments();
-            logme(TAG, "Using repopulate_button to get captions");
+            logme(TAG, "Using repopulate_button to get captions (=key 666 exists in lamp_button_assignments.xml file");
         } else {
-            logme(TAG, "Key 666 not found. Using populate_button from JSON");
+            logme(TAG, "Key 666 not found. Using populate_button from JSON (no lamp_buttons.assignments.xml file exists)");
             populateButtonNames();
         }
 

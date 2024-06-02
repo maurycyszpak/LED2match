@@ -3,6 +3,7 @@
     import static com.morris.LEDbar_controller.Constants.BT_CONNECTED_PREFS;
     import static com.morris.LEDbar_controller.Constants.PRESETS_DEFINITION;
     import static com.morris.LEDbar_controller.Constants.PRESETS_DEFINITION_JSONFILE;
+    import static com.morris.LEDbar_controller.Constants.SHAREDPREFS_CONTROLLER_FILEIMAGE;
     import static com.morris.LEDbar_controller.Constants.sNewLine;
     import static com.morris.LEDbar_controller.LightSettings.SHAREDPREFS_LAMP_STATE;
     import static com.morris.LEDbar_controller.LightSettings.SHAREDPREFS_LED_TIMERS;
@@ -165,7 +166,7 @@
 
     public void decodeBTResponse(String sDecodedReply) {
         //makeToast("Entering decodeBTResponse: '" + sReply + "'");
-        Log.d(TAG, "decodeBTResponse() - sDecodedReply = " + sDecodedReply);
+        //Log.d(TAG, "decodeBTResponse() - sDecodedReply = " + sDecodedReply);
 
         //String sDecodedReply = sReply;
         //logIncomingData(sDecodedReply);
@@ -247,7 +248,7 @@
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm.ss", Locale.US);
 
                 String sTemp = sDataPart;
-                Log.d(TAG, "FILE json contents received: " + sDataPart);
+                //Log.d(TAG, "FILE json contents received: " + sDataPart);
                 //makeToast("Filesize: " + sTemp.length());
                 if (sTemp.length() < 10) {
                     //factoryReset(); TBC
@@ -269,7 +270,7 @@
                     makeToast("Unable to find ',' in string: " + sTemp);
                 }
 
-                Log.d(TAG, "Storing contents to JSON file: '" + sTemp + "'");
+                //Log.d(TAG, "Storing contents to JSON file: '" + sTemp + "'");
                 spsEditor.putString("JSON", sTemp);
                 spsEditor.putLong("timestamp", lMillisEpoch);
                 spsEditor.commit();
@@ -290,9 +291,9 @@
                     JSONObject jsonObject = null;
                     try {
                         sTemp = "{" + sTemp + "}";
-                        Log.d(TAG, "Trying to create JSON Object on: " + sTemp);
+                        //Log.d(TAG, "Trying to create JSON Object on: " + sTemp);
                         jsonObject = new JSONObject(sTemp);
-                        Log.d(TAG, "Trying to parse: " + sTemp);
+                        //Log.d(TAG, "Trying to parse: " + sTemp);
                         JSONObject jsonPresets = new JSONObject();
                         for (int i=1; i<11; i++) {
                             String iterKey1 = "p" + i + "_nm";
@@ -366,13 +367,39 @@
                             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                         } else {
                             Log.d(TAG, "BUTTON data received with value: " + sDataArray[1]);
-                            for (Map.Entry<String, ?> entry : keys.entrySet()) {
-                                if (entry.getValue().toString().equalsIgnoreCase(sDataArray[1])) {
-                                    iButtonIndex = Integer.valueOf(entry.getKey());
+                            if (shared_prefs_exists(SHAREDPREFS_LAMP_ASSIGNMENTS, "666")) {
+                                for (Map.Entry<String, ?> entry : keys.entrySet()) {
+                                    if (entry.getValue().toString().equalsIgnoreCase(sDataArray[1])) {
+                                        iButtonIndex = Integer.valueOf(entry.getKey());
+                                        Intent intent = new Intent("button_highlight_event");
+                                        intent.putExtra("button_index", String.valueOf(iButtonIndex));
+                                        intent.putExtra("button_name", sDataArray[1]);
+                                        Log.d(TAG, "Found preset '" + sDataArray[1] + "' under index: " + iButtonIndex);
+                                        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                                    }
+                                }
+                            } else {
+                                Log.d(TAG, "No 666 key, scanning JSON xml file for button name to exist");
+                                boolean blFOUND = false;
+                                String button_nm_received = sDataArray[1];
+
+                                SharedPreferences spFile = getSharedPreferences(SHAREDPREFS_CONTROLLER_FILEIMAGE, 0);
+                                JSON_analyst json_analyst = new JSON_analyst(spFile);
+
+                                for (int x=1; x<10; x++ ){
+                                    String tag ="p" + x + "_nm";
+                                    String lamp_name = json_analyst.getJSONValue(tag);
+                                    if (lamp_name.equalsIgnoreCase(button_nm_received) && button_nm_received.length() > 0) {
+                                        blFOUND = true;
+                                        x=10;
+                                    }
+                                }
+
+                                if (blFOUND || sDataArray[1].equalsIgnoreCase("OFF")) {
                                     Intent intent = new Intent("button_highlight_event");
-                                    intent.putExtra("button_index", String.valueOf(iButtonIndex));
+                                    //intent.putExtra("button_index", String.valueOf(iButtonIndex));
                                     intent.putExtra("button_name", sDataArray[1]);
-                                    Log.d(TAG, "Found preset '" + sDataArray[1] + "' under index: " + iButtonIndex);
+                                    Log.d(TAG, "Sending preset name '" + sDataArray[1] + "' to intent: button_highlight_event");
                                     LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                                 }
                             }
@@ -402,6 +429,11 @@
         //asyncTask.execute();
         //arrReply.add(i, sLamps[i]);
     }
+
+        public boolean shared_prefs_exists(String sFileName, String sKey) {
+            SharedPreferences spFile = getSharedPreferences(sFileName, 0);
+            return spFile.contains(sKey);
+        }
 
     private void store_presets_file(String content) {
         try {
